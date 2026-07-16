@@ -3,7 +3,6 @@ package com.sevenheadeddragon.registry;
 import com.sevenheadeddragon.SevenHeadedDragon;
 import com.sevenheadeddragon.entity.MagicCircleEntity;
 import com.sevenheadeddragon.entity.PotionMasterEntity;
-import com.sevenheadeddragon.entity.projectile.PotionBulletEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
@@ -33,16 +32,7 @@ public final class ModEntities {
                     .sized(1.5f, 0.1f)
                     .clientTrackingRange(48)
                     .updateInterval(1)
-                    .noSummon()
                     .build("magic_circle"));
-
-    public static final RegistryObject<EntityType<PotionBulletEntity>> POTION_BULLET =
-            ENTITY_TYPES.register("potion_bullet", () -> EntityType.Builder.<PotionBulletEntity>of(PotionBulletEntity::new, MobCategory.MISC)
-                    .sized(0.25f, 0.25f)
-                    .clientTrackingRange(32)
-                    .updateInterval(2)
-                    .noSummon()
-                    .build("potion_bullet"));
 
     public static void registerAttributes(EntityAttributeCreationEvent event) {
         event.put(POTION_MASTER.get(), PotionMasterEntity.createAttributes().build());

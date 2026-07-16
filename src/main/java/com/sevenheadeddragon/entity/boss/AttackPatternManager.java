@@ -2,18 +2,20 @@ package com.sevenheadeddragon.entity.boss;
 
 import com.sevenheadeddragon.entity.MagicCircleEntity;
 import com.sevenheadeddragon.entity.PotionMasterEntity;
-import com.sevenheadeddragon.entity.projectile.PotionBulletEntity;
 import com.sevenheadeddragon.registry.ModEntities;
+import com.sevenheadeddragon.util.PotionEffectPool;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.ThrownPotion;
 
 /**
  * Selects and executes one of several geometric "bullet-hell" attack
  * patterns for the Potion Master boss's 60-second attack turn.
  * <p>
  * Every pattern first spawns one or more {@link MagicCircleEntity} telegraph
- * markers and only fires the actual {@link PotionBulletEntity} projectiles
+ * markers and only fires the actual vanilla Splash Potion projectiles
  * after a short warning delay, giving the player time to react/dodge.
  * <p>
  * All bullets are affected by gravity and apply a randomly rolled debuff
@@ -109,7 +111,7 @@ public final class AttackPatternManager {
             perpVY /= perpVLen;
             perpVZ /= perpVLen;
 
-            double speed = 0.65;
+            double speed = 1.6; // Increased speed for longer throw distance
             double coneHalfAngle = Math.toRadians(22);
 
             for (int i = 0; i < bulletCount; i++) {
@@ -147,7 +149,7 @@ public final class AttackPatternManager {
 
         for (int w = 0; w < waves; w++) {
             int waveDelay = TELEGRAPH_TICKS + w * 12; // each wave 0.6s apart
-            double waveSpeed = 0.25 + w * 0.08; // each successive wave is faster/wider
+            double waveSpeed = 0.5 + w * 0.15; // Increased speed for wider/farther spread
 
             final double fSpeed = waveSpeed;
             final double angleOffset = w * 0.15; // slight angular offset between waves
@@ -159,7 +161,7 @@ public final class AttackPatternManager {
                     double angle = (Math.PI * 2 * j) / fBullets + angleOffset;
                     double vx = Math.cos(angle) * fSpeed;
                     double vz = Math.sin(angle) * fSpeed;
-                    spawnBullet(level, boss, bossX, bossY, bossZ, vx, 0.15, vz);
+                    spawnBullet(level, boss, bossX, bossY, bossZ, vx, 0.4, vz); // slightly higher arc
                 }
             });
         }
@@ -190,18 +192,18 @@ public final class AttackPatternManager {
 
             for (int i = 0; i < bulletsPerArm; i++) {
                 int fireDelay = TELEGRAPH_TICKS + (i * fireDuration) / bulletsPerArm;
-                // 3 full rotations over the firing duration
-                double angle = armOffset + (Math.PI * 2 * i * 3.0) / bulletsPerArm;
+                // 7 full rotations over the firing duration (per user request)
+                double angle = armOffset + (Math.PI * 2 * i * 7.0) / bulletsPerArm;
 
                 final double spawnX = centerX + Math.cos(angle) * radius;
                 final double spawnZ = centerZ + Math.sin(angle) * radius;
 
                 boss.scheduleIn(fireDelay, () -> {
                     if (!boss.isAlive()) return;
-                    // Slight outward push + downward; gravity does the rest
-                    double outX = (spawnX - centerX) * 0.03;
-                    double outZ = (spawnZ - centerZ) * 0.03;
-                    spawnBullet(level, boss, spawnX, circleY, spawnZ, outX, -0.05, outZ);
+                    // Stronger outward push so the spiral expands further
+                    double outX = (spawnX - centerX) * 0.1;
+                    double outZ = (spawnZ - centerZ) * 0.1;
+                    spawnBullet(level, boss, spawnX, circleY, spawnZ, outX, -0.1, outZ);
                 });
             }
         }
@@ -265,12 +267,11 @@ public final class AttackPatternManager {
 
     private static void spawnBullet(ServerLevel level, LivingEntity owner, double x, double y, double z,
                                      double vx, double vy, double vz) {
-        PotionBulletEntity bullet = ModEntities.POTION_BULLET.get().create(level);
-        if (bullet != null) {
-            bullet.moveTo(x, y, z, 0.0f, 0.0f);
-            bullet.setOwner(owner);
-            bullet.setDeltaMovement(vx, vy, vz);
-            level.addFreshEntity(bullet);
-        }
+        ThrownPotion bullet = new ThrownPotion(EntityType.POTION, level);
+        bullet.setPos(x, y, z);
+        bullet.setOwner(owner);
+        bullet.setItem(PotionEffectPool.createRandomPotionItem(owner.getRandom()));
+        bullet.setDeltaMovement(vx, vy, vz);
+        level.addFreshEntity(bullet);
     }
 }
