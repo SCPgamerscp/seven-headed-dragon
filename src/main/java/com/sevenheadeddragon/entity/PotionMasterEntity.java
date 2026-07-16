@@ -242,6 +242,15 @@ public class PotionMasterEntity extends Monster {
     }
 
     @Override
+    public boolean canBeAffected(net.minecraft.world.effect.MobEffectInstance effectInstance) {
+        net.minecraft.resources.ResourceLocation effectId = net.minecraftforge.registries.ForgeRegistries.MOB_EFFECTS.getKey(effectInstance.getEffect());
+        if (effectId != null && effectId.getNamespace().equals(com.sevenheadeddragon.SevenHeadedDragon.MODID)) {
+            return false; // Immune to all custom effects from this mod to prevent self-destruction
+        }
+        return super.canBeAffected(effectInstance);
+    }
+
+    @Override
     public boolean doHurtTarget(net.minecraft.world.entity.Entity target) {
         // The Potion Master never performs direct melee/physical attacks.
         return false;
