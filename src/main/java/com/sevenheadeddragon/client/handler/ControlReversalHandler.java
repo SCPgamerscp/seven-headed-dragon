@@ -19,7 +19,11 @@ import net.minecraftforge.fml.common.Mod;
  * the Control Reversal MobEffect active, the raw keyboard-derived movement
  * input vector is negated before it's used to compute actual movement.
  */
+<<<<<<< HEAD
+@Mod.EventBusSubscriber(modid = SevenHeadedDragon.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+=======
 @Mod.EventBusSubscriber(modid = SevenHeadedDragon.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+>>>>>>> origin/genspark_ai_developer
 public final class ControlReversalHandler {
 
     @SubscribeEvent
