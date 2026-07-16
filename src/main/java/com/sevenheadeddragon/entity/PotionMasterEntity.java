@@ -312,14 +312,14 @@ public class PotionMasterEntity extends Monster {
 
             double distanceSq = this.mob.distanceToSqr(target);
             if (distanceSq < this.keepDistance * this.keepDistance) {
-                net.minecraft.world.phys.Vec3 awayPos = DefaultRandomPos.getPosAway(this.mob, 16, 7, target.position());
-                if (awayPos != null) {
-                    this.mob.getNavigation().moveTo(awayPos.x, awayPos.y, awayPos.z, this.speedModifier);
-                }
+                // Smoothly strafe backwards instead of spamming moveTo (pathfinding), which causes stuttering
+                this.mob.getNavigation().stop();
+                this.mob.getMoveControl().strafe(-0.5F, 0.0F);
             } else if (distanceSq > this.chaseDistance * this.chaseDistance) {
                 this.mob.getNavigation().moveTo(target, this.speedModifier);
             } else {
                 this.mob.getNavigation().stop();
+                this.mob.getMoveControl().strafe(0.0F, 0.0F); // stop strafing
             }
         }
     }

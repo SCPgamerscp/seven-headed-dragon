@@ -188,12 +188,15 @@ public final class AttackPatternManager {
             int fireDelay = TELEGRAPH_TICKS + i; // 1 tick apart
             // 7 full rotations over the 100 ticks
             double angle = (Math.PI * 2 * i * 7.0) / totalBullets;
+            final int bulletIndex = i;
 
             boss.scheduleIn(fireDelay, () -> {
                 if (!boss.isAlive()) return;
+                // Speed increases from 0.1 to 1.6 over the duration
+                double currentSpeed = 0.1 + ((double) bulletIndex / totalBullets) * 1.5;
                 // Shoot outward horizontally from the center of the magic circle
-                double vx = Math.cos(angle) * 1.5;
-                double vz = Math.sin(angle) * 1.5;
+                double vx = Math.cos(angle) * currentSpeed;
+                double vz = Math.sin(angle) * currentSpeed;
                 spawnBullet(level, boss, centerX, circleY, centerZ, vx, -0.2, vz);
             });
         }
