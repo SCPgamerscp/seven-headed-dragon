@@ -9,8 +9,8 @@ import net.minecraft.world.entity.LivingEntity;
 /**
  * 殺虫 (Insecticide)
  * Only deals damage if the target currently has the "Insectify" effect
- * active. If the target is NOT insectified, damage is completely zero
- * (this effect does nothing to a normal player/mob).
+ * active OR if the target's MobType is ARTHROPOD (e.g., spiders, silverfish).
+ * Otherwise, damage is completely zero.
  */
 public class InsecticideEffect extends MobEffect {
 
@@ -23,7 +23,7 @@ public class InsecticideEffect extends MobEffect {
 
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
-        if (entity.hasEffect(ModEffects.INSECTIFY.get())) {
+        if (entity.hasEffect(ModEffects.INSECTIFY.get()) || entity.getMobType() == net.minecraft.world.entity.MobType.ARTHROPOD) {
             entity.hurt(ModDamageTypes.source(entity, ModDamageTypes.INSECTICIDE), DAMAGE_PER_TICK * (amplifier + 1));
         }
         // If not insectified: intentionally no damage at all.

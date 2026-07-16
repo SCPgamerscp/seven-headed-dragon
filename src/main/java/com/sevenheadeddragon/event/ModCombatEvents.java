@@ -34,7 +34,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 public class ModCombatEvents {
 
     private static final float SCORCH_MULTIPLIER = 5.0f;
-    private static final float POISON_AMPLIFY_MULTIPLIER = 3.0f;
+    private static final float POISON_AMPLIFY_MULTIPLIER = 5.0f;
 
     @SubscribeEvent
     public void onLivingDamage(LivingDamageEvent event) {

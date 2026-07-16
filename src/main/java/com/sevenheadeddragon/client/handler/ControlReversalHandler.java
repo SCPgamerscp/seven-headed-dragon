@@ -29,6 +29,12 @@ public final class ControlReversalHandler {
             return;
         }
 
+        net.minecraft.world.effect.MobEffectInstance effect = player.getEffect(ModEffects.CONTROL_REVERSAL.get());
+        if (effect != null && effect.getDuration() % 40 < 20) {
+            // Normal operation for 1 second, skips the inversion
+            return;
+        }
+
         Input input = event.getInput();
 
         // Invert the raw impulse axes (forward/back, strafe left/right).
