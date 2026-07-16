@@ -16,6 +16,7 @@
   "effect.sevenheadeddragon.poison_amplify": "Poison Amplify",
   "effect.sevenheadeddragon.magma": "Magma Damage",
   "effect.sevenheadeddragon.fall_amplify": "Fall Damage Amplify",
+  "effect.sevenheadeddragon.void_damage": "Void Damage",
   "effect.sevenheadeddragon.water_vulnerability": "Water Vulnerability",
   "effect.sevenheadeddragon.lightning_mark": "Lightning Mark",
   "effect.sevenheadeddragon.control_reversal": "Control Reversal",
@@ -49,6 +50,9 @@
   "item.minecraft.potion.effect.fall_amplify": "Potion of Fall Damage Amplify",
   "item.minecraft.splash_potion.effect.fall_amplify": "Splash Potion of Fall Damage Amplify",
   "item.minecraft.lingering_potion.effect.fall_amplify": "Lingering Potion of Fall Damage Amplify",
+  "item.minecraft.potion.effect.void_damage": "Potion of the Void",
+  "item.minecraft.splash_potion.effect.void_damage": "Splash Potion of the Void",
+  "item.minecraft.lingering_potion.effect.void_damage": "Lingering Potion of the Void",
   "item.minecraft.potion.effect.water_vulnerability": "Potion of Water Vulnerability",
   "item.minecraft.splash_potion.effect.water_vulnerability": "Splash Potion of Water Vulnerability",
   "item.minecraft.lingering_potion.effect.water_vulnerability": "Lingering Potion of Water Vulnerability",
@@ -73,8 +77,8 @@
   "death.attack.sevenheadeddragon.asphyxiation.player": "%1$s suffocated on dry land while trying to escape %2$s",
   "death.attack.sevenheadeddragon.magma": "%1$s was consumed by phantom magma",
   "death.attack.sevenheadeddragon.magma.player": "%1$s was consumed by phantom magma while trying to escape %2$s",
-  "death.attack.sevenheadeddragon.fall_amplify_void": "%1$s was pulled into the void",
-  "death.attack.sevenheadeddragon.fall_amplify_void.player": "%1$s was pulled into the void while trying to escape %2$s",
+  "death.attack.sevenheadeddragon.void_damage": "%1$s was pulled into the void",
+  "death.attack.sevenheadeddragon.void_damage.player": "%1$s was pulled into the void while trying to escape %2$s",
   "death.attack.sevenheadeddragon.water_vulnerability": "%1$s was washed away by the rain",
   "death.attack.sevenheadeddragon.water_vulnerability.player": "%1$s was washed away by the rain while trying to escape %2$s"
 }

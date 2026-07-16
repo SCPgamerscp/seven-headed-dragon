@@ -59,6 +59,10 @@ public final class ModEffects {
     public static final RegistryObject<MobEffect> POISON_AMPLIFY =
             EFFECTS.register("poison_amplify", PoisonAmplifyEffect::new);
 
+    // 8. 奈落ダメージ (Void Damage) - bypasses armor completely.
+    public static final RegistryObject<MobEffect> VOID_DAMAGE =
+            EFFECTS.register("void_damage", com.sevenheadeddragon.effect.VoidDamageEffect::new);
+
     // 8. マグマダメージ (Magma) - deals magma block contact damage each tick.
     public static final RegistryObject<MobEffect> MAGMA =
             EFFECTS.register("magma", MagmaEffect::new);

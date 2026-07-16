@@ -16,6 +16,7 @@
   "effect.sevenheadeddragon.poison_amplify": "毒ダメージ倍化",
   "effect.sevenheadeddragon.magma": "マグマダメージ",
   "effect.sevenheadeddragon.fall_amplify": "落下ダメージ倍化",
+  "effect.sevenheadeddragon.void_damage": "奈落ダメージ",
   "effect.sevenheadeddragon.water_vulnerability": "水耐性低下",
   "effect.sevenheadeddragon.lightning_mark": "雷",
   "effect.sevenheadeddragon.control_reversal": "操作反転",
@@ -49,6 +50,9 @@
   "item.minecraft.potion.effect.fall_amplify": "落下ダメージ倍化のポーション",
   "item.minecraft.splash_potion.effect.fall_amplify": "落下ダメージ倍化のスプラッシュポーション",
   "item.minecraft.lingering_potion.effect.fall_amplify": "落下ダメージ倍化のスローポーション",
+  "item.minecraft.potion.effect.void_damage": "奈落のポーション",
+  "item.minecraft.splash_potion.effect.void_damage": "奈落のスプラッシュポーション",
+  "item.minecraft.lingering_potion.effect.void_damage": "奈落のスローポーション",
   "item.minecraft.potion.effect.water_vulnerability": "水耐性低下のポーション",
   "item.minecraft.splash_potion.effect.water_vulnerability": "水耐性低下のスプラッシュポーション",
   "item.minecraft.lingering_potion.effect.water_vulnerability": "水耐性低下のスローポーション",
@@ -73,8 +77,8 @@
   "death.attack.sevenheadeddragon.asphyxiation.player": "%1$sは%2$sから逃げようとして陸上で酸欠になった",
   "death.attack.sevenheadeddragon.magma": "%1$sは幻のマグマに焼かれた",
   "death.attack.sevenheadeddragon.magma.player": "%1$sは%2$sから逃げようとして幻のマグマに焼かれた",
-  "death.attack.sevenheadeddragon.fall_amplify_void": "%1$sは奈落に引き込まれた",
-  "death.attack.sevenheadeddragon.fall_amplify_void.player": "%1$sは%2$sから逃げようとして奈落に引き込まれた",
+  "death.attack.sevenheadeddragon.void_damage": "%1$sは奈落に飲み込まれた",
+  "death.attack.sevenheadeddragon.void_damage.player": "%1$sは%2$sから逃げようとして奈落に飲み込まれた",
   "death.attack.sevenheadeddragon.water_vulnerability": "%1$sは雨に流された",
   "death.attack.sevenheadeddragon.water_vulnerability.player": "%1$sは%2$sから逃げようとして雨に流された"
 }

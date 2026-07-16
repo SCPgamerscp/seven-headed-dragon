@@ -46,7 +46,7 @@ public final class PotionEffectPool {
         for (RegistryObject<MobEffect> effect : List.of(
                 ModEffects.PERCENT_POISON, ModEffects.UNDEAD_CURSE, ModEffects.INSECTIFY,
                 ModEffects.INSECTICIDE, ModEffects.SCORCH, ModEffects.ASPHYXIATION,
-                ModEffects.POISON_AMPLIFY, ModEffects.MAGMA, ModEffects.FALL_AMPLIFY,
+                ModEffects.POISON_AMPLIFY, ModEffects.VOID_DAMAGE, ModEffects.MAGMA, ModEffects.FALL_AMPLIFY,
                 ModEffects.WATER_VULNERABILITY, ModEffects.LIGHTNING_MARK,
                 ModEffects.CONTROL_REVERSAL, ModEffects.TELEPORT_MARK, ModEffects.FIREWORK_MARK)) {
             list.add(effect::get);

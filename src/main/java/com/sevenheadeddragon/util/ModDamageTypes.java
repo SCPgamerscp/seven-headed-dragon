@@ -25,7 +25,7 @@ public final class ModDamageTypes {
     public static final ResourceKey<DamageType> INSECTICIDE = key("insecticide");
     public static final ResourceKey<DamageType> ASPHYXIATION = key("asphyxiation");
     public static final ResourceKey<DamageType> MAGMA = key("magma");
-    public static final ResourceKey<DamageType> FALL_AMPLIFY_VOID = key("fall_amplify_void");
+    public static final ResourceKey<DamageType> VOID_DAMAGE = key("void_damage");
     public static final ResourceKey<DamageType> WATER_VULNERABILITY = key("water_vulnerability");
 
     private static ResourceKey<DamageType> key(String path) {
