@@ -7,14 +7,14 @@ import net.minecraft.world.entity.LivingEntity;
 
 /**
  * マグマダメージ (Magma Damage)
- * While active, deals damage each tick equivalent to standing in magma
- * (fire damage type, matching vanilla magma block contact damage), regardless
+ * While active, deals damage each tick equivalent to standing in lava
+ * (fire damage type, 4 damage every 0.5 seconds), regardless
  * of the target's actual surroundings.
  */
 public class MagmaEffect extends MobEffect {
 
-    private static final float DAMAGE_PER_TICK = 1.0f; // matches vanilla magma block tick damage
-    private static final int TICK_INTERVAL = 20;
+    private static final float DAMAGE_PER_TICK = 4.0f; // matches vanilla lava damage
+    private static final int TICK_INTERVAL = 10; // 0.5 seconds
 
     public MagmaEffect() {
         super(MobEffectCategory.HARMFUL, 0xFF8C00);
