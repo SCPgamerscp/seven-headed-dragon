@@ -292,6 +292,11 @@ public class PotionMasterEntity extends Monster {
         return false;
     }
 
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return false;
+    }
+
     private class KiteTargetGoal extends Goal {
         private final PotionMasterEntity mob;
         private final double speedModifier;
