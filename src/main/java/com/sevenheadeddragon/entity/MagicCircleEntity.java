@@ -25,6 +25,14 @@ public class MagicCircleEntity extends Entity {
     private static final EntityDataAccessor<Integer> DATA_LIFETIME_TICKS =
             SynchedEntityData.defineId(MagicCircleEntity.class, EntityDataSerializers.INT);
 
+    /** Pitch rotation in degrees (0 = flat/horizontal, 90 = vertical). */
+    private static final EntityDataAccessor<Float> DATA_PITCH =
+            SynchedEntityData.defineId(MagicCircleEntity.class, EntityDataSerializers.FLOAT);
+
+    /** Yaw rotation in degrees (rotation around the Y axis). */
+    private static final EntityDataAccessor<Float> DATA_YAW =
+            SynchedEntityData.defineId(MagicCircleEntity.class, EntityDataSerializers.FLOAT);
+
     /** Default telegraph duration before the circle disappears (in ticks). */
     private static final int DEFAULT_LIFETIME = 40;
 
@@ -37,6 +45,8 @@ public class MagicCircleEntity extends Entity {
     @Override
     protected void defineSynchedData() {
         this.entityData.define(DATA_LIFETIME_TICKS, DEFAULT_LIFETIME);
+        this.entityData.define(DATA_PITCH, 0.0f);
+        this.entityData.define(DATA_YAW, 0.0f);
     }
 
     public void setLifetime(int ticks) {
@@ -45,6 +55,22 @@ public class MagicCircleEntity extends Entity {
 
     public int getLifetime() {
         return this.entityData.get(DATA_LIFETIME_TICKS);
+    }
+
+    public void setOrientationPitch(float pitch) {
+        this.entityData.set(DATA_PITCH, pitch);
+    }
+
+    public float getOrientationPitch() {
+        return this.entityData.get(DATA_PITCH);
+    }
+
+    public void setOrientationYaw(float yaw) {
+        this.entityData.set(DATA_YAW, yaw);
+    }
+
+    public float getOrientationYaw() {
+        return this.entityData.get(DATA_YAW);
     }
 
     @Override

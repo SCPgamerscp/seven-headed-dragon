@@ -37,6 +37,14 @@ public class MagicCircleRenderer extends EntityRenderer<MagicCircleEntity> {
                         MultiBufferSource buffer, int packedLight) {
         poseStack.pushPose();
         poseStack.translate(0.0, 0.05, 0.0);
+
+        // Apply orientation: yaw (horizontal facing), then pitch (tilt upright).
+        float yaw = entity.getOrientationYaw();
+        float pitch = entity.getOrientationPitch();
+        poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(yaw));
+        poseStack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(pitch));
+
+        // Spin animation on top of the orientation.
         poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(
                 (entity.tickCount + partialTicks) * 1.5f % 360.0f));
 

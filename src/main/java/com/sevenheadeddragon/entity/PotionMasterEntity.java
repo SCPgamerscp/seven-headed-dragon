@@ -22,13 +22,10 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-<<<<<<< HEAD
 import java.util.EnumSet;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.entity.ai.goal.Goal;
-=======
->>>>>>> origin/genspark_ai_developer
 
 /**
  * The Potion Master boss ("ポーションマスター").
@@ -62,13 +59,9 @@ public class PotionMasterEntity extends Monster {
     public static final int PLAYER_TURN_TICKS = 20 * 5;
 
     /** Ticks between successive attack-pattern selections during a single boss turn. */
-<<<<<<< HEAD
     private static final int ATTACK_INTERVAL_TICKS = 20 * 4; // new pattern every 4 seconds
 
     private final ServerBossEvent bossEvent = (ServerBossEvent)(new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS)).setDarkenScreen(true);
-=======
-    private static final int ATTACK_INTERVAL_TICKS = 20 * 8; // new pattern every 8 seconds
->>>>>>> origin/genspark_ai_developer
 
     private int turnTimer = 0;
     private int attackCooldown = 0;
@@ -150,10 +143,7 @@ public class PotionMasterEntity extends Monster {
         // Kiting movement: keep distance while still slowly approaching -
         // full geometric bullet-hell AI is handled by a dedicated goal to be
         // added; this baseline keeps the boss mobile and ground-walking.
-<<<<<<< HEAD
         this.goalSelector.addGoal(2, new KiteTargetGoal(this, 1.0D, 8.0F, 16.0F));
-=======
->>>>>>> origin/genspark_ai_developer
         this.goalSelector.addGoal(3, new RandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(4, new MoveTowardsRestrictionGoal(this, 1.0D));
 
@@ -164,7 +154,6 @@ public class PotionMasterEntity extends Monster {
     }
 
     @Override
-<<<<<<< HEAD
     public void startSeenByPlayer(ServerPlayer player) {
         super.startSeenByPlayer(player);
         this.bossEvent.addPlayer(player);
@@ -183,18 +172,13 @@ public class PotionMasterEntity extends Monster {
     }
 
     @Override
-=======
->>>>>>> origin/genspark_ai_developer
     public void aiStep() {
         super.aiStep();
 
         if (this.level().isClientSide) return;
 
-<<<<<<< HEAD
         this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
 
-=======
->>>>>>> origin/genspark_ai_developer
         tickScheduledTasks();
 
         // Invulnerable during the boss's own attack turn; defenseless
@@ -294,7 +278,6 @@ public class PotionMasterEntity extends Monster {
     public boolean canChangeDimensions() {
         return false;
     }
-<<<<<<< HEAD
 
     private class KiteTargetGoal extends Goal {
         private final PotionMasterEntity mob;
@@ -333,6 +316,4 @@ public class PotionMasterEntity extends Monster {
             }
         }
     }
-=======
->>>>>>> origin/genspark_ai_developer
 }
