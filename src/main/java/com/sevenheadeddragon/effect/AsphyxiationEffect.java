@@ -35,7 +35,9 @@ public class AsphyxiationEffect extends MobEffect {
             entity.setAirSupply(0);
             entity.hurt(ModDamageTypes.source(entity, ModDamageTypes.ASPHYXIATION), 2.0f);
         } else {
-            entity.setAirSupply(air - 1);
+            // baseTick automatically adds 4 air per tick when on land.
+            // We subtract 5 to result in a net -1 air per tick.
+            entity.setAirSupply(air - 5);
         }
         return;
     }

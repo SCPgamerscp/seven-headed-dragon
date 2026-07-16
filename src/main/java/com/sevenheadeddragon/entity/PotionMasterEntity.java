@@ -312,14 +312,22 @@ public class PotionMasterEntity extends Monster {
 
             double distanceSq = this.mob.distanceToSqr(target);
             if (distanceSq < this.keepDistance * this.keepDistance) {
-                // Smoothly strafe backwards instead of spamming moveTo (pathfinding), which causes stuttering
-                this.mob.getNavigation().stop();
-                this.mob.getMoveControl().strafe(-0.5F, 0.0F);
+                if (this.mob.getNavigation().isDone()) {
+                    net.minecraft.world.phys.Vec3 retreatPos = net.minecraft.world.entity.ai.util.DefaultRandomPos.getPosAway(this.mob, 16, 7, target.position());
+                    if (retreatPos != null) {
+                        this.mob.getNavigation().moveTo(retreatPos.x, retreatPos.y, retreatPos.z, this.speedModifier * 1.2);
+                    }
+                }
             } else if (distanceSq > this.chaseDistance * this.chaseDistance) {
-                this.mob.getNavigation().moveTo(target, this.speedModifier);
+                if (this.mob.getNavigation().isDone() || target.distanceToSqr(this.mob.getNavigation().getTargetPos().getX(), this.mob.getNavigation().getTargetPos().getY(), this.mob.getNavigation().getTargetPos().getZ()) > 16.0) {
+                    this.mob.getNavigation().moveTo(target, this.speedModifier);
+                }
             } else {
-                this.mob.getNavigation().stop();
-                this.mob.getMoveControl().strafe(0.0F, 0.0F); // stop strafing
+                // If in the sweet spot, we can just randomly strafe or stand still.
+                // Stopping navigation to hold ground.
+                if (!this.mob.getNavigation().isDone()) {
+                    this.mob.getNavigation().stop();
+                }
             }
         }
     }
