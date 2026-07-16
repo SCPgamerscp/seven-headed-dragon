@@ -12,6 +12,7 @@ import net.minecraft.world.entity.ai.goal.MoveTowardsRestrictionGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -144,16 +145,16 @@ public class PotionMasterEntity extends Monster {
         // Kiting movement: keep distance while still slowly approaching -
         // full geometric bullet-hell AI is handled by a dedicated goal to be
         // added; this baseline keeps the boss mobile and ground-walking.
-        this.goalSelector.addGoal(2, new KiteTargetGoal(this, 1.0D, 8.0F, 16.0F));
+        this.goalSelector.addGoal(2, new KiteTargetGoal(this, 1.2D, 12.0F, 16.0F));
         this.goalSelector.addGoal(3, new RandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(4, new MoveTowardsRestrictionGoal(this, 1.0D));
 
         // Uses vanilla's standard hostile-targeting selection logic to pick
         // a single focused player target, per spec ("特定の1人をターゲットに
         // して攻撃するはバニラの敵対処理を使う").
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
         // Also retaliate against ANY entity (like other mobs) that attacks the boss, per user request.
-        this.targetSelector.addGoal(2, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     }
 
     @Override
@@ -307,15 +308,18 @@ public class PotionMasterEntity extends Monster {
             LivingEntity target = this.mob.getTarget();
             if (target == null) return;
 
+            this.mob.getLookControl().setLookAt(target, 30.0F, 30.0F);
+
             double distanceSq = this.mob.distanceToSqr(target);
             if (distanceSq < this.keepDistance * this.keepDistance) {
-                net.minecraft.world.phys.Vec3 away = net.minecraft.world.phys.Vec3.atBottomCenterOf(this.mob.blockPosition()).subtract(target.position()).normalize().scale(5);
-                this.mob.getNavigation().moveTo(this.mob.getX() + away.x, this.mob.getY(), this.mob.getZ() + away.z, this.speedModifier);
+                net.minecraft.world.phys.Vec3 awayPos = DefaultRandomPos.getPosAway(this.mob, 16, 7, target.position());
+                if (awayPos != null) {
+                    this.mob.getNavigation().moveTo(awayPos.x, awayPos.y, awayPos.z, this.speedModifier);
+                }
             } else if (distanceSq > this.chaseDistance * this.chaseDistance) {
                 this.mob.getNavigation().moveTo(target, this.speedModifier);
             } else {
                 this.mob.getNavigation().stop();
-                this.mob.getLookControl().setLookAt(target, 30.0F, 30.0F);
             }
         }
     }

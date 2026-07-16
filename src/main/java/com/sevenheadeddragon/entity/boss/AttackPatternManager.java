@@ -176,36 +176,26 @@ public final class AttackPatternManager {
     private static void spiralStream(ServerLevel level, PotionMasterEntity boss, LivingEntity target, RandomSource random) {
         double centerX = target.getX();
         double centerZ = target.getZ();
-        double circleY = target.getY() + 10.0; // 10 blocks above target
-        double radius = 4.0;
+        double circleY = target.getY() + 4.0; // Magic circle 4 blocks above target
 
-        // Horizontal telegraph above target
-        spawnTelegraph(level, centerX, circleY, centerZ, TELEGRAPH_TICKS + 60, 0.0f, 0.0f);
+        // Horizontal telegraph above target (Pitch 90 is horizontal flat on ground, we need a flat circle in the air)
+        spawnTelegraph(level, centerX, circleY, centerZ, TELEGRAPH_TICKS + 100, 90.0f, 0.0f);
 
-        int arms = 2;
-        int totalBullets = 70 + random.nextInt(11); // 70-80 bullets
-        int bulletsPerArm = totalBullets / arms;
-        int fireDuration = 50; // 2.5 seconds of continuous firing
+        int totalBullets = 100; // 1 bullet per tick
+        int fireDuration = 100; // 5 seconds of continuous firing
 
-        for (int arm = 0; arm < arms; arm++) {
-            double armOffset = (Math.PI * 2 * arm) / arms;
+        for (int i = 0; i < totalBullets; i++) {
+            int fireDelay = TELEGRAPH_TICKS + i; // 1 tick apart
+            // 7 full rotations over the 100 ticks
+            double angle = (Math.PI * 2 * i * 7.0) / totalBullets;
 
-            for (int i = 0; i < bulletsPerArm; i++) {
-                int fireDelay = TELEGRAPH_TICKS + (i * fireDuration) / bulletsPerArm;
-                // 7 full rotations over the firing duration (per user request)
-                double angle = armOffset + (Math.PI * 2 * i * 7.0) / bulletsPerArm;
-
-                final double spawnX = centerX + Math.cos(angle) * radius;
-                final double spawnZ = centerZ + Math.sin(angle) * radius;
-
-                boss.scheduleIn(fireDelay, () -> {
-                    if (!boss.isAlive()) return;
-                    // Stronger outward push so the spiral expands further
-                    double outX = (spawnX - centerX) * 0.1;
-                    double outZ = (spawnZ - centerZ) * 0.1;
-                    spawnBullet(level, boss, spawnX, circleY, spawnZ, outX, -0.1, outZ);
-                });
-            }
+            boss.scheduleIn(fireDelay, () -> {
+                if (!boss.isAlive()) return;
+                // Shoot outward horizontally from the center of the magic circle
+                double vx = Math.cos(angle) * 1.5;
+                double vz = Math.sin(angle) * 1.5;
+                spawnBullet(level, boss, centerX, circleY, centerZ, vx, -0.2, vz);
+            });
         }
     }
 
