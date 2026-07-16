@@ -204,6 +204,30 @@
           ]
         }
       ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:splash_potion",
+          "functions": [
+            { "function": "minecraft:set_potion", "id": "sevenheadeddragon:void_damage" }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:splash_potion",
+          "functions": [
+            { "function": "minecraft:set_potion", "id": "sevenheadeddragon:explosion" }
+          ]
+        }
+      ]
     }
   ]
 }
