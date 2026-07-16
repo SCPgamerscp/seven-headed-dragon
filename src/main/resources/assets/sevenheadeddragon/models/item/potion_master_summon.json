@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "sevenheadeddragon:item/potion_master_summon"
+  }
+}
