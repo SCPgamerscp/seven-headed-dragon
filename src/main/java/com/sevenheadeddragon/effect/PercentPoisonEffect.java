@@ -7,14 +7,14 @@ import net.minecraft.world.entity.LivingEntity;
 
 /**
  * 割合毒 (Percent Poison)
- * Deals damage equal to a percentage of the target's CURRENT health each tick
+ * Deals damage equal to 5% (1/20) of the target's MAX health each tick
  * interval. Unlike vanilla poison, this CAN kill the target (HP can reach 0).
  * Uses a dedicated custom DamageType so deaths show a unique death message.
  */
 public class PercentPoisonEffect extends MobEffect {
 
-    /** 6% of current HP per tick interval. */
-    private static final float PERCENT_PER_TICK = 0.06f;
+    /** 5% of MAX HP per tick interval (1/20). */
+    private static final float PERCENT_PER_TICK = 0.05f;
     private static final int TICK_INTERVAL = 20; // once per second
 
     public PercentPoisonEffect() {
@@ -23,12 +23,9 @@ public class PercentPoisonEffect extends MobEffect {
 
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
-        float current = entity.getHealth();
-        if (current > 0) {
-            float dmg = Math.max(0.5f, current * PERCENT_PER_TICK * (amplifier + 1));
-            entity.hurt(ModDamageTypes.source(entity, ModDamageTypes.PERCENT_POISON), dmg);
-        }
-        return;
+        float maxHealth = entity.getMaxHealth();
+        float dmg = maxHealth * PERCENT_PER_TICK * (amplifier + 1);
+        entity.hurt(ModDamageTypes.source(entity, ModDamageTypes.PERCENT_POISON), dmg);
     }
 
     @Override

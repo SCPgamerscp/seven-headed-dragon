@@ -3,7 +3,6 @@ package com.sevenheadeddragon.registry;
 import com.sevenheadeddragon.SevenHeadedDragon;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -47,6 +46,7 @@ public final class ModPotions {
     public static final RegistryObject<Potion> SCORCH = register("scorch", ModEffects.SCORCH);
     public static final RegistryObject<Potion> ASPHYXIATION = register("asphyxiation", ModEffects.ASPHYXIATION);
     public static final RegistryObject<Potion> POISON_AMPLIFY = register("poison_amplify", ModEffects.POISON_AMPLIFY);
+    public static final RegistryObject<Potion> VOID_DAMAGE = register("void_damage", ModEffects.VOID_DAMAGE);
     public static final RegistryObject<Potion> MAGMA = register("magma", ModEffects.MAGMA);
     public static final RegistryObject<Potion> FALL_AMPLIFY = register("fall_amplify", ModEffects.FALL_AMPLIFY);
     public static final RegistryObject<Potion> WATER_VULNERABILITY = register("water_vulnerability", ModEffects.WATER_VULNERABILITY);
@@ -66,7 +66,7 @@ public final class ModPotions {
     public static java.util.List<RegistryObject<Potion>> all() {
         return java.util.List.of(
                 PERCENT_POISON, UNDEAD_CURSE, INSECTIFY, INSECTICIDE, SCORCH,
-                ASPHYXIATION, POISON_AMPLIFY, MAGMA, FALL_AMPLIFY, WATER_VULNERABILITY,
+                ASPHYXIATION, POISON_AMPLIFY, VOID_DAMAGE, MAGMA, FALL_AMPLIFY, WATER_VULNERABILITY,
                 LIGHTNING_MARK, CONTROL_REVERSAL, TELEPORT_MARK, FIREWORK_MARK
         );
     }

@@ -8,6 +8,10 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.registries.RegistryObject;
 
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -42,7 +46,7 @@ public final class PotionEffectPool {
         for (RegistryObject<MobEffect> effect : List.of(
                 ModEffects.PERCENT_POISON, ModEffects.UNDEAD_CURSE, ModEffects.INSECTIFY,
                 ModEffects.INSECTICIDE, ModEffects.SCORCH, ModEffects.ASPHYXIATION,
-                ModEffects.POISON_AMPLIFY, ModEffects.MAGMA, ModEffects.FALL_AMPLIFY,
+                ModEffects.POISON_AMPLIFY, ModEffects.VOID_DAMAGE, ModEffects.MAGMA, ModEffects.FALL_AMPLIFY,
                 ModEffects.WATER_VULNERABILITY, ModEffects.LIGHTNING_MARK,
                 ModEffects.CONTROL_REVERSAL, ModEffects.TELEPORT_MARK, ModEffects.FIREWORK_MARK)) {
             list.add(effect::get);
@@ -72,6 +76,18 @@ public final class PotionEffectPool {
     public static void applyRandomEffect(LivingEntity target, RandomSource random) {
         MobEffect effect = POOL.get(random.nextInt(POOL.size())).get();
         target.addEffect(new MobEffectInstance(effect, ModEffects.SPECIAL_EFFECT_DURATION_TICKS, 0));
+    }
+
+    /**
+     * Creates a vanilla Splash Potion ItemStack infused with a randomly
+     * selected effect from the pool. Used by the bullet hell attack patterns
+     * to instantiate vanilla ThrownPotion entities.
+     */
+    public static ItemStack createRandomPotionItem(RandomSource random) {
+        ItemStack stack = new ItemStack(Items.SPLASH_POTION);
+        MobEffect effect = POOL.get(random.nextInt(POOL.size())).get();
+        PotionUtils.setCustomEffects(stack, List.of(new MobEffectInstance(effect, ModEffects.SPECIAL_EFFECT_DURATION_TICKS, 0)));
+        return stack;
     }
 
     private PotionEffectPool() {}

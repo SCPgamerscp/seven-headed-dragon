@@ -10,7 +10,9 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.MoveTowardsRestrictionGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -22,13 +24,10 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-<<<<<<< HEAD
 import java.util.EnumSet;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.entity.ai.goal.Goal;
-=======
->>>>>>> origin/genspark_ai_developer
 
 /**
  * The Potion Master boss ("ポーションマスター").
@@ -62,13 +61,9 @@ public class PotionMasterEntity extends Monster {
     public static final int PLAYER_TURN_TICKS = 20 * 5;
 
     /** Ticks between successive attack-pattern selections during a single boss turn. */
-<<<<<<< HEAD
     private static final int ATTACK_INTERVAL_TICKS = 20 * 4; // new pattern every 4 seconds
 
     private final ServerBossEvent bossEvent = (ServerBossEvent)(new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS)).setDarkenScreen(true);
-=======
-    private static final int ATTACK_INTERVAL_TICKS = 20 * 8; // new pattern every 8 seconds
->>>>>>> origin/genspark_ai_developer
 
     private int turnTimer = 0;
     private int attackCooldown = 0;
@@ -150,21 +145,19 @@ public class PotionMasterEntity extends Monster {
         // Kiting movement: keep distance while still slowly approaching -
         // full geometric bullet-hell AI is handled by a dedicated goal to be
         // added; this baseline keeps the boss mobile and ground-walking.
-<<<<<<< HEAD
-        this.goalSelector.addGoal(2, new KiteTargetGoal(this, 1.0D, 8.0F, 16.0F));
-=======
->>>>>>> origin/genspark_ai_developer
+        this.goalSelector.addGoal(2, new KiteTargetGoal(this, 1.2D, 12.0F, 16.0F));
         this.goalSelector.addGoal(3, new RandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(4, new MoveTowardsRestrictionGoal(this, 1.0D));
 
         // Uses vanilla's standard hostile-targeting selection logic to pick
         // a single focused player target, per spec ("特定の1人をターゲットに
         // して攻撃するはバニラの敵対処理を使う").
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        // Also retaliate against ANY entity (like other mobs) that attacks the boss, per user request.
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
     }
 
     @Override
-<<<<<<< HEAD
     public void startSeenByPlayer(ServerPlayer player) {
         super.startSeenByPlayer(player);
         this.bossEvent.addPlayer(player);
@@ -183,18 +176,13 @@ public class PotionMasterEntity extends Monster {
     }
 
     @Override
-=======
->>>>>>> origin/genspark_ai_developer
     public void aiStep() {
         super.aiStep();
 
         if (this.level().isClientSide) return;
 
-<<<<<<< HEAD
         this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
 
-=======
->>>>>>> origin/genspark_ai_developer
         tickScheduledTasks();
 
         // Invulnerable during the boss's own attack turn; defenseless
@@ -254,6 +242,15 @@ public class PotionMasterEntity extends Monster {
     }
 
     @Override
+    public boolean canBeAffected(net.minecraft.world.effect.MobEffectInstance effectInstance) {
+        net.minecraft.resources.ResourceLocation effectId = net.minecraftforge.registries.ForgeRegistries.MOB_EFFECTS.getKey(effectInstance.getEffect());
+        if (effectId != null && effectId.getNamespace().equals(com.sevenheadeddragon.SevenHeadedDragon.MODID)) {
+            return false; // Immune to all custom effects from this mod to prevent self-destruction
+        }
+        return super.canBeAffected(effectInstance);
+    }
+
+    @Override
     public boolean doHurtTarget(net.minecraft.world.entity.Entity target) {
         // The Potion Master never performs direct melee/physical attacks.
         return false;
@@ -294,7 +291,6 @@ public class PotionMasterEntity extends Monster {
     public boolean canChangeDimensions() {
         return false;
     }
-<<<<<<< HEAD
 
     private class KiteTargetGoal extends Goal {
         private final PotionMasterEntity mob;
@@ -321,18 +317,27 @@ public class PotionMasterEntity extends Monster {
             LivingEntity target = this.mob.getTarget();
             if (target == null) return;
 
+            this.mob.getLookControl().setLookAt(target, 30.0F, 30.0F);
+
             double distanceSq = this.mob.distanceToSqr(target);
             if (distanceSq < this.keepDistance * this.keepDistance) {
-                net.minecraft.world.phys.Vec3 away = net.minecraft.world.phys.Vec3.atBottomCenterOf(this.mob.blockPosition()).subtract(target.position()).normalize().scale(5);
-                this.mob.getNavigation().moveTo(this.mob.getX() + away.x, this.mob.getY(), this.mob.getZ() + away.z, this.speedModifier);
+                if (this.mob.getNavigation().isDone()) {
+                    net.minecraft.world.phys.Vec3 retreatPos = net.minecraft.world.entity.ai.util.DefaultRandomPos.getPosAway(this.mob, 16, 7, target.position());
+                    if (retreatPos != null) {
+                        this.mob.getNavigation().moveTo(retreatPos.x, retreatPos.y, retreatPos.z, this.speedModifier * 1.2);
+                    }
+                }
             } else if (distanceSq > this.chaseDistance * this.chaseDistance) {
-                this.mob.getNavigation().moveTo(target, this.speedModifier);
+                if (this.mob.getNavigation().isDone() || target.distanceToSqr(this.mob.getNavigation().getTargetPos().getX(), this.mob.getNavigation().getTargetPos().getY(), this.mob.getNavigation().getTargetPos().getZ()) > 16.0) {
+                    this.mob.getNavigation().moveTo(target, this.speedModifier);
+                }
             } else {
-                this.mob.getNavigation().stop();
-                this.mob.getLookControl().setLookAt(target, 30.0F, 30.0F);
+                // If in the sweet spot, we can just randomly strafe or stand still.
+                // Stopping navigation to hold ground.
+                if (!this.mob.getNavigation().isDone()) {
+                    this.mob.getNavigation().stop();
+                }
             }
         }
     }
-=======
->>>>>>> origin/genspark_ai_developer
 }

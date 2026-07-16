@@ -7,25 +7,23 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.projectile.FireworkRocketEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 
 /**
  * 花火 (Firework Mark)
  * <p>
- * After a short fuse delay, detonates 7 individually "crafted" fireworks
- * around the target, each with a random color and random star shape.
- * <ul>
- *   <li>The 7 fireworks' explosions never destroy terrain (block breaking is
- *       disabled), matching vanilla firework star explosions.</li>
- *   <li>Separately, a single "weak explosion" (blast power 1) is triggered
- *       which DOES break terrain, similar to a small TNT-like blast.</li>
- * </ul>
+ * After a short fuse delay, detonates a powerful firework rocket crafted
+ * with 7 firework stars directly on the target. This deals massive damage
+ * scaling with the number of stars, exactly matching vanilla mechanics.
  */
 public class FireworkMarkEffect extends MobEffect {
 
     private static final int FUSE_DELAY_TICKS = 20 * 2;
-    private static final int FIREWORK_COUNT = 7;
+    private static final int FIREWORK_STAR_COUNT = 7;
 
     public FireworkMarkEffect() {
         super(MobEffectCategory.HARMFUL, 0xFF1493);
@@ -34,7 +32,7 @@ public class FireworkMarkEffect extends MobEffect {
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
         if (!(entity.level() instanceof ServerLevel serverLevel)) return;
-        detonateFireworkBarrage(serverLevel, entity, entity.getRandom());
+        detonateMassiveFirework(serverLevel, entity, entity.getRandom());
         return;
     }
 
@@ -45,38 +43,23 @@ public class FireworkMarkEffect extends MobEffect {
         return elapsed == FUSE_DELAY_TICKS;
     }
 
-    private void detonateFireworkBarrage(ServerLevel level, LivingEntity target, RandomSource random) {
-        double baseX = target.getX();
-        double baseY = target.getY() + target.getEyeHeight();
-        double baseZ = target.getZ();
+    private void detonateMassiveFirework(ServerLevel level, LivingEntity target, RandomSource random) {
+        ItemStack fireworkItem = new ItemStack(Items.FIREWORK_ROCKET);
+        CompoundTag fireworksTag = fireworkItem.getOrCreateTagElement("Fireworks");
+        ListTag explosions = new ListTag();
 
-        // 7 crafted fireworks, each with a random color & random "star shape"
-        // (shape only affects the particle pattern used for visuals).
-        for (int i = 0; i < FIREWORK_COUNT; i++) {
-            double angle = (Math.PI * 2 * i) / FIREWORK_COUNT;
-            double radius = 1.5 + random.nextDouble() * 1.5;
-            double x = baseX + Math.cos(angle) * radius;
-            double y = baseY + (random.nextDouble() - 0.5) * 1.5;
-            double z = baseZ + Math.sin(angle) * radius;
-
-            spawnFireworkBurstParticles(level, x, y, z, random);
-
-            // No block breaking for the firework star explosions themselves.
-            level.explode(target, x, y, z, 0.0f, Level.ExplosionInteraction.NONE);
+        for (int i = 0; i < FIREWORK_STAR_COUNT; i++) {
+            CompoundTag explosion = new CompoundTag();
+            explosion.putByte("Type", (byte) random.nextInt(5)); // Random shape
+            explosion.putIntArray("Colors", new int[]{ 0xFF000000 | random.nextInt(0x1000000) }); // Random color
+            explosions.add(explosion);
         }
 
-        // The single "weak explosion": blast power 1, WITH terrain destruction
-        // (creates uneven, cratered terrain as specified).
-        BlockPos targetPos = target.blockPosition();
-        level.explode(target, targetPos.getX() + 0.5, targetPos.getY() + 0.1, targetPos.getZ() + 0.5,
-                1.0f, false, Level.ExplosionInteraction.TNT);
-    }
+        fireworksTag.put("Explosions", explosions);
+        fireworksTag.putByte("Flight", (byte) 0); // Explode very quickly
 
-    private void spawnFireworkBurstParticles(ServerLevel level, double x, double y, double z, RandomSource random) {
-        // Random color per firework (matching "花火の色や星の形状はランダム").
-        int color = 0xFF000000 | (random.nextInt(0x1000000));
-        // FireworkParticles.SparkParticle-esque visual using vanilla FIREWORK particle.
-        level.sendParticles(ParticleTypes.FIREWORK, x, y, z, 40 + random.nextInt(20), 0.4, 0.4, 0.4, 0.08);
-        level.sendParticles(ParticleTypes.FLASH, x, y, z, 1, 0.0, 0.0, 0.0, 0.0);
+        FireworkRocketEntity rocket = new FireworkRocketEntity(level, fireworkItem, target, 
+            target.getX(), target.getY(), target.getZ(), true);
+        level.addFreshEntity(rocket);
     }
 }

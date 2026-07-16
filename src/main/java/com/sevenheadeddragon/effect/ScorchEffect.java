@@ -19,11 +19,11 @@ public class ScorchEffect extends MobEffect {
 
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
-        return;
+        entity.setSecondsOnFire(3); // Ignite the target
     }
 
     @Override
     public boolean isDurationEffectTick(int duration, int amplifier) {
-        return true;
+        return duration % 20 == 0; // Trigger once per second
     }
 }
