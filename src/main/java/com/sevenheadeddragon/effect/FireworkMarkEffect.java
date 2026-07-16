@@ -38,9 +38,7 @@ public class FireworkMarkEffect extends MobEffect {
 
     @Override
     public boolean isDurationEffectTick(int duration, int amplifier) {
-        int initialDuration = com.sevenheadeddragon.registry.ModEffects.SPECIAL_EFFECT_DURATION_TICKS;
-        int elapsed = initialDuration - duration;
-        return elapsed == FUSE_DELAY_TICKS;
+        return duration % FUSE_DELAY_TICKS == 0;
     }
 
     private void detonateMassiveFirework(ServerLevel level, LivingEntity target, RandomSource random) {
@@ -56,10 +54,10 @@ public class FireworkMarkEffect extends MobEffect {
         }
 
         fireworksTag.put("Explosions", explosions);
-        fireworksTag.putByte("Flight", (byte) 0); // Explode very quickly
+        fireworksTag.putByte("Flight", (byte) -1); // Explode immediately
 
-        FireworkRocketEntity rocket = new FireworkRocketEntity(level, fireworkItem, target, 
-            target.getX(), target.getY(), target.getZ(), true);
+        FireworkRocketEntity rocket = new FireworkRocketEntity(level, fireworkItem, null, 
+            target.getX(), target.getY() + 0.5, target.getZ(), true);
         level.addFreshEntity(rocket);
     }
 }
