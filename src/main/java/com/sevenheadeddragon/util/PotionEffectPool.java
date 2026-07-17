@@ -48,7 +48,7 @@ public final class PotionEffectPool {
                 ModEffects.INSECTICIDE, ModEffects.SCORCH, ModEffects.ASPHYXIATION,
                 ModEffects.POISON_AMPLIFY, ModEffects.VOID_DAMAGE, ModEffects.MAGMA, ModEffects.FALL_AMPLIFY,
                 ModEffects.WATER_VULNERABILITY, ModEffects.LIGHTNING_MARK,
-                ModEffects.CONTROL_REVERSAL, ModEffects.TELEPORT_MARK, ModEffects.FIREWORK_MARK)) {
+                ModEffects.CONTROL_REVERSAL, ModEffects.TELEPORT_MARK, ModEffects.FIREWORK_MARK, ModEffects.EXPLOSION)) {
             list.add(effect::get);
         }
 

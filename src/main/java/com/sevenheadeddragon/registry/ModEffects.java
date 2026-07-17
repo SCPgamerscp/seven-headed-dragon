@@ -92,5 +92,9 @@ public final class ModEffects {
     public static final RegistryObject<MobEffect> FIREWORK_MARK =
             EFFECTS.register("firework_mark", FireworkMarkEffect::new);
 
+    // 15. 爆発 (Explosion) - periodically causes a power-1 explosion.
+    public static final RegistryObject<MobEffect> EXPLOSION =
+            EFFECTS.register("explosion", com.sevenheadeddragon.effect.ExplosionEffect::new);
+
     private ModEffects() {}
 }

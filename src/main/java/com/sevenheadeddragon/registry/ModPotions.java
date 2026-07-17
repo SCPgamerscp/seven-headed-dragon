@@ -54,6 +54,7 @@ public final class ModPotions {
     public static final RegistryObject<Potion> CONTROL_REVERSAL = register("control_reversal", ModEffects.CONTROL_REVERSAL);
     public static final RegistryObject<Potion> TELEPORT_MARK = register("teleport_mark", ModEffects.TELEPORT_MARK);
     public static final RegistryObject<Potion> FIREWORK_MARK = register("firework_mark", ModEffects.FIREWORK_MARK);
+    public static final RegistryObject<Potion> EXPLOSION = register("explosion", ModEffects.EXPLOSION);
 
     private static RegistryObject<Potion> register(String name, Supplier<MobEffect> effect) {
         return POTIONS.register(name, () -> new Potion(name, new MobEffectInstance(effect.get(), DURATION, 0)));
@@ -67,7 +68,7 @@ public final class ModPotions {
         return java.util.List.of(
                 PERCENT_POISON, UNDEAD_CURSE, INSECTIFY, INSECTICIDE, SCORCH,
                 ASPHYXIATION, POISON_AMPLIFY, VOID_DAMAGE, MAGMA, FALL_AMPLIFY, WATER_VULNERABILITY,
-                LIGHTNING_MARK, CONTROL_REVERSAL, TELEPORT_MARK, FIREWORK_MARK
+                LIGHTNING_MARK, CONTROL_REVERSAL, TELEPORT_MARK, FIREWORK_MARK, EXPLOSION
         );
     }
 
