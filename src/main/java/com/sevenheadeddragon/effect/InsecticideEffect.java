@@ -14,7 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
  */
 public class InsecticideEffect extends MobEffect {
 
-    private static final float DAMAGE_PER_TICK = 2.0f;
+    private static final float DAMAGE_PER_TICK = 10.0f;
     private static final int TICK_INTERVAL = 20;
 
     public InsecticideEffect() {

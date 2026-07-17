@@ -109,6 +109,7 @@ public class PotionMasterEntity extends Monster {
                 .add(Attributes.MAX_HEALTH, 1000.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.25D) // matches vanilla Witch
                 .add(Attributes.FOLLOW_RANGE, 48.0D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
                 .add(Attributes.ARMOR, 0.0D);
     }
 
