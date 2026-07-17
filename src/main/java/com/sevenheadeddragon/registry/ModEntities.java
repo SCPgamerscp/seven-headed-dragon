@@ -1,6 +1,8 @@
 package com.sevenheadeddragon.registry;
 
 import com.sevenheadeddragon.SevenHeadedDragon;
+import com.sevenheadeddragon.entity.FangConductorEntity;
+import com.sevenheadeddragon.entity.FangKingEntity;
 import com.sevenheadeddragon.entity.MagicCircleEntity;
 import com.sevenheadeddragon.entity.PotionMasterEntity;
 import net.minecraft.world.entity.EntityType;
@@ -34,8 +36,24 @@ public final class ModEntities {
                     .updateInterval(1)
                     .build("magic_circle"));
 
+    public static final RegistryObject<EntityType<FangKingEntity>> FANG_KING =
+            ENTITY_TYPES.register("fang_king", () -> EntityType.Builder.of(FangKingEntity::new, MobCategory.MONSTER)
+                    .sized(0.6f, 1.95f) // identical hitbox to vanilla Evoker
+                    .clientTrackingRange(64)
+                    .updateInterval(1)
+                    .build("fang_king"));
+
+    public static final RegistryObject<EntityType<FangConductorEntity>> FANG_CONDUCTOR =
+            ENTITY_TYPES.register("fang_conductor", () -> EntityType.Builder.<FangConductorEntity>of(FangConductorEntity::new, MobCategory.MISC)
+                    .sized(0.1f, 0.1f)
+                    .noSave()
+                    .clientTrackingRange(48)
+                    .updateInterval(1)
+                    .build("fang_conductor"));
+
     public static void registerAttributes(EntityAttributeCreationEvent event) {
         event.put(POTION_MASTER.get(), PotionMasterEntity.createAttributes().build());
+        event.put(FANG_KING.get(), FangKingEntity.createAttributes().build());
     }
 
     private ModEntities() {}

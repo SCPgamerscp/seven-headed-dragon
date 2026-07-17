@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
@@ -35,6 +36,8 @@ public class MagicCircleEntity extends Entity {
 
     /** Default telegraph duration before the circle disappears (in ticks). */
     private static final int DEFAULT_LIFETIME = 40;
+
+    private LivingEntity targetToTrack = null;
 
     public MagicCircleEntity(EntityType<?> type, Level level) {
         super(type, level);
@@ -73,10 +76,22 @@ public class MagicCircleEntity extends Entity {
         return this.entityData.get(DATA_YAW);
     }
 
+    public void startTracking(LivingEntity target) {
+        this.targetToTrack = target;
+    }
+
     @Override
     public void tick() {
         super.tick();
         if (!this.level().isClientSide) {
+            if (targetToTrack != null && targetToTrack.isAlive()) {
+                double yawRad = Math.toRadians(targetToTrack.getYRot());
+                double behindX = targetToTrack.getX() - Math.sin(yawRad) * 2.0;
+                double behindZ = targetToTrack.getZ() + Math.cos(yawRad) * 2.0;
+                this.setPos(behindX, targetToTrack.getY() + 1.5, behindZ);
+                this.setOrientationYaw(targetToTrack.getYRot());
+            }
+            
             int remaining = getLifetime() - 1;
             if (remaining <= 0) {
                 this.discard();

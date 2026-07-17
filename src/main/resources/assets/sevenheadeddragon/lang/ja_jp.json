@@ -4,8 +4,11 @@
   "entity.sevenheadeddragon.potion_master": "ポーションマスター",
   "entity.sevenheadeddragon.magic_circle": "魔法陣",
   "entity.sevenheadeddragon.potion_bullet": "ポーション弾",
+  "entity.sevenheadeddragon.fang_king": "牙の王",
+  "entity.sevenheadeddragon.fang_conductor": "牙制御体",
 
   "item.sevenheadeddragon.potion_master_summon": "ポーションマスターの召喚石",
+  "item.sevenheadeddragon.fang_king_spawn_egg": "牙の王のスポーンエッグ",
 
   "effect.sevenheadeddragon.percent_poison": "割合毒",
   "effect.sevenheadeddragon.undead_curse": "アンデッド化",

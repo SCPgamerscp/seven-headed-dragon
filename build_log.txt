@@ -1,0 +1,64 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.8/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+
+> Configure project :
+MixinGradle did not locate the diffplug APT plugin, skipping eclipse task configuration
+Java: 17.0.12, JVM: 17.0.12+8-LTS-286 (Oracle Corporation), Arch: amd64
+
+> Task :downloadMcpConfig
+> Task :extractSrg UP-TO-DATE
+> Task :createMcpToSrg UP-TO-DATE
+
+> Task :compileJava
+ノート:SpongePowered MIXIN Annotation Processor Version=0.8.5 (MixinGradle Version=0.7.38)
+ノート:Supported obfuscation types: ObfuscationServiceMCP supports [notch] ObfuscationServiceFG3 supports [searge]
+ノート:Loading searge mappings from C:\Users\ecrea\Downloads\seven-headed-dragon-main\seven-headed-dragon-main\build\createMcpToSrg\output.tsrg
+ノート:Writing refmap to C:\Users\ecrea\Downloads\seven-headed-dragon-main\seven-headed-dragon-main\build\tmp\compileJava\compileJava-refmap.json
+ノート:Writing refmap to C:\Users\ecrea\Downloads\seven-headed-dragon-main\seven-headed-dragon-main\build\tmp\compileJava\compileJava-refmap.json
+ノート:Writing searge composite mappings to C:\Users\ecrea\Downloads\seven-headed-dragon-main\seven-headed-dragon-main\build\tmp\compileJava\compileJava-mappings.tsrg
+ノート:Writing refmap to C:\Users\ecrea\Downloads\seven-headed-dragon-main\seven-headed-dragon-main\build\tmp\compileJava\compileJava-refmap.json
+ノート:Writing refmap to C:\Users\ecrea\Downloads\seven-headed-dragon-main\seven-headed-dragon-main\build\tmp\compileJava\compileJava-refmap.json
+ノート:Writing searge composite mappings to C:\Users\ecrea\Downloads\seven-headed-dragon-main\seven-headed-dragon-main\build\tmp\compileJava\compileJava-mappings.tsrg
+C:\Users\ecrea\Downloads\seven-headed-dragon-main\seven-headed-dragon-main\src\main\java\com\sevenheadeddragon\client\FangConductorRenderer.java:17: 警告:[removal] ResourceLocationのResourceLocation(String,String)は推奨されておらず、削除用にマークされています
+            new ResourceLocation("minecraft", "textures/entity/witch.png");
+            ^
+C:\Users\ecrea\Downloads\seven-headed-dragon-main\seven-headed-dragon-main\src\main\java\com\sevenheadeddragon\client\MagicCircleRenderer.java:21: 警告:[removal] ResourceLocationのResourceLocation(String,String)は推奨されておらず、削除用にマークされています
+            new ResourceLocation(SevenHeadedDragon.MODID, "textures/entity/magic_circle.png");
+            ^
+C:\Users\ecrea\Downloads\seven-headed-dragon-main\seven-headed-dragon-main\src\main\java\com\sevenheadeddragon\client\PotionMasterRenderer.java:18: 警告:[removal] ResourceLocationのResourceLocation(String,String)は推奨されておらず、削除用にマークされています
+            new ResourceLocation("minecraft", "textures/entity/witch.png");
+            ^
+C:\Users\ecrea\Downloads\seven-headed-dragon-main\seven-headed-dragon-main\src\main\java\com\sevenheadeddragon\entity\PotionMasterEntity.java:298: 警告:[removal] ResourceLocationのResourceLocation(String,String)は推奨されておらず、削除用にマークされています
+        return new net.minecraft.resources.ResourceLocation(com.sevenheadeddragon.SevenHeadedDragon.MODID, "entities/potion_master");
+               ^
+C:\Users\ecrea\Downloads\seven-headed-dragon-main\seven-headed-dragon-main\src\main\java\com\sevenheadeddragon\util\ModDamageTypes.java:32: 警告:[removal] ResourceLocationのResourceLocation(String,String)は推奨されておらず、削除用にマークされています
+        return ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(SevenHeadedDragon.MODID, path));
+                                                          ^
+警告5個
+
+> Task :addMixinsToJar
+> Task :processResources
+> Task :classes
+> Task :jar
+> Task :configureReobfTaskForReobfJar
+> Task :reobfJar
+> Task :configureReobfTaskForReobfJarJar
+> Task :addMixinsToJarJar
+> Task :jarJar SKIPPED
+> Task :reobfJarJar SKIPPED
+> Task :assemble
+> Task :compileTestJava NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test NO-SOURCE
+> Task :check UP-TO-DATE
+> Task :build
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.8/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 19s
+11 actionable tasks: 9 executed, 2 up-to-date

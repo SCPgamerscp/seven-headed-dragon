@@ -19,6 +19,8 @@ public final class ClientSetup {
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.POTION_MASTER.get(), PotionMasterRenderer::new);
         event.registerEntityRenderer(ModEntities.MAGIC_CIRCLE.get(), MagicCircleRenderer::new);
+        event.registerEntityRenderer(ModEntities.FANG_KING.get(), FangKingRenderer::new);
+        event.registerEntityRenderer(ModEntities.FANG_CONDUCTOR.get(), FangConductorRenderer::new);
     }
 
     private ClientSetup() {}

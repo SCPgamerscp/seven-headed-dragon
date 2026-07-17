@@ -3,6 +3,7 @@ package com.sevenheadeddragon.registry;
 import com.sevenheadeddragon.SevenHeadedDragon;
 import com.sevenheadeddragon.item.SummonItem;
 import net.minecraft.world.item.Item;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -27,6 +28,14 @@ public final class ModItems {
     public static final RegistryObject<Item> POTION_MASTER_SUMMON = ITEMS.register(
             "potion_master_summon",
             () -> new SummonItem(new Item.Properties().stacksTo(16)));
+
+    /**
+     * Manual summon method for the Fang King, per spec ("手動召喚アイテムはスポーンエッグやコマンドのみ") -
+     * no dedicated summon item, just a standard spawn egg.
+     */
+    public static final RegistryObject<Item> FANG_KING_SPAWN_EGG = ITEMS.register(
+            "fang_king_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.FANG_KING, 0x2B2B2B, 0xE8E8E8, new Item.Properties()));
 
     private ModItems() {}
 }

@@ -21,6 +21,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.MoveTowardsRestrictionGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
@@ -28,6 +29,7 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.SpellcasterIllager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -51,7 +53,7 @@ import java.util.List;
  * automatically whenever a vanilla Raid ends in victory (see
  * {@code event.RaidVictoryHandler}).
  */
-public class FangKingEntity extends Monster {
+public class FangKingEntity extends SpellcasterIllager {
 
     private static final EntityDataAccessor<Boolean> DATA_PLAYER_TURN =
             SynchedEntityData.defineId(FangKingEntity.class, EntityDataSerializers.BOOLEAN);
@@ -72,7 +74,7 @@ public class FangKingEntity extends Monster {
     /** Simple delayed-callback queue used by {@link FangKingAttackPatternManager} to stagger telegraph -> fire timing. */
     private final List<ScheduledTask> scheduledTasks = new ArrayList<>();
 
-    public FangKingEntity(EntityType<? extends Monster> type, Level level) {
+    public FangKingEntity(EntityType<? extends FangKingEntity> type, Level level) {
         super(type, level);
         this.turnTimer = BOSS_TURN_TICKS;
     }
@@ -85,14 +87,14 @@ public class FangKingEntity extends Monster {
     /** Called by {@link FangKingAttackPatternManager} once a pattern has fully finished, so the next one can begin immediately (no cooldown). */
     public void onPatternFinished() {
         this.patternActive = false;
+        this.setCastingAnimation(false);
     }
 
     private void tickScheduledTasks() {
-        Iterator<ScheduledTask> it = scheduledTasks.iterator();
-        while (it.hasNext()) {
-            ScheduledTask t = it.next();
+        for (int i = scheduledTasks.size() - 1; i >= 0; i--) {
+            ScheduledTask t = scheduledTasks.get(i);
             if (t.ticksLeft-- <= 0) {
-                it.remove();
+                scheduledTasks.remove(i);
                 t.task.run();
             }
         }
@@ -131,6 +133,10 @@ public class FangKingEntity extends Monster {
         this.entityData.set(DATA_PLAYER_TURN, value);
     }
 
+    public void setCastingAnimation(boolean casting) {
+        this.setIsCastingSpell(casting ? IllagerSpell.FANGS : IllagerSpell.NONE);
+    }
+
     /** The player currently being focused for this attack turn (also used as the Vex summon's shared target via vanilla's own owner-target copy AI). */
     @Nullable
     public LivingEntity getFocusedTarget() {
@@ -139,6 +145,11 @@ public class FangKingEntity extends Monster {
 
     @Override
     protected void registerGoals() {
+        // Deliberately does NOT call super.registerGoals() - this skips all of
+        // Raider/PatrollingMonster/AbstractIllager's raid-joining, village-patrolling,
+        // and banner-grabbing goals, none of which we want for this boss.
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+
         // Approaches when the target is far, retreats when the target is close (10-14 block neutral zone); only active during the boss's own attack turn.
         this.goalSelector.addGoal(2, new FangKingKiteGoal(this, 1.0D, 10.0F, 14.0F));
         this.goalSelector.addGoal(3, new RandomStrollGoal(this, 1.0D));
@@ -241,6 +252,33 @@ public class FangKingEntity extends Monster {
     @Override
     protected SoundEvent getDeathSound() {
         return SoundEvents.EVOKER_DEATH;
+    }
+
+    @Override
+    protected SoundEvent getCastingSoundEvent() {
+        return SoundEvents.EVOKER_CAST_SPELL;
+    }
+
+    @Override
+    public net.minecraft.sounds.SoundEvent getCelebrateSound() {
+        return SoundEvents.EVOKER_CELEBRATE;
+    }
+
+    /**
+     * {@link SpellcasterIllager} extends {@code Raider}, which is what lets us
+     * reuse the vanilla Evoker model/renderer directly - but we never want
+     * the Fang King to actually join or be affected by unrelated vanilla
+     * Raids, so this is hard-disabled regardless of the internal flag that
+     * {@code Raider#finalizeSpawn} would otherwise set.
+     */
+    @Override
+    public boolean canJoinRaid() {
+        return false;
+    }
+
+    @Override
+    public void applyRaidBuffs(int wave, boolean unusedFlag) {
+        // The Fang King never actually participates in vanilla Raids (see canJoinRaid()), so this is intentionally a no-op.
     }
 
     @Override

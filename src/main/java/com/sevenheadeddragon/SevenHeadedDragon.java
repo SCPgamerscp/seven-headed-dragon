@@ -2,6 +2,7 @@ package com.sevenheadeddragon;
 
 import com.mojang.logging.LogUtils;
 import com.sevenheadeddragon.event.ModCombatEvents;
+import com.sevenheadeddragon.event.RaidVictoryHandler;
 import com.sevenheadeddragon.registry.ModCreativeTabs;
 import com.sevenheadeddragon.registry.ModEffects;
 import com.sevenheadeddragon.registry.ModEntities;
@@ -46,8 +47,9 @@ public class SevenHeadedDragon {
 
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new ModCombatEvents());
+        MinecraftForge.EVENT_BUS.register(new RaidVictoryHandler());
 
-        LOGGER.info("Seven Headed Dragon mod initializing - Potion Master boss loaded.");
+        LOGGER.info("Seven Headed Dragon mod initializing - Potion Master and Fang King bosses loaded.");
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {

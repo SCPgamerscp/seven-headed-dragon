@@ -4,8 +4,11 @@
   "entity.sevenheadeddragon.potion_master": "Potion Master",
   "entity.sevenheadeddragon.magic_circle": "Magic Circle",
   "entity.sevenheadeddragon.potion_bullet": "Potion Bullet",
+  "entity.sevenheadeddragon.fang_king": "Fang King",
+  "entity.sevenheadeddragon.fang_conductor": "Fang Conductor",
 
   "item.sevenheadeddragon.potion_master_summon": "Potion Master Summoning Charge",
+  "item.sevenheadeddragon.fang_king_spawn_egg": "Fang King Spawn Egg",
 
   "effect.sevenheadeddragon.percent_poison": "Percent Poison",
   "effect.sevenheadeddragon.undead_curse": "Undead Curse",
