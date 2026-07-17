@@ -293,6 +293,11 @@ public class PotionMasterEntity extends Monster {
     }
 
     @Override
+    protected net.minecraft.resources.ResourceLocation getDefaultLootTable() {
+        return new net.minecraft.resources.ResourceLocation(com.sevenheadeddragon.SevenHeadedDragon.MODID, "entities/potion_master");
+    }
+
+    @Override
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {
         return false;
     }
