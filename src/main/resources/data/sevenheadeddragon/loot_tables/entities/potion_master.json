@@ -8,7 +8,8 @@
           "type": "minecraft:item",
           "name": "minecraft:enchanted_golden_apple",
           "functions": [
-            { "function": "minecraft:set_count", "count": 10 }
+            { "function": "minecraft:set_count", "count": 10 },
+            { "function": "minecraft:looting_enchant", "count": { "type": "minecraft:uniform", "min": 2, "max": 5 } }
           ]
         }
       ]
@@ -20,7 +21,8 @@
           "type": "minecraft:item",
           "name": "minecraft:nether_wart",
           "functions": [
-            { "function": "minecraft:set_count", "count": 64 }
+            { "function": "minecraft:set_count", "count": 64 },
+            { "function": "minecraft:looting_enchant", "count": { "type": "minecraft:uniform", "min": 10, "max": 20 } }
           ]
         }
       ]
@@ -32,7 +34,8 @@
           "type": "minecraft:item",
           "name": "minecraft:diamond_block",
           "functions": [
-            { "function": "minecraft:set_count", "count": 5 }
+            { "function": "minecraft:set_count", "count": 5 },
+            { "function": "minecraft:looting_enchant", "count": { "type": "minecraft:uniform", "min": 1, "max": 2 } }
           ]
         }
       ]
