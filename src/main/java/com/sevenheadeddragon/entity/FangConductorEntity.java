@@ -36,6 +36,9 @@ public class FangConductorEntity extends Entity {
     public static final int PATTERN_SPIRAL_OUTWARD = 2;
     public static final int PATTERN_HOMING_TRACKER = 3;
     public static final int PATTERN_WIDE_RANDOM = 4;
+    public static final int PATTERN_PINCER = 5;
+    public static final int PATTERN_WOBBLY = 6;
+    public static final int PATTERN_DNA = 7;
 
     /** Ticks between an enchant-particle telegraph and the real EvokerFangs spawning at that spot. */
     private static final int ENCHANT_LEAD_TICKS = 10;
@@ -47,6 +50,12 @@ public class FangConductorEntity extends Entity {
     private int patternType;
     private int elapsedTicks;
     private List<Vec3> wideRandomPositions;
+
+    // Captured once at the start of a pattern (elapsedTicks == 0) for patterns whose
+    // shape is defined along a fixed axis rather than continuously tracking the target.
+    private Vec3 axisOrigin;
+    private Vec3 axisDir;
+    private double axisLength;
 
     public FangConductorEntity(EntityType<?> type, Level level) {
         super(type, level);
@@ -83,6 +92,9 @@ public class FangConductorEntity extends Entity {
             case PATTERN_SPIRAL_OUTWARD -> tickSpiralOutward();
             case PATTERN_HOMING_TRACKER -> tickHomingTracker();
             case PATTERN_WIDE_RANDOM -> tickWideRandom();
+            case PATTERN_PINCER -> tickPincer();
+            case PATTERN_WOBBLY -> tickWobbly();
+            case PATTERN_DNA -> tickDna();
             default -> finishPattern();
         }
 
@@ -212,6 +224,115 @@ public class FangConductorEntity extends Entity {
             }
         }
         
+        if (elapsedTicks >= 100) finishPattern();
+    }
+
+    // ------------------------------------------------------------------
+    // Pattern 6: Pincer (挟み撃ち) - two 30-block-long walls of fangs,
+    // perpendicular to the target's facing axis, closing in on the target
+    // simultaneously from the front and the back. 5 layered sub-positions
+    // per wave trigger for 5x density.
+    // ------------------------------------------------------------------
+
+    private void tickPincer() {
+        if (elapsedTicks == 0) {
+            axisOrigin = target.position();
+            float yawRad = (float) Math.toRadians(target.getYRot());
+            axisDir = new Vec3(-Math.sin(yawRad), 0, Math.cos(yawRad)).normalize();
+        }
+
+        if (elapsedTicks % 4 == 0) {
+            double baseDistance = 15.0 - (elapsedTicks / 4) * 0.7; // closes in from 15 blocks down to ~0
+            if (baseDistance > 0) {
+                Vec3 perp = new Vec3(-axisDir.z, 0, axisDir.x);
+                for (int layer = 0; layer < 5; layer++) {
+                    double distance = baseDistance - layer * 0.25;
+                    if (distance <= 0) continue;
+                    for (int side = -1; side <= 1; side += 2) {
+                        Vec3 wallCenter = axisOrigin.add(axisDir.scale(side * distance));
+                        for (int i = 0; i <= 15; i++) {
+                            double t = -15.0 + i * 2.0; // -15..+15 across the wall, 30 blocks total
+                            Vec3 pos = wallCenter.add(perp.scale(t));
+                            spawnFangTelegraph(pos.x, pos.z);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (elapsedTicks >= 100) finishPattern();
+    }
+
+    // ------------------------------------------------------------------
+    // Pattern 7: Wobbly Fang (へにょりファング) - 20 separate wavy fang-lines
+    // (30 blocks long each), fanned out across a 45-degree arc, each one
+    // individually undulating within a small 10-degree wobble, all growing
+    // outward simultaneously. 5 sub-ticks per tick for dense fangs.
+    // ------------------------------------------------------------------
+
+    private void tickWobbly() {
+        if (elapsedTicks == 0) {
+            axisOrigin = boss.position();
+            Vec3 fromBoss = target.position().subtract(boss.position());
+            axisDir = fromBoss.lengthSqr() > 0.001 ? fromBoss.normalize() : new Vec3(0, 0, 1);
+        }
+
+        double baseAngle = Math.atan2(axisDir.x, axisDir.z);
+
+        for (int i = 0; i < 5; i++) {
+            double subTick = elapsedTicks + (i / 5.0);
+            double dist = subTick * 0.3; // reaches the full 30 blocks around subTick 100
+            if (dist > 30.0) continue;
+
+            for (int line = 0; line < 15; line++) {
+                double fanOffset = Math.toRadians(-22.5 + line * (45.0 / 14.0)); // 15 lines spread across a 45-degree fan
+                // 40 ticks (2 seconds) per cycle: 2 * PI / 40 = 0.157
+                double wobble = Math.toRadians(5.0) * Math.sin(subTick * 0.157 + line * 0.4);
+                double angle = baseAngle + fanOffset + wobble;
+                double fx = axisOrigin.x + Math.sin(angle) * dist;
+                double fz = axisOrigin.z + Math.cos(angle) * dist;
+                spawnFangTelegraph(fx, fz);
+            }
+        }
+
+        if (elapsedTicks >= 100) finishPattern();
+    }
+
+    // ------------------------------------------------------------------
+    // Pattern 8: DNA Fang (DNAファング) - 8 DNA strands shooting out radially
+    // in all directions (360 degrees). Each strand has 2 arms twisting
+    // around its axis, growing up to 30 blocks long.
+    // ------------------------------------------------------------------
+
+    private void tickDna() {
+        if (elapsedTicks == 0) {
+            axisOrigin = boss.position();
+        }
+
+        for (int i = 0; i < 5; i++) {
+            double subTick = elapsedTicks + (i / 5.0);
+            double dist = subTick * 0.3; // always a fixed 30-block strand
+            if (dist > 30.0) continue;
+
+            double twist = Math.toRadians(subTick * 10.0);
+
+            // 8 strands shooting out in 360 degrees
+            for (int strand = 0; strand < 8; strand++) {
+                double strandAngle = Math.toRadians(strand * 45.0);
+                Vec3 dir = new Vec3(Math.cos(strandAngle), 0, Math.sin(strandAngle));
+                Vec3 perp = new Vec3(-dir.z, 0, dir.x);
+
+                // 2 arms per strand (DNA double helix)
+                for (int arm = 0; arm < 2; arm++) {
+                    double armPhase = twist + arm * Math.PI; // opposite sides
+                    double offset = Math.sin(armPhase) * 2.5; // 2.5 block width
+                    
+                    Vec3 pos = axisOrigin.add(dir.scale(dist)).add(perp.scale(offset));
+                    spawnFangTelegraph(pos.x, pos.z);
+                }
+            }
+        }
+
         if (elapsedTicks >= 100) finishPattern();
     }
 

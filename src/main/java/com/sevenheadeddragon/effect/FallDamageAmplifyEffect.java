@@ -17,7 +17,7 @@ import net.minecraft.world.entity.LivingEntity;
 public class FallDamageAmplifyEffect extends MobEffect {
 
     /** Multiplier applied to actual fall damage while this effect is active. */
-    public static final float FALL_DAMAGE_MULTIPLIER = 3.0f;
+    public static final float FALL_DAMAGE_MULTIPLIER = 2.0f;
 
     public FallDamageAmplifyEffect() {
         super(MobEffectCategory.HARMFUL, 0x704214);
