@@ -12,7 +12,7 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.monster.Vex;
 
 /**
- * Chooses and drives the Fang King's attack patterns: five geometric
+ * Chooses and drives the Fang King's attack patterns: eight geometric
  * EvokerFangs bullet-hell arrangements (delegated to
  * {@link FangConductorEntity}) plus a Vex-summon burst sequence, picked with
  * equal random weight and chained back-to-back with no cooldown for the
@@ -21,8 +21,8 @@ import net.minecraft.world.entity.monster.Vex;
  */
 public final class FangKingAttackPatternManager {
 
-    private static final int PATTERN_COUNT = 6; // 5 fang patterns + 1 Vex summon
-    private static final int VEX_SUMMON_PATTERN = 5;
+    private static final int PATTERN_COUNT = 9; // 8 fang patterns + 1 Vex summon
+    private static final int VEX_SUMMON_PATTERN = 8;
 
     /** How long the magic-circle telegraph lingers behind the boss before a fang pattern actually begins (stage-1 telegraph). */
     private static final int MAGIC_CIRCLE_TELEGRAPH_TICKS = 15;
