@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "NNN",
+    "NWN",
+    "NNN"
+  ],
+  "key": {
+    "N": {
+      "item": "minecraft:nether_wart"
+    },
+    "W": {
+      "type": "forge:nbt",
+      "item": "minecraft:potion",
+      "nbt": "{Potion:\"minecraft:water\"}"
+    }
+  },
+  "result": {
+    "item": "sevenheadeddragon:energy_drink"
+  }
+}
