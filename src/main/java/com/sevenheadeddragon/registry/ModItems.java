@@ -1,6 +1,7 @@
 package com.sevenheadeddragon.registry;
 
 import com.sevenheadeddragon.SevenHeadedDragon;
+import com.sevenheadeddragon.item.EnergyDrinkItem;
 import com.sevenheadeddragon.item.SummonItem;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.ForgeSpawnEggItem;
@@ -28,6 +29,11 @@ public final class ModItems {
     public static final RegistryObject<Item> POTION_MASTER_SUMMON = ITEMS.register(
             "potion_master_summon",
             () -> new SummonItem(new Item.Properties().stacksTo(16)));
+
+    /** A ten-minute level IV multi-effect drink. */
+    public static final RegistryObject<Item> ENERGY_DRINK = ITEMS.register(
+            "energy_drink",
+            () -> new EnergyDrinkItem(new Item.Properties()));
 
     /**
      * Manual summon method for the Fang King, per spec ("手動召喚アイテムはスポーンエッグやコマンドのみ") -

@@ -19,6 +19,7 @@ public final class ModCreativeTabs {
                     .icon(() -> ModItems.POTION_MASTER_SUMMON.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
                         output.accept(ModItems.POTION_MASTER_SUMMON.get());
+                        output.accept(ModItems.ENERGY_DRINK.get());
                         output.accept(ModItems.FANG_KING_SPAWN_EGG.get());
                     })
                     .build());
