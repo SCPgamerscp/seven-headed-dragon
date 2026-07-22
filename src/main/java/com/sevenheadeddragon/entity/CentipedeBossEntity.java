@@ -4,6 +4,7 @@ import com.sevenheadeddragon.entity.boss.CentipedeAttackPatternManager;
 import com.sevenheadeddragon.registry.ModEffects;
 import com.sevenheadeddragon.registry.ModSounds;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.Mth;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
@@ -50,7 +51,6 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -61,7 +61,7 @@ import java.util.List;
  * attacks - a circling walking AoE, a poisonous bite, and a raining-potion
  * magic attack) and a 5-second "your turn" player phase (fully defenseless
  * and immobile). Its long body has whole-body hit detection via
- * {@link CentipedePart} segments trailing its recorded movement path.
+ * {@link CentipedePart} segments following its rendered centre line.
  * Spawned when a player kills 10 spiders while under Bad Omen (see
  * {@code event.CentipedeSpawnHandler}).
  */
@@ -76,9 +76,11 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
 
     /** Number of body segments used for whole-body hit detection. */
     public static final int PART_COUNT = 21;
-    /** How many ticks apart (along the recorded movement trail) each body segment sits from the next. */
-    private static final int PART_TRAIL_SPACING_TICKS = 4;
-    private static final int TRAIL_HISTORY_LENGTH = PART_COUNT * PART_TRAIL_SPACING_TICKS + 10;
+    private static final int CENTER_PART_INDEX = PART_COUNT / 2;
+    private static final double PART_SPACING = 1.0D;
+    private static final double SUPPORT_PROBE_DEPTH = 0.35D;
+    private static final double MAX_BRIDGE_STEP_DOWN = 0.6D;
+    private static final float BODY_YAW_LERP = 0.35F;
 
     private final ServerBossEvent bossEvent = (ServerBossEvent) (new ServerBossEvent(this.getDisplayName(),
             BossEvent.BossBarColor.GREEN, BossEvent.BossBarOverlay.PROGRESS)).setDarkenScreen(true);
@@ -89,11 +91,9 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
     private boolean patternActive = false;
     private int youchuCooldown;
 
-    /** Whole-body hit-detection segments, and the recorded movement trail they follow. */
+    /** Whole-body hit-detection segments following the rendered body's centre line. */
     private final PartEntity<?>[] parts;
-    private final Vec3[] trail = new Vec3[TRAIL_HISTORY_LENGTH];
-    private int trailPointer = -1;
-    private float currentBodyYaw = 0.0F;
+    private float currentBodyYaw;
 
     private final List<ScheduledTask> scheduledTasks = new ArrayList<>();
 
@@ -238,7 +238,16 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
     @Override
     public void aiStep() {
         super.aiStep();
-        recordTrailAndPositionParts();
+        positionBodyParts();
+
+        // Vanilla movement only tests the parent's small central box.  A long
+        // creature would therefore fall through a one-block-wide gap even
+        // while its body is still supported on both sides.  Treat the body as
+        // a bridge for a short downward step, then update all parts again so
+        // collision/debug boxes never spend a frame detached from the model.
+        if (!this.level().isClientSide && stabilizeOverNarrowGap()) {
+            positionBodyParts();
+        }
 
         if (this.level().isClientSide) return;
 
@@ -268,20 +277,75 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
         }
     }
 
-    /** Positions every body-segment part along the centipede's full length from tail (-10m) to head (+10m) using Forge yBodyRot. */
-    private void recordTrailAndPositionParts() {
-        float yawRad = -this.yBodyRot * ((float) Math.PI / 180.0F);
-
-        for (int i = 0; i < parts.length; i++) {
-            double offsetDist = (i - 10) * 1.0D;
-            double offsetX = Math.sin(yawRad) * offsetDist;
-            double offsetZ = Math.cos(yawRad) * offsetDist;
-
-            parts[i].setPos(this.getX() + offsetX, this.getY(), this.getZ() + offsetZ);
-            parts[i].xo = this.getX() + offsetX;
-            parts[i].yo = this.getY();
-            parts[i].zo = this.getZ() + offsetZ;
+    /**
+     * Positions hitboxes from tail to head along the rendered body's centre
+     * line.  The body yaw is interpolated on both logical sides instead of
+     * rotating all 21 boxes instantly when pathfinding changes direction.
+     * Previous positions are retained for Minecraft's debug-hitbox renderer,
+     * which otherwise appears to teleport or draw boxes at stale locations.
+     */
+    private void positionBodyParts() {
+        if (this.tickCount <= 1) {
+            this.currentBodyYaw = this.yBodyRot;
+        } else {
+            this.currentBodyYaw = Mth.rotLerp(BODY_YAW_LERP, this.currentBodyYaw, this.yBodyRot);
         }
+
+        float yawRad = -this.currentBodyYaw * Mth.DEG_TO_RAD;
+        for (int i = 0; i < parts.length; i++) {
+            double offsetDistance = (i - CENTER_PART_INDEX) * PART_SPACING;
+            double x = this.getX() + Math.sin(yawRad) * offsetDistance;
+            double y = this.getY();
+            double z = this.getZ() + Math.cos(yawRad) * offsetDistance;
+            PartEntity<?> part = parts[i];
+
+            if (this.tickCount <= 1) {
+                part.setPos(x, y, z);
+                part.xo = x;
+                part.yo = y;
+                part.zo = z;
+            } else {
+                part.xo = part.getX();
+                part.yo = part.getY();
+                part.zo = part.getZ();
+                part.setPos(x, y, z);
+            }
+        }
+    }
+
+    /**
+     * Stops the central movement box dropping into a hole narrower than the
+     * centipede.  Support must exist under at least one segment on each side
+     * of the centre, so a single block under a dangling tail cannot suspend
+     * the entire boss in mid-air.
+     */
+    private boolean stabilizeOverNarrowGap() {
+        double stepDown = this.yo - this.getY();
+        if (stepDown <= 0.0D || stepDown > MAX_BRIDGE_STEP_DOWN || this.getDeltaMovement().y > 0.0D) {
+            return false;
+        }
+
+        boolean supportBehind = false;
+        boolean supportAhead = false;
+        for (int i = 0; i < parts.length; i++) {
+            if (i == CENTER_PART_INDEX || !hasBlockSupport(parts[i])) {
+                continue;
+            }
+            supportBehind |= i < CENTER_PART_INDEX;
+            supportAhead |= i > CENTER_PART_INDEX;
+            if (supportBehind && supportAhead) {
+                this.setPos(this.getX(), this.yo, this.getZ());
+                this.setDeltaMovement(this.getDeltaMovement().x, 0.0D, this.getDeltaMovement().z);
+                this.fallDistance = 0.0F;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean hasBlockSupport(PartEntity<?> part) {
+        return this.level().getBlockCollisions(
+                this, part.getBoundingBox().move(0.0D, -SUPPORT_PROBE_DEPTH, 0.0D)).iterator().hasNext();
     }
 
     private void tickYouchuSound() {
