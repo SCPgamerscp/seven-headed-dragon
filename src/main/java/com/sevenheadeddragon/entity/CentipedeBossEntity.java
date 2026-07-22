@@ -491,10 +491,11 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
         spawnStackedLoot(Items.DIAMOND_BLOCK, 64 + looting * 8);
         spawnStackedLoot(Items.ENCHANTED_GOLDEN_APPLE, 20 + looting * 4);
 
+        int splashCount = 5 + looting * 2;
         this.spawnAtLocation(net.minecraft.world.item.alchemy.PotionUtils.setPotion(
-                new ItemStack(Items.SPLASH_POTION), com.sevenheadeddragon.registry.ModPotions.DRAGON_SLAYING_POISON.get()).copyWithCount(5));
+                new ItemStack(Items.SPLASH_POTION), com.sevenheadeddragon.registry.ModPotions.DRAGON_SLAYING_POISON.get()).copyWithCount(splashCount));
         this.spawnAtLocation(net.minecraft.world.item.alchemy.PotionUtils.setPotion(
-                new ItemStack(Items.SPLASH_POTION), com.sevenheadeddragon.registry.ModPotions.POISON_5.get()).copyWithCount(5));
+                new ItemStack(Items.SPLASH_POTION), com.sevenheadeddragon.registry.ModPotions.POISON_5.get()).copyWithCount(splashCount));
     }
 
     private void spawnStackedLoot(Item item, int totalCount) {
