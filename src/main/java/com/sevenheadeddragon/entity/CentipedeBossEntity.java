@@ -236,7 +236,7 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new CentipedeCircleGoal(this, 1.4D, 15.0F));
+        this.goalSelector.addGoal(2, new CentipedeCircleGoal(this, 2.2D, 15.0F));
         this.goalSelector.addGoal(3, new RandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(4, new MoveTowardsRestrictionGoal(this, 1.0D));
 
@@ -570,6 +570,7 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
         private final double speedModifier;
         private final float radius;
         private double angle;
+        private int direction = 1;
 
         CentipedeCircleGoal(CentipedeBossEntity mob, double speedModifier, float radius) {
             this.mob = mob;
@@ -591,6 +592,7 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
                 Vec3 toMob = this.mob.position().subtract(target.position());
                 angle = Math.atan2(toMob.z, toMob.x);
             }
+            direction = this.mob.getRandom().nextBoolean() ? 1 : -1;
         }
 
         @Override
@@ -600,7 +602,7 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
 
             this.mob.getLookControl().setLookAt(target, 30.0F, 30.0F);
 
-            angle += 0.08D; // orbit speed
+            angle += 0.16D * direction; // orbit speed (doubled, with random direction)
             double x = target.getX() + radius * Math.cos(angle);
             double z = target.getZ() + radius * Math.sin(angle);
             this.mob.getNavigation().moveTo(x, target.getY(), z, speedModifier);
