@@ -27,6 +27,7 @@ public final class ModDamageTypes {
     public static final ResourceKey<DamageType> MAGMA = key("magma");
     public static final ResourceKey<DamageType> VOID_DAMAGE = key("void_damage");
     public static final ResourceKey<DamageType> WATER_VULNERABILITY = key("water_vulnerability");
+    public static final ResourceKey<DamageType> DRAGON_SLAYING_POISON = key("dragon_slaying_poison");
 
     private static ResourceKey<DamageType> key(String path) {
         return ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(SevenHeadedDragon.MODID, path));

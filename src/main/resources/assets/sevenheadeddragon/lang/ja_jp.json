@@ -6,10 +6,18 @@
   "entity.sevenheadeddragon.potion_bullet": "ポーション弾",
   "entity.sevenheadeddragon.fang_king": "牙の王",
   "entity.sevenheadeddragon.fang_conductor": "牙制御体",
+  "entity.sevenheadeddragon.centipede_black_dragon_eater": "竜殺しのオオムカデ",
 
   "item.sevenheadeddragon.potion_master_summon": "ポーションマスターの召喚石",
   "item.sevenheadeddragon.energy_drink": "エナジードリンク",
   "item.sevenheadeddragon.fang_king_spawn_egg": "牙の王のスポーンエッグ",
+  "item.sevenheadeddragon.centipede_black_dragon_eater_spawn_egg": "竜殺しのオオムカデのスポーンエッグ",
+
+  "effect.sevenheadeddragon.dragon_slaying_poison": "ドラゴン殺しの毒",
+  "death.attack.sevenheadeddragon.dragon_slaying_poison": "%1$sはドラゴン殺しの毒に蝕まれて死んだ",
+
+  "subtitle.sevenheadeddragon.centipede.walk": "ムカデが這う音",
+  "subtitle.sevenheadeddragon.centipede.youchu": "ムカデの鳴き声",
 
   "effect.sevenheadeddragon.percent_poison": "割合毒",
   "effect.sevenheadeddragon.undead_curse": "アンデッド化",

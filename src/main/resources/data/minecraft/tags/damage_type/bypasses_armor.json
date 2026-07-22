@@ -4,6 +4,7 @@
     "sevenheadeddragon:void_damage",
     "sevenheadeddragon:asphyxiation",
     "sevenheadeddragon:percent_poison",
-    "sevenheadeddragon:insecticide"
+    "sevenheadeddragon:insecticide",
+    "sevenheadeddragon:dragon_slaying_poison"
   ]
 }

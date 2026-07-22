@@ -21,6 +21,7 @@ public final class ClientSetup {
         event.registerEntityRenderer(ModEntities.MAGIC_CIRCLE.get(), MagicCircleRenderer::new);
         event.registerEntityRenderer(ModEntities.FANG_KING.get(), FangKingRenderer::new);
         event.registerEntityRenderer(ModEntities.FANG_CONDUCTOR.get(), FangConductorRenderer::new);
+        event.registerEntityRenderer(ModEntities.CENTIPEDE_BOSS.get(), CentipedeRenderer::new);
     }
 
     private ClientSetup() {}

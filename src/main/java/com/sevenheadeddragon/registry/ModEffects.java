@@ -96,5 +96,9 @@ public final class ModEffects {
     public static final RegistryObject<MobEffect> EXPLOSION =
             EFFECTS.register("explosion", com.sevenheadeddragon.effect.ExplosionEffect::new);
 
+    // 16. ドラゴン殺しの毒 (Dragon-Slaying Poison) - Centipede Boss bite debuff, 10 magic dmg/sec, stops at 1 HP.
+    public static final RegistryObject<MobEffect> DRAGON_SLAYING_POISON =
+            EFFECTS.register("dragon_slaying_poison", com.sevenheadeddragon.effect.DragonSlayingPoisonEffect::new);
+
     private ModEffects() {}
 }
