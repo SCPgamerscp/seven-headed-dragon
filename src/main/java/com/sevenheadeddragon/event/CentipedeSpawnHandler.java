@@ -59,6 +59,16 @@ public class CentipedeSpawnHandler {
         });
     }
 
+    @SubscribeEvent
+    public void onLivingDamage(net.minecraftforge.event.entity.living.LivingDamageEvent event) {
+        if (event.getSource().is(com.sevenheadeddragon.util.ModDamageTypes.DRAGON_SLAYING_POISON)) {
+            net.minecraft.world.entity.LivingEntity entity = event.getEntity();
+            if (entity.getHealth() - event.getAmount() < 1.0F) {
+                event.setAmount(Math.max(0.0F, entity.getHealth() - 1.0F));
+            }
+        }
+    }
+
     private void spawnCentipede(ServerPlayer player) {
         ServerLevel level = player.serverLevel();
         CentipedeBossEntity boss = ModEntities.CENTIPEDE_BOSS.get().create(level);
