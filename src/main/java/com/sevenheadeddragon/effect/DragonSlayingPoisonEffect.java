@@ -23,8 +23,10 @@ public class DragonSlayingPoisonEffect extends MobEffect {
     public void applyEffectTick(LivingEntity entity, int amplifier) {
         if (entity.getHealth() > 1.0F) {
             DamageSource source = ModDamageTypes.source(entity, ModDamageTypes.DRAGON_SLAYING_POISON);
-            float actualDamage = Math.min((float) DAMAGE_PER_TICK, entity.getHealth() - 1.0F);
-            entity.hurt(source, actualDamage);
+            entity.hurt(source, (float) DAMAGE_PER_TICK);
+            if (entity.getHealth() < 1.0F) {
+                entity.setHealth(1.0F);
+            }
         }
     }
 
