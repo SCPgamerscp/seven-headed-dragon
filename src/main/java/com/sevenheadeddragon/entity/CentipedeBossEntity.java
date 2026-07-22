@@ -125,9 +125,7 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
 
     @Override
     public boolean isMultipartEntity() {
-        // Return false so Forge's default un-interpolated green debug lines are not drawn in F3+B.
-        // Custom smooth white hitboxes are rendered via ClientHitboxRenderer.
-        return false;
+        return true;
     }
 
     @Override
