@@ -37,6 +37,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -346,6 +347,29 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
     private boolean hasBlockSupport(PartEntity<?> part) {
         return this.level().getBlockCollisions(
                 this, part.getBoundingBox().move(0.0D, -SUPPORT_PROBE_DEPTH, 0.0D)).iterator().hasNext();
+    }
+
+    /**
+     * Combines the AABB bounding boxes of all 21 parts so that frustum culling
+     * never hides the centipede model when any part (head, body, tail) is visible on screen.
+     */
+    @Override
+    public AABB getBoundingBoxForCulling() {
+        AABB combinedBox = this.getBoundingBox();
+        if (this.parts != null) {
+            for (PartEntity<?> part : this.parts) {
+                if (part != null) {
+                    combinedBox = combinedBox.minmax(part.getBoundingBox());
+                }
+            }
+        }
+        return combinedBox.inflate(2.0D);
+    }
+
+    @Override
+    public boolean shouldRenderAtSqrDistance(double distanceSqr) {
+        double renderDistance = 128.0D * getViewScale();
+        return distanceSqr < renderDistance * renderDistance;
     }
 
     private void tickYouchuSound() {
