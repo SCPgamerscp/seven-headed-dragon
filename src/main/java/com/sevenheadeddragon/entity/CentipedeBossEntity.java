@@ -105,6 +105,7 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
         for (int i = 0; i < PART_COUNT; i++) {
             this.parts[i] = new CentipedePart(this, i, 2.0F, 2.0F);
         }
+        this.setMaxUpStep(4.0F);
         this.youchuCooldown = 100 + this.random.nextInt(400);
     }
 

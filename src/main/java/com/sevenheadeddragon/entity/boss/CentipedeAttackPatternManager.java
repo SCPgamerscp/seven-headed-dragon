@@ -98,11 +98,11 @@ public final class CentipedeAttackPatternManager {
             entity.hurt(boss.damageSources().mobAttack(boss), WALK_DAMAGE_AMOUNT);
         }
 
-        // Spawn a massive burst of critical particles across the ground in the 20-block AoE radius
+        // Spawn a massive burst of 500 critical particles across the ground in the 20-block AoE radius
         double centerX = boss.getX();
         double centerY = boss.getY() + 0.1;
         double centerZ = boss.getZ();
-        for (int i = 0; i < 150; i++) {
+        for (int i = 0; i < 500; i++) {
             double angle = boss.getRandom().nextDouble() * Math.PI * 2.0;
             double dist = boss.getRandom().nextDouble() * WALK_DAMAGE_RADIUS;
             double px = centerX + Math.cos(angle) * dist;
@@ -148,8 +148,8 @@ public final class CentipedeAttackPatternManager {
     // (5 minutes) rain down around the magic circle.
     // ------------------------------------------------------------------
 
-    private static final int RAIN_POTION_COUNT = 50;
-    private static final int RAIN_POTION_INTERVAL_TICKS = 3;
+    private static final int RAIN_POTION_COUNT = 150;
+    private static final int RAIN_POTION_INTERVAL_TICKS = 1;
     private static final double RAIN_AREA_RADIUS = 8.0;
     private static final double RAIN_HEIGHT = 15.0;
     private static final int POISON_RAIN_DURATION_TICKS = 20 * 60 * 5; // 5 minutes, per spec
@@ -178,7 +178,7 @@ public final class CentipedeAttackPatternManager {
         circle.moveTo(rainOrigin.x, rainOrigin.y, rainOrigin.z, 0.0F, 0.0F);
         circle.setLifetime(MAGIC_GETUP_TICKS + RAIN_POTION_COUNT * RAIN_POTION_INTERVAL_TICKS + MAGIC_GETDOWN_TICKS);
         circle.setOrientationYaw(0.0F);
-        circle.setOrientationPitch(90.0F);
+        circle.setOrientationPitch(0.0F); // Flat on the ground
         serverLevel.addFreshEntity(circle);
     }
 
