@@ -598,12 +598,16 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
             LivingEntity target = this.mob.getTarget();
             if (target == null) return;
 
-            this.mob.getLookControl().setLookAt(target, 30.0F, 30.0F);
+            double dx = this.mob.getX() - target.getX();
+            double dz = this.mob.getZ() - target.getZ();
+            double currentAngle = Math.atan2(dz, dx);
 
-            angle += 0.16D; // fast orbit speed
-            double x = target.getX() + radius * Math.cos(angle);
-            double z = target.getZ() + radius * Math.sin(angle);
-            this.mob.getNavigation().moveTo(x, target.getY(), z, speedModifier);
+            // Target a waypoint 0.6 radians (~35 degrees) ahead on the circle of radius 15.0F
+            double wayAngle = currentAngle + 0.6D;
+            double wayX = target.getX() + radius * Math.cos(wayAngle);
+            double wayZ = target.getZ() + radius * Math.sin(wayAngle);
+
+            this.mob.getNavigation().moveTo(wayX, target.getY(), wayZ, speedModifier);
         }
     }
 }
