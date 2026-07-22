@@ -31,6 +31,8 @@ import net.minecraft.world.entity.ai.goal.MoveTowardsRestrictionGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.ai.navigation.WallClimberNavigation;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -68,9 +70,9 @@ import java.util.List;
  */
 public class CentipedeBossEntity extends Monster implements GeoEntity {
 
-    private static final EntityDataAccessor<Boolean> DATA_PLAYER_TURN =
-            SynchedEntityData.defineId(CentipedeBossEntity.class, EntityDataSerializers.BOOLEAN);
-
+    private static final EntityDataAccessor<Boolean> DATA_PLAYER_TURN = SynchedEntityData.defineId(CentipedeBossEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Byte> DATA_FLAGS_ID = SynchedEntityData.defineId(CentipedeBossEntity.class, EntityDataSerializers.BYTE);
+    
     public static final int BOSS_TURN_TICKS = 20 * 60;
     public static final int PLAYER_TURN_TICKS = 20 * 5;
     private static final int MIN_TICKS_FOR_NEW_PATTERN = 40;
@@ -154,6 +156,31 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
         super.defineSynchedData();
         this.entityData.define(DATA_PLAYER_TURN, false);
         this.entityData.define(DATA_ACTION_STATE, ACTION_IDLE_OR_WALK);
+        this.entityData.define(DATA_FLAGS_ID, (byte)0);
+    }
+
+    @Override
+    protected PathNavigation createNavigation(Level level) {
+        return new WallClimberNavigation(this, level);
+    }
+
+    @Override
+    public boolean onClimbable() {
+        return this.isClimbing();
+    }
+
+    public boolean isClimbing() {
+        return (this.entityData.get(DATA_FLAGS_ID) & 1) != 0;
+    }
+
+    public void setClimbing(boolean climbing) {
+        byte b0 = this.entityData.get(DATA_FLAGS_ID);
+        if (climbing) {
+            b0 = (byte)(b0 | 1);
+        } else {
+            b0 = (byte)(b0 & -2);
+        }
+        this.entityData.set(DATA_FLAGS_ID, b0);
     }
 
     public boolean isPlayerTurn() {
@@ -235,6 +262,14 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
     public void setCustomName(@Nullable Component name) {
         super.setCustomName(name);
         this.bossEvent.setName(this.getDisplayName());
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (!this.level().isClientSide) {
+            this.setClimbing(this.horizontalCollision);
+        }
     }
 
     @Override
