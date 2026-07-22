@@ -34,6 +34,26 @@ public class CentipedePart extends PartEntity<CentipedeBossEntity> {
         this.refreshDimensions();
     }
 
+    public void setPosAndOld(double x, double y, double z) {
+        this.xo = x;
+        this.yo = y;
+        this.zo = z;
+        this.xOld = x;
+        this.yOld = y;
+        this.zOld = z;
+        this.setPos(x, y, z);
+    }
+
+    public void updatePosWithOld(double newX, double newY, double newZ) {
+        this.xo = this.getX();
+        this.yo = this.getY();
+        this.zo = this.getZ();
+        this.xOld = this.getX();
+        this.yOld = this.getY();
+        this.zOld = this.getZ();
+        this.setPos(newX, newY, newZ);
+    }
+
     @Override
     protected void defineSynchedData() {
         // No independent state - purely a positioned hitbox.

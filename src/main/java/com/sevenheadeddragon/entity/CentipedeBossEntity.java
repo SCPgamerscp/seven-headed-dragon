@@ -301,16 +301,14 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
             double z = this.getZ() + Math.cos(yawRad) * offsetDistance;
             PartEntity<?> part = parts[i];
 
-            if (this.tickCount <= 1) {
-                part.setPos(x, y, z);
-                part.xo = x;
-                part.yo = y;
-                part.zo = z;
+            if (parts[i] instanceof CentipedePart centipedePart) {
+                if (this.tickCount <= 1) {
+                    centipedePart.setPosAndOld(x, y, z);
+                } else {
+                    centipedePart.updatePosWithOld(x, y, z);
+                }
             } else {
-                part.xo = part.getX();
-                part.yo = part.getY();
-                part.zo = part.getZ();
-                part.setPos(x, y, z);
+                parts[i].setPos(x, y, z);
             }
         }
     }
