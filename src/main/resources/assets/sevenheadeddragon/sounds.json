@@ -1,0 +1,20 @@
+{
+  "centipede.walk": {
+    "subtitle": "subtitle.sevenheadeddragon.centipede.walk",
+    "sounds": [
+      {
+        "name": "sevenheadeddragon:centipede/walk",
+        "stream": false
+      }
+    ]
+  },
+  "centipede.youchu": {
+    "subtitle": "subtitle.sevenheadeddragon.centipede.youchu",
+    "sounds": [
+      {
+        "name": "sevenheadeddragon:centipede/youchu",
+        "stream": false
+      }
+    ]
+  }
+}

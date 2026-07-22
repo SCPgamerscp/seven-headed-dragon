@@ -3,6 +3,7 @@ package com.sevenheadeddragon.registry;
 import com.sevenheadeddragon.SevenHeadedDragon;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -55,6 +56,11 @@ public final class ModPotions {
     public static final RegistryObject<Potion> TELEPORT_MARK = register("teleport_mark", ModEffects.TELEPORT_MARK);
     public static final RegistryObject<Potion> FIREWORK_MARK = register("firework_mark", ModEffects.FIREWORK_MARK);
     public static final RegistryObject<Potion> EXPLOSION = register("explosion", ModEffects.EXPLOSION);
+
+    // Centipede Boss ("竜殺しのオオムカデ") loot-reward potions - 10 minute versions of the effects it uses in combat.
+    public static final RegistryObject<Potion> DRAGON_SLAYING_POISON = register("dragon_slaying_poison", ModEffects.DRAGON_SLAYING_POISON);
+    public static final RegistryObject<Potion> POISON_5 = POTIONS.register("poison_5",
+            () -> new Potion("poison_5", new MobEffectInstance(MobEffects.POISON, DURATION, 4)));
 
     private static RegistryObject<Potion> register(String name, Supplier<MobEffect> effect) {
         return POTIONS.register(name, () -> new Potion(name, new MobEffectInstance(effect.get(), DURATION, 0)));

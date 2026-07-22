@@ -43,5 +43,9 @@ public final class ModItems {
             "fang_king_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.FANG_KING, 0x2B2B2B, 0xE8E8E8, new Item.Properties()));
 
+    public static final RegistryObject<Item> CENTIPEDE_SPAWN_EGG = ITEMS.register(
+            "centipede_black_dragon_eater_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.CENTIPEDE_BOSS, 0x1A1A1A, 0xB22222, new Item.Properties()));
+
     private ModItems() {}
 }

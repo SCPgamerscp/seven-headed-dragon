@@ -21,6 +21,7 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.POTION_MASTER_SUMMON.get());
                         output.accept(ModItems.ENERGY_DRINK.get());
                         output.accept(ModItems.FANG_KING_SPAWN_EGG.get());
+                        output.accept(ModItems.CENTIPEDE_SPAWN_EGG.get());
                     })
                     .build());
 

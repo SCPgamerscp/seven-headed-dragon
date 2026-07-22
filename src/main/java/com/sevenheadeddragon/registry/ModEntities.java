@@ -1,6 +1,7 @@
 package com.sevenheadeddragon.registry;
 
 import com.sevenheadeddragon.SevenHeadedDragon;
+import com.sevenheadeddragon.entity.CentipedeBossEntity;
 import com.sevenheadeddragon.entity.FangConductorEntity;
 import com.sevenheadeddragon.entity.FangKingEntity;
 import com.sevenheadeddragon.entity.MagicCircleEntity;
@@ -51,9 +52,17 @@ public final class ModEntities {
                     .updateInterval(1)
                     .build("fang_conductor"));
 
+    public static final RegistryObject<EntityType<CentipedeBossEntity>> CENTIPEDE_BOSS =
+            ENTITY_TYPES.register("centipede_black_dragon_eater", () -> EntityType.Builder.of(CentipedeBossEntity::new, MobCategory.MONSTER)
+                    .sized(2.0f, 2.0f)
+                    .clientTrackingRange(80)
+                    .updateInterval(1)
+                    .build("centipede_black_dragon_eater"));
+
     public static void registerAttributes(EntityAttributeCreationEvent event) {
         event.put(POTION_MASTER.get(), PotionMasterEntity.createAttributes().build());
         event.put(FANG_KING.get(), FangKingEntity.createAttributes().build());
+        event.put(CENTIPEDE_BOSS.get(), CentipedeBossEntity.createAttributes().build());
     }
 
     private ModEntities() {}

@@ -6,10 +6,18 @@
   "entity.sevenheadeddragon.potion_bullet": "Potion Bullet",
   "entity.sevenheadeddragon.fang_king": "Fang King",
   "entity.sevenheadeddragon.fang_conductor": "Fang Conductor",
+  "entity.sevenheadeddragon.centipede_black_dragon_eater": "Black Dragon Eater",
 
   "item.sevenheadeddragon.potion_master_summon": "Potion Master Summoning Charge",
   "item.sevenheadeddragon.energy_drink": "Energy Drink",
   "item.sevenheadeddragon.fang_king_spawn_egg": "Fang King Spawn Egg",
+  "item.sevenheadeddragon.centipede_black_dragon_eater_spawn_egg": "Black Dragon Eater Spawn Egg",
+
+  "effect.sevenheadeddragon.dragon_slaying_poison": "Dragon-Slaying Poison",
+  "death.attack.sevenheadeddragon.dragon_slaying_poison": "%1$s was eaten away by dragon-slaying poison",
+
+  "subtitle.sevenheadeddragon.centipede.walk": "Centipede skitters",
+  "subtitle.sevenheadeddragon.centipede.youchu": "Centipede screeches",
 
   "effect.sevenheadeddragon.percent_poison": "Percent Poison",
   "effect.sevenheadeddragon.undead_curse": "Undead Curse",
