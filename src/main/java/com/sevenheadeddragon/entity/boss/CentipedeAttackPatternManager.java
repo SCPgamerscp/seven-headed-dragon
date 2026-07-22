@@ -148,7 +148,8 @@ public final class CentipedeAttackPatternManager {
     // (5 minutes) rain down around the magic circle.
     // ------------------------------------------------------------------
 
-    private static final int RAIN_POTION_COUNT = 150;
+    private static final int RAIN_POTION_COUNT = 500;
+    private static final int RAIN_POTIONS_PER_TICK = 5;
     private static final int RAIN_POTION_INTERVAL_TICKS = 1;
     private static final double RAIN_AREA_RADIUS = 8.0;
     private static final double RAIN_HEIGHT = 15.0;
@@ -176,7 +177,7 @@ public final class CentipedeAttackPatternManager {
         MagicCircleEntity circle = ModEntities.MAGIC_CIRCLE.get().create(serverLevel);
         if (circle == null) return;
         circle.moveTo(rainOrigin.x, rainOrigin.y, rainOrigin.z, 0.0F, 0.0F);
-        circle.setLifetime(MAGIC_GETUP_TICKS + RAIN_POTION_COUNT * RAIN_POTION_INTERVAL_TICKS + MAGIC_GETDOWN_TICKS);
+        circle.setLifetime(MAGIC_GETUP_TICKS + (RAIN_POTION_COUNT / RAIN_POTIONS_PER_TICK) * RAIN_POTION_INTERVAL_TICKS + MAGIC_GETDOWN_TICKS);
         circle.setOrientationYaw(0.0F);
         circle.setOrientationPitch(0.0F); // Flat on the ground
         serverLevel.addFreshEntity(circle);
@@ -189,8 +190,11 @@ public final class CentipedeAttackPatternManager {
         }
 
         if (spawned < RAIN_POTION_COUNT) {
-            spawnRainingPotion(boss, rainOrigin);
-            boss.scheduleIn(RAIN_POTION_INTERVAL_TICKS, () -> rainPotions(boss, rainOrigin, spawned + 1));
+            int toSpawn = Math.min(RAIN_POTIONS_PER_TICK, RAIN_POTION_COUNT - spawned);
+            for (int i = 0; i < toSpawn; i++) {
+                spawnRainingPotion(boss, rainOrigin);
+            }
+            boss.scheduleIn(RAIN_POTION_INTERVAL_TICKS, () -> rainPotions(boss, rainOrigin, spawned + toSpawn));
         } else {
             boss.setActionState(CentipedeBossEntity.ACTION_MAGIC_GETDOWN);
             boss.scheduleIn(MAGIC_GETDOWN_TICKS, () -> {
