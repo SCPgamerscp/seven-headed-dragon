@@ -8,6 +8,7 @@
     "LivingEntityMixin"
   ],
   "client": [
+    "EntityRenderDispatcherMixin"
   ],
   "injectors": {
     "defaultRequire": 1
