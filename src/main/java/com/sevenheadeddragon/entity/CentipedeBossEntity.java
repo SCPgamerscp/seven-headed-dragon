@@ -236,7 +236,7 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new CentipedeCircleGoal(this, 2.2D, 15.0F));
+        this.goalSelector.addGoal(2, new CentipedeCircleGoal(this, 1.5D, 15.0F));
         this.goalSelector.addGoal(3, new RandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(4, new MoveTowardsRestrictionGoal(this, 1.0D));
 
