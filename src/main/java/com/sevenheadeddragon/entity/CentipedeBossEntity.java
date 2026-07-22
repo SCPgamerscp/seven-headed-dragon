@@ -297,7 +297,7 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
         tickScheduledTasks();
         tickYouchuSound();
 
-        if (isPlayerTurn() || isCastingMagic()) {
+        if (isPlayerTurn()) {
             this.getNavigation().stop();
             this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
         } else if (!patternActive && turnTimer > MIN_TICKS_FOR_NEW_PATTERN) {
@@ -581,7 +581,7 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
         @Override
         public boolean canUse() {
             LivingEntity target = this.mob.getTarget();
-            return this.mob.circlingActive && target != null && target.isAlive() && !this.mob.isPlayerTurn() && !this.mob.isCastingMagic();
+            return this.mob.circlingActive && target != null && target.isAlive() && !this.mob.isPlayerTurn();
         }
 
         @Override
