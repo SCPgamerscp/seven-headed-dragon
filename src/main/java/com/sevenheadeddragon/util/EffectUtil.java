@@ -49,6 +49,24 @@ public final class EffectUtil {
      * by one block repeatedly until open air/passable space is found or a
      * safety limit is hit.
      */
+    /**
+     * Scans UPWARD from the start position up to maxUpwardBlocks (e.g. 20 blocks).
+     * If a solid ceiling block (including thin slabs or roofs) is encountered along the way,
+     * it immediately stops and returns the position 1 block BELOW that ceiling.
+     */
+    public static BlockPos resolveUpwardTeleportDestination(Level level, BlockPos start, int maxUpwardBlocks) {
+        BlockPos current = start;
+        for (int i = 1; i <= maxUpwardBlocks; i++) {
+            BlockPos nextUp = start.above(i);
+            if (isBlocked(level, nextUp)) {
+                // Ceiling detected! Return position 1 block below the ceiling.
+                return current;
+            }
+            current = nextUp;
+        }
+        return current;
+    }
+
     public static BlockPos resolveTeleportDestination(Level level, BlockPos desired) {
         BlockPos pos = desired;
         int guard = 0;
