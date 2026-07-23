@@ -75,8 +75,52 @@ public class CentipedePart extends PartEntity<CentipedeBossEntity> {
     }
 
     @Override
+    public void setSecondsOnFire(int seconds) {
+        this.parentMob.setSecondsOnFire(seconds);
+    }
+
+    @Override
     public boolean hurt(DamageSource source, float amount) {
-        return this.isInvulnerableTo(source) ? false : this.parentMob.hurt(source, amount);
+        if (this.isInvulnerableTo(source)) return false;
+
+        float finalAmount = amount;
+        Entity attacker = source.getEntity();
+        if (attacker instanceof net.minecraft.world.entity.LivingEntity livingAttacker) {
+            net.minecraft.world.item.ItemStack mainHand = livingAttacker.getMainHandItem();
+
+            // 1. Bane of Arthropods (虫特効) bonus damage & Slowness IV
+            int arthropodLvl = net.minecraft.world.item.enchantment.EnchantmentHelper.getItemEnchantmentLevel(
+                    net.minecraft.world.item.enchantment.Enchantments.BANE_OF_ARTHROPODS, mainHand);
+            if (arthropodLvl > 0) {
+                finalAmount += arthropodLvl * 2.5F;
+                int duration = 20 + livingAttacker.getRandom().nextInt(10 * arthropodLvl);
+                this.parentMob.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                        net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, duration, 3));
+            }
+
+            // 2. Fire Aspect (火属性) ignition
+            int fireAspectLvl = net.minecraft.world.item.enchantment.EnchantmentHelper.getItemEnchantmentLevel(
+                    net.minecraft.world.item.enchantment.Enchantments.FIRE_ASPECT, mainHand);
+            if (fireAspectLvl > 0) {
+                this.parentMob.setSecondsOnFire(fireAspectLvl * 4);
+            }
+        }
+
+        // 3. Tipped Arrow / Projectile Potion Effects
+        Entity directEntity = source.getDirectEntity();
+        if (directEntity instanceof net.minecraft.world.entity.projectile.Arrow tippedArrow) {
+            net.minecraft.nbt.CompoundTag arrowTag = new net.minecraft.nbt.CompoundTag();
+            tippedArrow.saveWithoutId(arrowTag);
+            net.minecraft.world.item.alchemy.Potion p = net.minecraft.world.item.alchemy.PotionUtils.getPotion(arrowTag);
+            for (net.minecraft.world.effect.MobEffectInstance effect : p.getEffects()) {
+                this.parentMob.addEffect(new net.minecraft.world.effect.MobEffectInstance(effect));
+            }
+            for (net.minecraft.world.effect.MobEffectInstance effect : net.minecraft.world.item.alchemy.PotionUtils.getCustomEffects(arrowTag)) {
+                this.parentMob.addEffect(new net.minecraft.world.effect.MobEffectInstance(effect));
+            }
+        }
+
+        return this.parentMob.hurt(source, finalAmount);
     }
 
     @Override

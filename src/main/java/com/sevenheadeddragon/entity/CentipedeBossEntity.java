@@ -297,6 +297,26 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
         tickScheduledTasks();
         tickYouchuSound();
 
+        if (this.tickCount % 5 == 0 && this.parts != null) {
+            for (net.minecraftforge.entity.PartEntity<?> p : this.parts) {
+                if (p instanceof CentipedePart part) {
+                    java.util.List<net.minecraft.world.entity.AreaEffectCloud> clouds = this.level().getEntitiesOfClass(
+                            net.minecraft.world.entity.AreaEffectCloud.class, part.getBoundingBox());
+                    for (net.minecraft.world.entity.AreaEffectCloud cloud : clouds) {
+                        net.minecraft.nbt.CompoundTag cloudTag = new net.minecraft.nbt.CompoundTag();
+                        cloud.saveWithoutId(cloudTag);
+                        net.minecraft.world.item.alchemy.Potion potion = net.minecraft.world.item.alchemy.PotionUtils.getPotion(cloudTag);
+                        for (net.minecraft.world.effect.MobEffectInstance effect : potion.getEffects()) {
+                            this.addEffect(new net.minecraft.world.effect.MobEffectInstance(effect));
+                        }
+                        for (net.minecraft.world.effect.MobEffectInstance effect : net.minecraft.world.item.alchemy.PotionUtils.getCustomEffects(cloudTag)) {
+                            this.addEffect(new net.minecraft.world.effect.MobEffectInstance(effect));
+                        }
+                    }
+                }
+            }
+        }
+
         if (isPlayerTurn()) {
             this.getNavigation().stop();
             this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
