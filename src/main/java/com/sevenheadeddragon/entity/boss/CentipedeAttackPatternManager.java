@@ -10,6 +10,7 @@ import com.sevenheadeddragon.registry.ModSounds;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -98,11 +99,11 @@ public final class CentipedeAttackPatternManager {
             entity.hurt(boss.damageSources().mobAttack(boss), WALK_DAMAGE_AMOUNT);
         }
 
-        // Spawn a massive burst of critical particles across the ground in the 20-block AoE radius
+        // Spawn a massive burst of 500 critical particles across the ground in the 20-block AoE radius
         double centerX = boss.getX();
         double centerY = boss.getY() + 0.1;
         double centerZ = boss.getZ();
-        for (int i = 0; i < 150; i++) {
+        for (int i = 0; i < 500; i++) {
             double angle = boss.getRandom().nextDouble() * Math.PI * 2.0;
             double dist = boss.getRandom().nextDouble() * WALK_DAMAGE_RADIUS;
             double px = centerX + Math.cos(angle) * dist;
@@ -128,18 +129,56 @@ public final class CentipedeAttackPatternManager {
 
     private static void startBite(CentipedeBossEntity boss, LivingEntity target) {
         boss.setActionState(CentipedeBossEntity.ACTION_BITING);
-        boss.getNavigation().moveTo(target, 1.2);
+        tickBiteLunge(boss, target, 0, false);
+    }
 
-        boss.scheduleIn(15, () -> {
-            if (boss.isAlive() && target.isAlive() && boss.distanceTo(target) < 6.0) {
-                target.hurt(boss.damageSources().mobAttack(boss), BITE_DAMAGE);
-                target.addEffect(new MobEffectInstance(ModEffects.DRAGON_SLAYING_POISON.get(), BITE_POISON_DURATION_TICKS, 0));
+    private static void tickBiteLunge(CentipedeBossEntity boss, LivingEntity target, int elapsed, boolean hasHit) {
+        if (!boss.isAlive()) {
+            boss.onPatternFinished();
+            return;
+        }
+
+        boolean currentHit = hasHit;
+        if (target != null && target.isAlive()) {
+            double dx = target.getX() - boss.getX();
+            double dz = target.getZ() - boss.getZ();
+            float targetYaw = (float) (Mth.atan2(dz, dx) * (180.0 / Math.PI)) - 90.0F;
+            boss.setYRot(targetYaw);
+            boss.yBodyRot = targetYaw;
+            boss.yHeadRot = targetYaw;
+            boss.getNavigation().moveTo(target, 1.8);
+
+            if (!currentHit && elapsed >= 4 && elapsed <= 25) {
+                boolean frontHit = false;
+                if (boss.getParts() != null && boss.getParts().length > 0) {
+                    // Test all front-half body parts (head to center: parts[0] through parts[10])
+                    int checkLimit = Math.min(11, boss.getParts().length);
+                    for (int p = 0; p < checkLimit; p++) {
+                        var part = boss.getParts()[p];
+                        if (part != null && (part.getBoundingBox().inflate(1.5).intersects(target.getBoundingBox()) || part.distanceTo(target) < 5.5F)) {
+                            frontHit = true;
+                            break;
+                        }
+                    }
+                } else if (boss.distanceTo(target) < 12.0F) {
+                    frontHit = true;
+                }
+
+                if (frontHit) {
+                    target.hurt(boss.damageSources().mobAttack(boss), BITE_DAMAGE);
+                    target.addEffect(new MobEffectInstance(ModEffects.DRAGON_SLAYING_POISON.get(), BITE_POISON_DURATION_TICKS, 0));
+                    currentHit = true;
+                }
             }
-            boss.scheduleIn(10, () -> {
-                boss.setActionState(CentipedeBossEntity.ACTION_IDLE_OR_WALK);
-                boss.onPatternFinished();
-            });
-        });
+        }
+
+        if (elapsed < 30) {
+            final boolean hitState = currentHit;
+            boss.scheduleIn(1, () -> tickBiteLunge(boss, target, elapsed + 1, hitState));
+        } else {
+            boss.setActionState(CentipedeBossEntity.ACTION_IDLE_OR_WALK);
+            boss.onPatternFinished();
+        }
     }
 
     // ------------------------------------------------------------------
@@ -148,8 +187,9 @@ public final class CentipedeAttackPatternManager {
     // (5 minutes) rain down around the magic circle.
     // ------------------------------------------------------------------
 
-    private static final int RAIN_POTION_COUNT = 50;
-    private static final int RAIN_POTION_INTERVAL_TICKS = 3;
+    private static final int RAIN_POTION_COUNT = 500;
+    private static final int RAIN_POTIONS_PER_TICK = 5;
+    private static final int RAIN_POTION_INTERVAL_TICKS = 1;
     private static final double RAIN_AREA_RADIUS = 8.0;
     private static final double RAIN_HEIGHT = 15.0;
     private static final int POISON_RAIN_DURATION_TICKS = 20 * 60 * 5; // 5 minutes, per spec
@@ -176,9 +216,9 @@ public final class CentipedeAttackPatternManager {
         MagicCircleEntity circle = ModEntities.MAGIC_CIRCLE.get().create(serverLevel);
         if (circle == null) return;
         circle.moveTo(rainOrigin.x, rainOrigin.y, rainOrigin.z, 0.0F, 0.0F);
-        circle.setLifetime(MAGIC_GETUP_TICKS + RAIN_POTION_COUNT * RAIN_POTION_INTERVAL_TICKS + MAGIC_GETDOWN_TICKS);
+        circle.setLifetime(MAGIC_GETUP_TICKS + (RAIN_POTION_COUNT / RAIN_POTIONS_PER_TICK) * RAIN_POTION_INTERVAL_TICKS + MAGIC_GETDOWN_TICKS);
         circle.setOrientationYaw(0.0F);
-        circle.setOrientationPitch(90.0F);
+        circle.setOrientationPitch(0.0F); // Flat on the ground
         serverLevel.addFreshEntity(circle);
     }
 
@@ -189,8 +229,11 @@ public final class CentipedeAttackPatternManager {
         }
 
         if (spawned < RAIN_POTION_COUNT) {
-            spawnRainingPotion(boss, rainOrigin);
-            boss.scheduleIn(RAIN_POTION_INTERVAL_TICKS, () -> rainPotions(boss, rainOrigin, spawned + 1));
+            int toSpawn = Math.min(RAIN_POTIONS_PER_TICK, RAIN_POTION_COUNT - spawned);
+            for (int i = 0; i < toSpawn; i++) {
+                spawnRainingPotion(boss, rainOrigin);
+            }
+            boss.scheduleIn(RAIN_POTION_INTERVAL_TICKS, () -> rainPotions(boss, rainOrigin, spawned + toSpawn));
         } else {
             boss.setActionState(CentipedeBossEntity.ACTION_MAGIC_GETDOWN);
             boss.scheduleIn(MAGIC_GETDOWN_TICKS, () -> {

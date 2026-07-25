@@ -59,6 +59,33 @@ public class CentipedeSpawnHandler {
         });
     }
 
+    @SubscribeEvent
+    public void onLivingDamage(net.minecraftforge.event.entity.living.LivingDamageEvent event) {
+        if (event.getSource().is(com.sevenheadeddragon.util.ModDamageTypes.DRAGON_SLAYING_POISON)) {
+            net.minecraft.world.entity.LivingEntity entity = event.getEntity();
+            if (entity.getHealth() - event.getAmount() < 1.0F) {
+                event.setAmount(Math.max(0.0F, entity.getHealth() - 1.0F));
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onProjectileImpact(net.minecraftforge.event.entity.ProjectileImpactEvent event) {
+        if (event.getProjectile() instanceof net.minecraft.world.entity.projectile.ThrownPotion potion) {
+            net.minecraft.world.phys.HitResult hitResult = event.getRayTraceResult();
+            if (hitResult != null) {
+                net.minecraft.world.phys.Vec3 pos = hitResult.getLocation();
+                net.minecraft.world.phys.AABB searchArea = new net.minecraft.world.phys.AABB(pos, pos).inflate(4.0);
+                java.util.List<com.sevenheadeddragon.entity.CentipedePart> parts = potion.level().getEntitiesOfClass(com.sevenheadeddragon.entity.CentipedePart.class, searchArea);
+                for (com.sevenheadeddragon.entity.CentipedePart part : parts) {
+                    for (net.minecraft.world.effect.MobEffectInstance effect : net.minecraft.world.item.alchemy.PotionUtils.getMobEffects(potion.getItem())) {
+                        part.parentMob.addEffect(new net.minecraft.world.effect.MobEffectInstance(effect));
+                    }
+                }
+            }
+        }
+    }
+
     private void spawnCentipede(ServerPlayer player) {
         ServerLevel level = player.serverLevel();
         CentipedeBossEntity boss = ModEntities.CENTIPEDE_BOSS.get().create(level);

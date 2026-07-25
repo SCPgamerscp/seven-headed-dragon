@@ -32,9 +32,9 @@ public class TeleportMarkEffect extends MobEffect {
         double dx = Math.cos(angle) * dist;
         double dz = Math.sin(angle) * dist;
 
-        // Target 20 blocks up into the air
-        net.minecraft.core.BlockPos desired = entity.blockPosition().offset((int) dx, 20, (int) dz);
-        net.minecraft.core.BlockPos safe = com.sevenheadeddragon.util.EffectUtil.resolveTeleportDestination(serverLevel, desired);
+        // Start from current entity position + horizontal offset, then scan upwards for ceilings up to 20 blocks
+        net.minecraft.core.BlockPos basePos = entity.blockPosition().offset((int) dx, 0, (int) dz);
+        net.minecraft.core.BlockPos safe = com.sevenheadeddragon.util.EffectUtil.resolveUpwardTeleportDestination(serverLevel, basePos, 20);
 
         entity.teleportTo(safe.getX() + 0.5, safe.getY(), safe.getZ() + 0.5);
         return;

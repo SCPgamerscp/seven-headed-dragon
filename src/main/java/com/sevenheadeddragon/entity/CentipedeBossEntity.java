@@ -31,12 +31,15 @@ import net.minecraft.world.entity.ai.goal.MoveTowardsRestrictionGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.ai.navigation.WallClimberNavigation;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -67,9 +70,9 @@ import java.util.List;
  */
 public class CentipedeBossEntity extends Monster implements GeoEntity {
 
-    private static final EntityDataAccessor<Boolean> DATA_PLAYER_TURN =
-            SynchedEntityData.defineId(CentipedeBossEntity.class, EntityDataSerializers.BOOLEAN);
-
+    private static final EntityDataAccessor<Boolean> DATA_PLAYER_TURN = SynchedEntityData.defineId(CentipedeBossEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Byte> DATA_FLAGS_ID = SynchedEntityData.defineId(CentipedeBossEntity.class, EntityDataSerializers.BYTE);
+    
     public static final int BOSS_TURN_TICKS = 20 * 60;
     public static final int PLAYER_TURN_TICKS = 20 * 5;
     private static final int MIN_TICKS_FOR_NEW_PATTERN = 40;
@@ -104,6 +107,7 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
         for (int i = 0; i < PART_COUNT; i++) {
             this.parts[i] = new CentipedePart(this, i, 2.0F, 2.0F);
         }
+        this.setMaxUpStep(4.0F);
         this.youchuCooldown = 100 + this.random.nextInt(400);
     }
 
@@ -152,6 +156,31 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
         super.defineSynchedData();
         this.entityData.define(DATA_PLAYER_TURN, false);
         this.entityData.define(DATA_ACTION_STATE, ACTION_IDLE_OR_WALK);
+        this.entityData.define(DATA_FLAGS_ID, (byte)0);
+    }
+
+    @Override
+    protected PathNavigation createNavigation(Level level) {
+        return new WallClimberNavigation(this, level);
+    }
+
+    @Override
+    public boolean onClimbable() {
+        return this.isClimbing();
+    }
+
+    public boolean isClimbing() {
+        return (this.entityData.get(DATA_FLAGS_ID) & 1) != 0;
+    }
+
+    public void setClimbing(boolean climbing) {
+        byte b0 = this.entityData.get(DATA_FLAGS_ID);
+        if (climbing) {
+            b0 = (byte)(b0 | 1);
+        } else {
+            b0 = (byte)(b0 & -2);
+        }
+        this.entityData.set(DATA_FLAGS_ID, b0);
     }
 
     public boolean isPlayerTurn() {
@@ -165,6 +194,11 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
     @Nullable
     public LivingEntity getFocusedTarget() {
         return this.getTarget();
+    }
+
+    public boolean isCastingMagic() {
+        byte state = getActionState();
+        return state == ACTION_MAGIC_GETUP || state == ACTION_MAGIC_CASTING || state == ACTION_MAGIC_GETDOWN;
     }
 
     public void scheduleIn(int delayTicks, Runnable task) {
@@ -202,7 +236,7 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new CentipedeCircleGoal(this, 1.4D, 15.0F));
+        this.goalSelector.addGoal(2, new CentipedeCircleGoal(this, 1.5D, 15.0F));
         this.goalSelector.addGoal(3, new RandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(4, new MoveTowardsRestrictionGoal(this, 1.0D));
 
@@ -236,6 +270,14 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
     }
 
     @Override
+    public void tick() {
+        super.tick();
+        if (!this.level().isClientSide) {
+            this.setClimbing(this.horizontalCollision);
+        }
+    }
+
+    @Override
     public void aiStep() {
         super.aiStep();
         positionBodyParts();
@@ -254,6 +296,26 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
         this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
         tickScheduledTasks();
         tickYouchuSound();
+
+        if (this.tickCount % 5 == 0 && this.parts != null) {
+            for (net.minecraftforge.entity.PartEntity<?> p : this.parts) {
+                if (p instanceof CentipedePart part) {
+                    java.util.List<net.minecraft.world.entity.AreaEffectCloud> clouds = this.level().getEntitiesOfClass(
+                            net.minecraft.world.entity.AreaEffectCloud.class, part.getBoundingBox());
+                    for (net.minecraft.world.entity.AreaEffectCloud cloud : clouds) {
+                        net.minecraft.nbt.CompoundTag cloudTag = new net.minecraft.nbt.CompoundTag();
+                        cloud.saveWithoutId(cloudTag);
+                        net.minecraft.world.item.alchemy.Potion potion = net.minecraft.world.item.alchemy.PotionUtils.getPotion(cloudTag);
+                        for (net.minecraft.world.effect.MobEffectInstance effect : potion.getEffects()) {
+                            this.addEffect(new net.minecraft.world.effect.MobEffectInstance(effect));
+                        }
+                        for (net.minecraft.world.effect.MobEffectInstance effect : net.minecraft.world.item.alchemy.PotionUtils.getCustomEffects(cloudTag)) {
+                            this.addEffect(new net.minecraft.world.effect.MobEffectInstance(effect));
+                        }
+                    }
+                }
+            }
+        }
 
         if (isPlayerTurn()) {
             this.getNavigation().stop();
@@ -299,16 +361,14 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
             double z = this.getZ() + Math.cos(yawRad) * offsetDistance;
             PartEntity<?> part = parts[i];
 
-            if (this.tickCount <= 1) {
-                part.setPos(x, y, z);
-                part.xo = x;
-                part.yo = y;
-                part.zo = z;
+            if (parts[i] instanceof CentipedePart centipedePart) {
+                if (this.tickCount <= 1) {
+                    centipedePart.setPosAndOld(x, y, z);
+                } else {
+                    centipedePart.updatePosWithOld(x, y, z);
+                }
             } else {
-                part.xo = part.getX();
-                part.yo = part.getY();
-                part.zo = part.getZ();
-                part.setPos(x, y, z);
+                parts[i].setPos(x, y, z);
             }
         }
     }
@@ -346,6 +406,29 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
     private boolean hasBlockSupport(PartEntity<?> part) {
         return this.level().getBlockCollisions(
                 this, part.getBoundingBox().move(0.0D, -SUPPORT_PROBE_DEPTH, 0.0D)).iterator().hasNext();
+    }
+
+    /**
+     * Combines the AABB bounding boxes of all 21 parts so that frustum culling
+     * never hides the centipede model when any part (head, body, tail) is visible on screen.
+     */
+    @Override
+    public AABB getBoundingBoxForCulling() {
+        AABB combinedBox = this.getBoundingBox();
+        if (this.parts != null) {
+            for (PartEntity<?> part : this.parts) {
+                if (part != null) {
+                    combinedBox = combinedBox.minmax(part.getBoundingBox());
+                }
+            }
+        }
+        return combinedBox.inflate(2.0D);
+    }
+
+    @Override
+    public boolean shouldRenderAtSqrDistance(double distanceSqr) {
+        double renderDistance = 128.0D * getViewScale();
+        return distanceSqr < renderDistance * renderDistance;
     }
 
     private void tickYouchuSound() {
@@ -433,10 +516,11 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
         spawnStackedLoot(Items.DIAMOND_BLOCK, 64 + looting * 8);
         spawnStackedLoot(Items.ENCHANTED_GOLDEN_APPLE, 20 + looting * 4);
 
+        int splashCount = 5 + looting * 2;
         this.spawnAtLocation(net.minecraft.world.item.alchemy.PotionUtils.setPotion(
-                new ItemStack(Items.SPLASH_POTION), com.sevenheadeddragon.registry.ModPotions.DRAGON_SLAYING_POISON.get()).copyWithCount(5));
+                new ItemStack(Items.SPLASH_POTION), com.sevenheadeddragon.registry.ModPotions.DRAGON_SLAYING_POISON.get()).copyWithCount(splashCount));
         this.spawnAtLocation(net.minecraft.world.item.alchemy.PotionUtils.setPotion(
-                new ItemStack(Items.SPLASH_POTION), com.sevenheadeddragon.registry.ModPotions.POISON_5.get()).copyWithCount(5));
+                new ItemStack(Items.SPLASH_POTION), com.sevenheadeddragon.registry.ModPotions.POISON_5.get()).copyWithCount(splashCount));
     }
 
     private void spawnStackedLoot(Item item, int totalCount) {
@@ -505,7 +589,7 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
         private final CentipedeBossEntity mob;
         private final double speedModifier;
         private final float radius;
-        private double angle;
+        double angle;
 
         CentipedeCircleGoal(CentipedeBossEntity mob, double speedModifier, float radius) {
             this.mob = mob;
@@ -534,12 +618,16 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
             LivingEntity target = this.mob.getTarget();
             if (target == null) return;
 
-            this.mob.getLookControl().setLookAt(target, 30.0F, 30.0F);
+            double dx = this.mob.getX() - target.getX();
+            double dz = this.mob.getZ() - target.getZ();
+            double currentAngle = Math.atan2(dz, dx);
 
-            angle += 0.08D; // orbit speed
-            double x = target.getX() + radius * Math.cos(angle);
-            double z = target.getZ() + radius * Math.sin(angle);
-            this.mob.getNavigation().moveTo(x, target.getY(), z, speedModifier);
+            // Target a waypoint 0.6 radians (~35 degrees) ahead on the circle of radius 15.0F
+            double wayAngle = currentAngle + 0.6D;
+            double wayX = target.getX() + radius * Math.cos(wayAngle);
+            double wayZ = target.getZ() + radius * Math.sin(wayAngle);
+
+            this.mob.getNavigation().moveTo(wayX, target.getY(), wayZ, speedModifier);
         }
     }
 }
