@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "sevenheadeddragon:dragon_slaying_poison",
-    "sevenheadeddragon:percent_poison"
+    "sevenheadeddragon:percent_poison",
+    "sevenheadeddragon:void_damage"
   ]
 }
