@@ -21,8 +21,9 @@ public class ExplosionEffect extends MobEffect {
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
         if (!entity.level().isClientSide) {
-            // Power 1 explosion with block destruction
-            entity.level().explode(entity, entity.getX(), entity.getY(), entity.getZ(), 1.0F, Level.ExplosionInteraction.TNT);
+            // Power 2 explosion centered on entity (null exploder ensures target receives full explosion damage)
+            float power = 2.0F + (amplifier * 0.5F);
+            entity.level().explode(null, entity.getX(), entity.getY(), entity.getZ(), power, Level.ExplosionInteraction.TNT);
         }
     }
 
