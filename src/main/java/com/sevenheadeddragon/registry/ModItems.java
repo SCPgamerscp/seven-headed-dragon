@@ -47,5 +47,31 @@ public final class ModItems {
             "centipede_black_dragon_eater_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.CENTIPEDE_BOSS, 0x1A1A1A, 0xB22222, new Item.Properties()));
 
+    // ------------------------------------------------------------------
+    // 終末の七つ頭の赤い竜 (Apocalypse Seven Headed Red Dragon)
+    // ------------------------------------------------------------------
+
+    /**
+     * Manual summon for the final boss. Its normal entry point is the
+     * "kill 10 zombies under Bad Omen" trigger (see
+     * {@code event.RedDragonSpawnHandler}); this egg exists purely for
+     * testing/creative use, matching how the Fang King and Centipede are
+     * handled.
+     */
+    public static final RegistryObject<Item> APOCALYPSE_RED_DRAGON_SPAWN_EGG = ITEMS.register(
+            "apocalypse_seven_headed_red_dragon_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.APOCALYPSE_RED_DRAGON, 0x8B0000, 0x2A0033,
+                    new Item.Properties()));
+
+    public static final RegistryObject<Item> DEBILITATION_MARTYR_SPAWN_EGG = ITEMS.register(
+            "debilitation_martyr_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.DEBILITATION_MARTYR, 0x3A3A3A, 0x1B4A2B,
+                    new Item.Properties()));
+
+    public static final RegistryObject<Item> TIMED_GIMMICK_CREEPER_SPAWN_EGG = ITEMS.register(
+            "timed_gimmick_creeper_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.TIMED_GIMMICK_CREEPER, 0x0DA70B, 0xFF3300,
+                    new Item.Properties()));
+
     private ModItems() {}
 }

@@ -6,8 +6,9 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 /**
- * Sets up the mod's network channel. Currently only carries the
- * {@link ScreenShakePacket} used by the Centipede boss's walking AoE attack.
+ * Sets up the mod's network channel. Carries the {@link ScreenShakePacket}
+ * used by the Centipede boss's walking AoE attack and the {@link RedWorldPacket}
+ * used by the Apocalypse Seven Headed Red Dragon's Red World effect.
  */
 public final class ModNetworking {
 
@@ -25,6 +26,8 @@ public final class ModNetworking {
     public static void register() {
         CHANNEL.registerMessage(nextId++, ScreenShakePacket.class,
                 ScreenShakePacket::encode, ScreenShakePacket::decode, ScreenShakePacket::handle);
+        CHANNEL.registerMessage(nextId++, RedWorldPacket.class,
+                RedWorldPacket::encode, RedWorldPacket::decode, RedWorldPacket::handle);
     }
 
     private ModNetworking() {}
