@@ -223,7 +223,16 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
 
     @Nullable
     public LivingEntity getFocusedTarget() {
-        return this.getTarget();
+        LivingEntity target = this.getTarget();
+        if (target != null && target.isAlive()) {
+            return target;
+        }
+        Player nearestPlayer = this.level().getNearestPlayer(this, 64.0D);
+        if (nearestPlayer != null && nearestPlayer.isAlive()) {
+            this.setTarget(nearestPlayer);
+            return nearestPlayer;
+        }
+        return null;
     }
 
     /** Called by the pattern manager once a pattern is completely finished. */
@@ -350,8 +359,12 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
         super.aiStep();
         if (this.level().isClientSide) return;
 
-                if (isPlayerTurn()) {
-            // プレイヤターン: 地上に停止して無防備
+        this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
+        tickScheduledTasks();
+        tickHover();
+
+        if (isPlayerTurn()) {
+            // プレイヤーターン: 地上に停止して無防備
             this.getNavigation().stop();
             this.setDeltaMovement(0.0D, this.isHovering() ? 0.0D : this.getDeltaMovement().y, 0.0D);
         } else {
