@@ -181,6 +181,11 @@ public class LonginusSpearEntity extends Projectile implements GeoEntity {
     }
 
     @Override
+    public boolean isPushable() {
+        return false;
+    }
+
+    @Override
     public boolean shouldRenderAtSqrDistance(double distanceSqr) {
         return distanceSqr < 160.0D * 160.0D;
     }
