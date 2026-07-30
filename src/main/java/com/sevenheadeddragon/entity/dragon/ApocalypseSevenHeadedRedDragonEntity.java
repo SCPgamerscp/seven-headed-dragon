@@ -261,8 +261,11 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
         if (state == ACTION_IDLE && this.isHovering()) {
             state = ACTION_FLY;
         }
+        byte currentState = getActionState();
         this.entityData.set(DATA_ACTION_STATE, state);
-        this.entityData.set(DATA_ANIM_TICKET, this.entityData.get(DATA_ANIM_TICKET) + 1);
+        if (currentState != state || (state != ACTION_IDLE && state != ACTION_FLY)) {
+            this.entityData.set(DATA_ANIM_TICKET, this.entityData.get(DATA_ANIM_TICKET) + 1);
+        }
     }
 
     public byte getActionState() {
@@ -716,12 +719,26 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
     // GeckoLib
     // ------------------------------------------------------------------
 
+    /** Tracks the last {@code DATA_ANIM_TICKET} value this client has already reacted to. */
+    private int lastSeenAnimTicket = -1;
+
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "main", 3, this::animationPredicate));
     }
 
     private PlayState animationPredicate(AnimationState<ApocalypseSevenHeadedRedDragonEntity> state) {
+        // DATA_ANIM_TICKET is bumped on every setActionState() call, including
+        // repeats of the same action (e.g. two tail swipes in a row). Without
+        // this, GeckoLib's "don't restart an already-playing animation"
+        // optimisation can silently skip replaying a one-shot clip like the
+        // tail swipe when the same action state is retriggered back-to-back.
+        int ticket = this.entityData.get(DATA_ANIM_TICKET);
+        if (ticket != this.lastSeenAnimTicket) {
+            this.lastSeenAnimTicket = ticket;
+            state.getController().forceAnimationReset();
+        }
+
         String defaultLoop = this.isHovering() ? "animation.dragon.fly" : "animation.dragon.idle";
         switch (getActionState()) {
             case ACTION_BITE -> state.getController().setAnimation(

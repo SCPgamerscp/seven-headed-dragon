@@ -65,7 +65,7 @@ public final class RedDragonAttackPatternManager {
     public static void startRandomAttack(ApocalypseSevenHeadedRedDragonEntity dragon) {
         LivingEntity target = dragon.getFocusedTarget();
         if (target == null || !target.isAlive()) {
-            dragon.scheduleIn(10, dragon::onPatternFinished);
+            dragon.onPatternFinished();
             return;
         }
 
