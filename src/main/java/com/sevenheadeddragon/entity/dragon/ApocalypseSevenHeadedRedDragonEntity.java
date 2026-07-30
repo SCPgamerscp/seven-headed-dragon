@@ -574,33 +574,40 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
     protected void tickDeath() {
         ++this.deathTime;
 
+        // Ender-dragon style slow upward float into the sky during death sequence
+        this.setDeltaMovement(0.0D, 0.08D, 0.0D);
+        this.move(net.minecraft.world.entity.MoverType.SELF, this.getDeltaMovement());
+
         if (this.level() instanceof ServerLevel serverLevel) {
-            // A column of light climbing out of the corpse.
-            for (int i = 0; i < 6; i++) {
+            // Intense End-Rod light columns and explosions
+            for (int i = 0; i < 8; i++) {
                 serverLevel.sendParticles(ParticleTypes.END_ROD,
-                        this.getX() + (this.random.nextDouble() - 0.5D) * 6.0D,
-                        this.getY() + this.random.nextDouble() * 20.0D,
-                        this.getZ() + (this.random.nextDouble() - 0.5D) * 6.0D,
-                        1, 0.0D, 0.35D, 0.0D, 0.06D);
-            }
-            if (this.deathTime % 8 == 0) {
-                serverLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER,
                         this.getX() + (this.random.nextDouble() - 0.5D) * 8.0D,
-                        this.getY() + this.random.nextDouble() * 6.0D,
+                        this.getY() + this.random.nextDouble() * 12.0D,
                         this.getZ() + (this.random.nextDouble() - 0.5D) * 8.0D,
+                        2, 0.0D, 0.4D, 0.0D, 0.08D);
+            }
+            if (this.deathTime % 5 == 0) {
+                serverLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER,
+                        this.getX() + (this.random.nextDouble() - 0.5D) * 10.0D,
+                        this.getY() + this.random.nextDouble() * 8.0D,
+                        this.getZ() + (this.random.nextDouble() - 0.5D) * 10.0D,
+                        2, 0.0D, 0.0D, 0.0D, 0.0D);
+                serverLevel.sendParticles(ParticleTypes.FLASH,
+                        this.getX() + (this.random.nextDouble() - 0.5D) * 6.0D,
+                        this.getY() + this.random.nextDouble() * 6.0D,
+                        this.getZ() + (this.random.nextDouble() - 0.5D) * 6.0D,
                         1, 0.0D, 0.0D, 0.0D, 0.0D);
                 this.level().playSound(null, this.blockPosition(), SoundEvents.GENERIC_EXPLODE,
-                        SoundSource.HOSTILE, 3.0F, 0.5F);
+                        SoundSource.HOSTILE, 3.0F, 0.5F + (this.deathTime / 200.0F) * 0.5F);
             }
-            if (this.deathTime == 1) {
+            if (this.deathTime == 1 || this.deathTime == 100) {
                 this.level().playSound(null, this.blockPosition(), SoundEvents.ENDER_DRAGON_DEATH,
-                        SoundSource.HOSTILE, 4.0F, 0.6F);
+                        SoundSource.HOSTILE, 5.0F, 0.6F);
             }
         }
 
         if (this.deathTime >= 200 && !this.level().isClientSide) {
-            // Vanilla's XP payout is capped per orb, so 100,000 EXP is emitted
-            // in bulk here rather than through the normal small-orb drip.
             dropExperienceBulk();
             this.remove(Entity.RemovalReason.KILLED);
             this.gameEvent(net.minecraft.world.level.gameevent.GameEvent.ENTITY_DIE);
