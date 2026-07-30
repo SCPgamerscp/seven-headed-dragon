@@ -118,5 +118,44 @@
   "death.attack.sevenheadeddragon.void_damage": "%1$sは奈落に飲み込まれた",
   "death.attack.sevenheadeddragon.void_damage.player": "%1$sは%2$sから逃げようとして奈落に飲み込まれた",
   "death.attack.sevenheadeddragon.water_vulnerability": "%1$sは雨に流された",
-  "death.attack.sevenheadeddragon.water_vulnerability.player": "%1$sは%2$sから逃げようとして雨に流された"
+  "death.attack.sevenheadeddragon.water_vulnerability.player": "%1$sは%2$sから逃げようとして雨に流された",
+
+  "entity.sevenheadeddragon.apocalypse_seven_headed_red_dragon": "終末の七つ頭の赤い竜",
+  "entity.sevenheadeddragon.goat_missile": "山羊ミサイル",
+  "entity.sevenheadeddragon.squid_missile": "イカミサイル",
+  "entity.sevenheadeddragon.longinus_spear": "ロンギヌスの槍",
+  "entity.sevenheadeddragon.rainbow_lightning": "七色の雷",
+  "entity.sevenheadeddragon.dragon_magic_circle": "魔法陣",
+  "entity.sevenheadeddragon.timed_gimmick_creeper": "時限クリーパー",
+  "entity.sevenheadeddragon.debilitation_martyr": "衰弱の殉教者",
+
+  "item.sevenheadeddragon.apocalypse_seven_headed_red_dragon_spawn_egg": "終末の七つ頭の赤い竜のスポーンエッグ",
+  "item.sevenheadeddragon.debilitation_martyr_spawn_egg": "衰弱の殉教者のスポーンエッグ",
+  "item.sevenheadeddragon.timed_gimmick_creeper_spawn_egg": "時限クリーパーのスポーンエッグ",
+  "item.sevenheadeddragon.apocalypse_elytra": "終末の翼",
+
+  "effect.sevenheadeddragon.god_slaying": "神殺し",
+  "effect.sevenheadeddragon.sin_pride": "傲慢",
+  "effect.sevenheadeddragon.sin_wrath": "憤怒",
+  "effect.sevenheadeddragon.sin_envy": "嫉妬",
+  "effect.sevenheadeddragon.sin_sloth": "怠惰",
+  "effect.sevenheadeddragon.sin_greed": "強欲",
+  "effect.sevenheadeddragon.sin_gluttony": "暴食",
+  "effect.sevenheadeddragon.sin_lust": "色欲",
+
+  "death.attack.sevenheadeddragon.god_slaying": "%1$sは神殺しの呪いに滅ぼされた",
+  "death.attack.sevenheadeddragon.god_slaying.player": "%1$sは%2$sから逃げようとして神殺しの呪いに滅ぼされた",
+  "death.attack.sevenheadeddragon.longinus_spear": "%1$sはロンギヌスの槍に貫かれた",
+  "death.attack.sevenheadeddragon.longinus_spear.player": "%1$sは%2$sから逃げようとしてロンギヌスの槍に貫かれた",
+  "death.attack.sevenheadeddragon.rainbow_lightning": "%1$sは七色の雷に討たれた",
+  "death.attack.sevenheadeddragon.rainbow_lightning.player": "%1$sは%2$sから逃げようとして七色の雷に討たれた",
+  "death.attack.sevenheadeddragon.wither_poison_cloud": "%1$sは殉教者の瘴気に衰弱した",
+  "death.attack.sevenheadeddragon.wither_poison_cloud.player": "%1$sは%2$sから逃げようとして殉教者の瘴気に衰弱した",
+
+  "message.sevenheadeddragon.red_dragon_progress": "終末の予兆: ゾンビ %1$s / %2$s 体討伐",
+  "message.sevenheadeddragon.red_dragon_awakens": "空が赤く燃える……終末の七つ頭の赤い竜が目覚めた！",
+  "message.sevenheadeddragon.red_dragon_defeated": "赤い竜は倒れた。空に青が戻る。",
+
+  "advancements.sevenheadeddragon.kill_apocalypse_red_dragon.title": "世界を救った",
+  "advancements.sevenheadeddragon.kill_apocalypse_red_dragon.description": "神の永遠の敵である赤い竜を倒した"
 }

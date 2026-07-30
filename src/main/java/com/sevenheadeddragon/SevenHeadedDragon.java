@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import com.sevenheadeddragon.event.CentipedeSpawnHandler;
 import com.sevenheadeddragon.event.ModCombatEvents;
 import com.sevenheadeddragon.event.RaidVictoryHandler;
+import com.sevenheadeddragon.event.RedDragonSpawnHandler;
 import com.sevenheadeddragon.network.ModNetworking;
 import com.sevenheadeddragon.registry.ModCreativeTabs;
 import com.sevenheadeddragon.registry.ModEffects;
@@ -56,8 +57,10 @@ public class SevenHeadedDragon {
         MinecraftForge.EVENT_BUS.register(new ModCombatEvents());
         MinecraftForge.EVENT_BUS.register(new RaidVictoryHandler());
         MinecraftForge.EVENT_BUS.register(new CentipedeSpawnHandler());
+        MinecraftForge.EVENT_BUS.register(new RedDragonSpawnHandler());
 
-        LOGGER.info("Seven Headed Dragon mod initializing - Potion Master, Fang King, and Centipede bosses loaded.");
+        LOGGER.info("Seven Headed Dragon mod initializing - Potion Master, Fang King, Centipede and "
+                + "Apocalypse Seven Headed Red Dragon bosses loaded.");
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {

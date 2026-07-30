@@ -1,0 +1,62 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 64,
+				"texture_height": 64,
+				"visible_bounds_width": 2,
+				"visible_bounds_height": 3,
+				"visible_bounds_offset": [0, 0.5, 0]
+			},
+			"bones": [
+				{
+					"name": "nose",
+					"pivot": [0.5, 2, 2],
+					"rotation": [55, 0, 0],
+					"cubes": [
+						{"origin": [-2.5, -1, -6], "size": [5, 7, 10], "uv": [34, 46]}
+					]
+				},
+				{
+					"name": "head",
+					"parent": "nose",
+					"pivot": [0.5, -9.14183, 0.0354],
+					"rotation": [-55, 0, 0],
+					"cubes": [
+						{"origin": [0, -13.14183, -13.9646], "size": [0, 7, 5], "uv": [23, 52]},
+						{"origin": [-5.5, -0.14183, -9.9646], "size": [3, 2, 1], "uv": [2, 61]}
+					]
+				},
+				{
+					"name": "mirror",
+					"parent": "head",
+					"pivot": [0, -19.14183, 0.0354],
+					"mirror": true,
+					"cubes": [
+						{"origin": [2.5, -0.14183, -9.9646], "size": [3, 2, 1], "uv": [2, 61]}
+					]
+				},
+				{
+					"name": "left_horn",
+					"parent": "nose",
+					"pivot": [0.5, -9.14183, 0.0354],
+					"rotation": [-55, 0, 0],
+					"cubes": [
+						{"origin": [0.49, -0.14183, -9.9646], "size": [2, 7, 2], "uv": [12, 55]}
+					]
+				},
+				{
+					"name": "right_horn",
+					"parent": "nose",
+					"pivot": [0.5, -9.14183, 0.0354],
+					"rotation": [-55, 0, 0],
+					"cubes": [
+						{"origin": [-2.49, -0.14183, -9.9646], "size": [2, 7, 2], "uv": [12, 55]}
+					]
+				}
+			]
+		}
+	]
+}

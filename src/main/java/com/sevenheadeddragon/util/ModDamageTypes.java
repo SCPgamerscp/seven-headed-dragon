@@ -29,6 +29,22 @@ public final class ModDamageTypes {
     public static final ResourceKey<DamageType> WATER_VULNERABILITY = key("water_vulnerability");
     public static final ResourceKey<DamageType> DRAGON_SLAYING_POISON = key("dragon_slaying_poison");
 
+    // ------------------------------------------------------------------
+    // 終末の七つ頭の赤い竜 (Apocalypse Seven Headed Red Dragon)
+    // ------------------------------------------------------------------
+
+    /** 神殺し - the Longinus Spear's 10%-of-max-HP percentage damage-over-time. */
+    public static final ResourceKey<DamageType> GOD_SLAYING = key("god_slaying");
+
+    /** ロンギヌスの槍 - a direct impact hit from a falling spear. */
+    public static final ResourceKey<DamageType> LONGINUS_SPEAR = key("longinus_spear");
+
+    /** 七色の雷 - the Shocker-Breaker rainbow lightning bolts. */
+    public static final ResourceKey<DamageType> RAINBOW_LIGHTNING = key("rainbow_lightning");
+
+    /** 衰弱の殉教者のウィザー毒雲 - the Debilitation Martyrs' wither poison cloud. */
+    public static final ResourceKey<DamageType> WITHER_POISON_CLOUD = key("wither_poison_cloud");
+
     private static ResourceKey<DamageType> key(String path) {
         return ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(SevenHeadedDragon.MODID, path));
     }
