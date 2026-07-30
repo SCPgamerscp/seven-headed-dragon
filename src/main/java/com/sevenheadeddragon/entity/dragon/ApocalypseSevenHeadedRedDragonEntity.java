@@ -715,14 +715,33 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
     }
 
     private PlayState animationPredicate(AnimationState<ApocalypseSevenHeadedRedDragonEntity> state) {
+        String defaultLoop = this.isHovering() ? "animation.dragon.fly" : "animation.dragon.idle";
         switch (getActionState()) {
-            case ACTION_BITE -> state.getController().setAnimation(ANIM_BITES[getBiteIndex()]);
-            case ACTION_CLAW -> state.getController().setAnimation(ANIM_CLAW);
-            case ACTION_CHARGE -> state.getController().setAnimation(ANIM_CHARGE);
-            case ACTION_TAIL -> state.getController().setAnimation(ANIM_TAIL);
-            case ACTION_FLY_START -> state.getController().setAnimation(ANIM_FLY_START);
-            case ACTION_FLY -> state.getController().setAnimation(ANIM_FLY);
-            case ACTION_FLY_END -> state.getController().setAnimation(ANIM_FLY_END);
+            case ACTION_BITE -> state.getController().setAnimation(
+                    RawAnimation.begin().thenPlayXTimes("animation.dragon.attack_bite_" + (getBiteIndex() + 1), 1)
+                            .thenLoop(defaultLoop)
+            );
+            case ACTION_CLAW -> state.getController().setAnimation(
+                    RawAnimation.begin().thenLoop("animation.dragon.claw")
+            );
+            case ACTION_CHARGE -> state.getController().setAnimation(
+                    RawAnimation.begin().thenLoop("animation.dragon.attack_charge")
+            );
+            case ACTION_TAIL -> state.getController().setAnimation(
+                    RawAnimation.begin().thenPlayXTimes("animation.dragon.attack_tail", 1)
+                            .thenLoop(defaultLoop)
+            );
+            case ACTION_FLY_START -> state.getController().setAnimation(
+                    RawAnimation.begin().thenPlayXTimes("animation.dragon.fly.start", 1)
+                            .thenLoop("animation.dragon.fly")
+            );
+            case ACTION_FLY -> state.getController().setAnimation(
+                    RawAnimation.begin().thenLoop("animation.dragon.fly")
+            );
+            case ACTION_FLY_END -> state.getController().setAnimation(
+                    RawAnimation.begin().thenPlayXTimes("animation.dragon.fly.end", 1)
+                            .thenLoop("animation.dragon.idle")
+            );
             default -> {
                 if (this.isHovering()) {
                     state.getController().setAnimation(ANIM_FLY);
