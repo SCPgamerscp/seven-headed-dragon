@@ -238,7 +238,7 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
     /** Called by the pattern manager once a pattern is completely finished. */
     public void onPatternFinished() {
         this.patternActive = false;
-        setActionState(ACTION_IDLE);
+        setActionState(this.isHovering() ? ACTION_FLY : ACTION_IDLE);
     }
 
     // ------------------------------------------------------------------
@@ -246,6 +246,9 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
     // ------------------------------------------------------------------
 
     public void setActionState(byte state) {
+        if (state == ACTION_IDLE && this.isHovering()) {
+            state = ACTION_FLY;
+        }
         this.entityData.set(DATA_ACTION_STATE, state);
         this.entityData.set(DATA_ANIM_TICKET, this.entityData.get(DATA_ANIM_TICKET) + 1);
     }
