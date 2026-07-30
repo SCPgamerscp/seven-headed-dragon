@@ -142,7 +142,7 @@ public class LonginusSpearEntity extends Projectile implements GeoEntity {
 
         if (result.getEntity() instanceof LivingEntity victim) {
             Entity owner = this.getOwner();
-            victim.hurt(ModDamageTypes.source(victim, ModDamageTypes.LONGINUS_SPEAR), IMPACT_DAMAGE);
+            victim.hurt(ModDamageTypes.source(victim, ModDamageTypes.LONGINUS_SPEAR, this, owner), IMPACT_DAMAGE);
             victim.addEffect(new MobEffectInstance(ModEffects.GOD_SLAYING.get(),
                     GOD_SLAYING_DURATION_TICKS, 0, false, true, true),
                     owner instanceof LivingEntity livingOwner ? livingOwner : null);

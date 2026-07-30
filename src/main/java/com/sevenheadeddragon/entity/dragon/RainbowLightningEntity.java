@@ -174,7 +174,7 @@ public class RainbowLightningEntity extends Entity {
         for (LivingEntity victim : this.level().getEntitiesOfClass(LivingEntity.class, column,
                 e -> e.isAlive() && !(e instanceof ApocalypseSevenHeadedRedDragonEntity))) {
             if (!this.alreadyHit.add(victim)) continue;
-            victim.hurt(ModDamageTypes.source(victim, ModDamageTypes.RAINBOW_LIGHTNING), DAMAGE);
+            victim.hurt(ModDamageTypes.source(victim, ModDamageTypes.RAINBOW_LIGHTNING, this, this.caster), DAMAGE);
         }
 
         if (this.level() instanceof ServerLevel serverLevel) {

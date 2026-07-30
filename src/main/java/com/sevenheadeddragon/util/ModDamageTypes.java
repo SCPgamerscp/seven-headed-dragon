@@ -57,10 +57,18 @@ public final class ModDamageTypes {
      * statically like a regular Forge registry object).
      */
     public static DamageSource source(LivingEntity victim, ResourceKey<DamageType> key) {
+        return source(victim, key, null, null);
+    }
+
+    public static DamageSource source(LivingEntity victim, ResourceKey<DamageType> key, @javax.annotation.Nullable net.minecraft.world.entity.Entity attacker) {
+        return source(victim, key, attacker, attacker);
+    }
+
+    public static DamageSource source(LivingEntity victim, ResourceKey<DamageType> key, @javax.annotation.Nullable net.minecraft.world.entity.Entity directEntity, @javax.annotation.Nullable net.minecraft.world.entity.Entity attacker) {
         Holder<DamageType> holder = victim.level().registryAccess()
                 .registryOrThrow(Registries.DAMAGE_TYPE)
                 .getHolderOrThrow(key);
-        return new DamageSource(holder);
+        return new DamageSource(holder, directEntity, attacker);
     }
 
     private ModDamageTypes() {}
