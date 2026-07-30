@@ -350,20 +350,24 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
         super.aiStep();
         if (this.level().isClientSide) return;
 
-        this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
-        tickScheduledTasks();
-        tickHover();
-
-        if (isPlayerTurn()) {
-            // プレイヤーターン: total shutdown. No movement, no navigation, no
-            // new attacks - the entire point is a clean, safe damage window.
+                if (isPlayerTurn()) {
+            // プレイヤターン: 地上に停止して無防備
             this.getNavigation().stop();
             this.setDeltaMovement(0.0D, this.isHovering() ? 0.0D : this.getDeltaMovement().y, 0.0D);
-        } else if (!this.patternActive && this.turnTimer > MIN_TICKS_FOR_NEW_PATTERN) {
-            // No cooldown whatsoever: the instant one combo ends the next
-            // begins, producing the spec's "切れ目なく怒涛の勢い".
-            this.patternActive = true;
-            RedDragonAttackPatternManager.startRandomAttack(this);
+        } else {
+            // ボスターン（計60秒 / 1200 ticks）:
+            // 前半30秒(1200〜601): 地上近接物理攻撃
+            // 後半30秒(600〜1): 上空10ブロックに滞空し、空中魔法攻撃
+            if (this.turnTimer <= 600 && !this.isHovering()) {
+                this.startHovering(this.getY() + 10.0D);
+                this.setActionState(ACTION_FLY_START);
+                this.scheduleIn(20, () -> this.setActionState(ACTION_FLY));
+            }
+
+            if (!this.patternActive && this.turnTimer > MIN_TICKS_FOR_NEW_PATTERN) {
+                this.patternActive = true;
+                RedDragonAttackPatternManager.startRandomAttack(this);
+            }
         }
 
         if (--this.turnTimer <= 0) {
@@ -393,13 +397,21 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
         this.patternActive = false;
         this.charging = false;
         this.scheduledTasks.clear();
-        setActionState(ACTION_IDLE);
 
         if (nextIsPlayerTurn) {
-            // Land before freezing, so the player is never handed a turn
-            // against an unreachable airborne target.
-            stopHovering();
+            // ボスターン終了: 着地してプレイヤーの反撃ターン開始
+            if (this.isHovering()) {
+                setActionState(ACTION_FLY_END);
+                scheduleIn(20, () -> {
+                    stopHovering();
+                    setActionState(ACTION_IDLE);
+                });
+            } else {
+                setActionState(ACTION_IDLE);
+            }
             broadcastYourTurnTitle();
+        } else {
+            setActionState(ACTION_IDLE);
         }
     }
 

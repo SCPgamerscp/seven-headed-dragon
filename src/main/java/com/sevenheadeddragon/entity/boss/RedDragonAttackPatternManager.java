@@ -55,14 +55,6 @@ public final class RedDragonAttackPatternManager {
 
     private RedDragonAttackPatternManager() {}
 
-    /** Ground-level patterns, picked at random each time. */
-    private static final int PATTERN_SEVEN_BITE = 0;
-    private static final int PATTERN_MARTYR_SUMMON = 1;
-    private static final int PATTERN_CLAW_CHARGE = 2;
-    private static final int PATTERN_TAIL = 3;
-    private static final int PATTERN_FLYING_MAGIC = 4;
-    private static final int GROUND_PATTERN_COUNT = 5;
-
     /** Standard damage figure used by nearly every attack, per spec ("各20ダメージ"). */
     public static final float STANDARD_DAMAGE = 20.0F;
 
@@ -72,32 +64,38 @@ public final class RedDragonAttackPatternManager {
     public static void startRandomAttack(ApocalypseSevenHeadedRedDragonEntity dragon) {
         LivingEntity target = dragon.getFocusedTarget();
         if (target == null || !target.isAlive()) {
-            // Nothing to attack - release the pattern lock so the boss retries
-            // next tick rather than stalling for the rest of its turn.
             dragon.scheduleIn(10, dragon::onPatternFinished);
             return;
         }
 
-        switch (dragon.getRandom().nextInt(GROUND_PATTERN_COUNT)) {
-            case PATTERN_SEVEN_BITE -> startSevenBiteCombo(dragon, target);
-            case PATTERN_MARTYR_SUMMON -> startMartyrSummon(dragon, target);
-            case PATTERN_CLAW_CHARGE -> startClawCharge(dragon, target);
-            case PATTERN_TAIL -> startTailSwipe(dragon, target);
-            default -> startFlyingMagicMode(dragon, target);
+        if (dragon.isHovering()) {
+            // 空中魔法フェーズ（後半30秒）: 上空10ブロックに浮遊したまま魔法6種を連打
+            startRandomMagicAttack(dragon, target, dragon::onPatternFinished);
+        } else {
+            // 地上物理フェーズ（前半30秒）: 地上で近接・物理攻撃3種を実行
+            startRandomGroundAttack(dragon, target);
+        }
+    }
+
+    private static void startRandomGroundAttack(ApocalypseSevenHeadedRedDragonEntity dragon, LivingEntity target) {
+        switch (dragon.getRandom().nextInt(3)) {
+            case 0 -> startSevenBiteCombo(dragon, target);
+            case 1 -> startClawCharge(dragon, target);
+            default -> startTailSwipe(dragon, target);
         }
     }
 
     /**
-     * Picks one of the five <em>magic</em> patterns only - used by the flying
-     * mode, which repeats a magic attack five times from the air.
+     * 空中魔法・召喚攻撃6種（前半30秒の地上戦が終わり、上空へ浮上した後に連打）
      */
     private static void startRandomMagicAttack(ApocalypseSevenHeadedRedDragonEntity dragon,
-                                               LivingEntity target, Runnable onComplete) {
-        switch (dragon.getRandom().nextInt(5)) {
-            case 0 -> runGoatMachineGun(dragon, target, onComplete);
-            case 1 -> runSquidVolley(dragon, target, onComplete);
-            case 2 -> runLonginusSpears(dragon, target, onComplete);
-            case 3 -> runRainbowLightning(dragon, target, onComplete);
+                                                LivingEntity target, Runnable onComplete) {
+        switch (dragon.getRandom().nextInt(6)) {
+            case 0 -> runMartyrSummon(dragon, target, onComplete);
+            case 1 -> runGoatMachineGun(dragon, target, onComplete);
+            case 2 -> runSquidVolley(dragon, target, onComplete);
+            case 3 -> runLonginusSpears(dragon, target, onComplete);
+            case 4 -> runRainbowLightning(dragon, target, onComplete);
             default -> runCreeperGimmick(dragon, target, onComplete);
         }
     }
@@ -541,10 +539,10 @@ public final class RedDragonAttackPatternManager {
      * a persistent Wither cloud until killed, so ignoring them compounds
      * quickly with everything else the dragon is doing.
      */
-    private static void startMartyrSummon(ApocalypseSevenHeadedRedDragonEntity dragon, LivingEntity target) {
+    private static void runMartyrSummon(ApocalypseSevenHeadedRedDragonEntity dragon, LivingEntity target, Runnable onComplete) {
         if (!dragon.isAlive() || target == null || !target.isAlive()
                 || !(dragon.level() instanceof ServerLevel serverLevel)) {
-            dragon.onPatternFinished();
+            onComplete.run();
             return;
         }
 
@@ -570,7 +568,7 @@ public final class RedDragonAttackPatternManager {
         serverLevel.playSound(null, dragon.blockPosition(), SoundEvents.WITHER_SPAWN,
                 SoundSource.HOSTILE, 2.0F, 1.4F);
 
-        dragon.scheduleIn(30, dragon::onPatternFinished);
+        dragon.scheduleIn(30, onComplete);
     }
 
     // ==================================================================
