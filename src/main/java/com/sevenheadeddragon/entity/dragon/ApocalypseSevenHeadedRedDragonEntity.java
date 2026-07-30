@@ -128,8 +128,7 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
     // ------------------------------------------------------------------
 
     private static final RawAnimation ANIM_IDLE = RawAnimation.begin().thenLoop("animation.dragon.idle");
-    private static final RawAnimation ANIM_CLAW =
-            RawAnimation.begin().then("animation.dragon.claw", Animation.LoopType.PLAY_ONCE);
+    private static final RawAnimation ANIM_CLAW = RawAnimation.begin().thenLoop("animation.dragon.claw");
     private static final RawAnimation ANIM_CHARGE = RawAnimation.begin().thenLoop("animation.dragon.attack_charge");
     private static final RawAnimation ANIM_TAIL =
             RawAnimation.begin().then("animation.dragon.attack_tail", Animation.LoopType.PLAY_ONCE);
@@ -700,7 +699,9 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
             return target != null && target.isAlive()
                     && !this.dragon.isPlayerTurn()
                     && !this.dragon.isCharging()
-                    && !this.dragon.isHovering();
+                    && !this.dragon.isHovering()
+                    && this.dragon.getActionState() != ACTION_BITE
+                    && this.dragon.getActionState() != ACTION_CLAW;
         }
 
         @Override

@@ -117,7 +117,7 @@ public final class RedDragonAttackPatternManager {
     // ==================================================================
 
     /** Ticks between consecutive bites - fast enough to feel like one combo. */
-    private static final int BITE_INTERVAL_TICKS = 9;
+    private static final int BITE_INTERVAL_TICKS = 16;
 
     /** Reach of each bite. */
     private static final double BITE_REACH = 9.0D;
@@ -130,6 +130,8 @@ public final class RedDragonAttackPatternManager {
      * leaves the player at a quarter of their offensive output and crawling.
      */
     private static void startSevenBiteCombo(ApocalypseSevenHeadedRedDragonEntity dragon, LivingEntity target) {
+        dragon.getNavigation().stop();
+        dragon.setDeltaMovement(0.0D, dragon.getDeltaMovement().y, 0.0D);
         biteStep(dragon, target, 0);
     }
 
@@ -139,6 +141,8 @@ public final class RedDragonAttackPatternManager {
             return;
         }
 
+        dragon.getNavigation().stop();
+        dragon.setDeltaMovement(0.0D, dragon.getDeltaMovement().y, 0.0D);
         dragon.playBite(index);
         faceTarget(dragon, target);
         dragon.level().playSound(null, dragon.blockPosition(), SoundEvents.ENDER_DRAGON_GROWL,
@@ -680,6 +684,8 @@ public final class RedDragonAttackPatternManager {
             return;
         }
 
+        dragon.getNavigation().stop();
+        dragon.setDeltaMovement(0.0D, dragon.getDeltaMovement().y, 0.0D);
         dragon.setActionState(ApocalypseSevenHeadedRedDragonEntity.ACTION_CLAW);
         faceTarget(dragon, target);
         dragon.level().playSound(null, dragon.blockPosition(), SoundEvents.RAVAGER_ATTACK,
