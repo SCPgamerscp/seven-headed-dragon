@@ -578,69 +578,8 @@ public final class RedDragonAttackPatternManager {
     }
 
     // ==================================================================
-    // ⑦ 飛行・魔法詠唱モード
+    // ⑦ 飛行・魔法詠唱モード（30秒間の空中フェーズ）
     // ==================================================================
-
-    /** Hover altitude above the ground, per spec ("上空10ブロック"). */
-    private static final double FLY_ALTITUDE = 10.0D;
-    /** fly.start animation length before the magic begins. */
-    private static final int FLY_START_TICKS = 20;
-    /** Magic repetitions while airborne, per spec ("5回繰り返し"). */
-    private static final int FLY_MAGIC_REPEATS = 5;
-    /** fly.end animation length after landing begins. */
-    private static final int FLY_END_TICKS = 20;
-
-    /**
-     * The signature spellcasting sequence:
-     * {@code fly.start} → rise 10 blocks → loop {@code fly} while casting five
-     * consecutive magic attacks (missiles / spears / lightning / creepers) →
-     * {@code fly.end} and land.
-     */
-    private static void startFlyingMagicMode(ApocalypseSevenHeadedRedDragonEntity dragon, LivingEntity target) {
-        if (!dragon.isAlive() || target == null || !target.isAlive()) {
-            dragon.onPatternFinished();
-            return;
-        }
-
-        dragon.setActionState(ApocalypseSevenHeadedRedDragonEntity.ACTION_FLY_START);
-        dragon.getNavigation().stop();
-        dragon.level().playSound(null, dragon.blockPosition(), SoundEvents.ENDER_DRAGON_FLAP,
-                SoundSource.HOSTILE, 3.0F, 0.8F);
-
-        dragon.scheduleIn(FLY_START_TICKS, () -> {
-            if (!dragon.isAlive() || dragon.isPlayerTurn()) {
-                dragon.stopHovering();
-                dragon.onPatternFinished();
-                return;
-            }
-            dragon.startHovering(dragon.getY() + FLY_ALTITUDE);
-            dragon.setActionState(ApocalypseSevenHeadedRedDragonEntity.ACTION_FLY);
-            flyingMagicStep(dragon, target, 0);
-        });
-    }
-
-    private static void flyingMagicStep(ApocalypseSevenHeadedRedDragonEntity dragon,
-                                        LivingEntity target, int castsDone) {
-        if (!dragon.isAlive() || dragon.isPlayerTurn() || castsDone >= FLY_MAGIC_REPEATS
-                || target == null || !target.isAlive()) {
-            endFlight(dragon);
-            return;
-        }
-
-        // Keep the fly loop playing and stay locked onto the target.
-        dragon.setActionState(ApocalypseSevenHeadedRedDragonEntity.ACTION_FLY);
-        faceTarget(dragon, target);
-
-        startRandomMagicAttack(dragon, target, () -> flyingMagicStep(dragon, target, castsDone + 1));
-    }
-
-    private static void endFlight(ApocalypseSevenHeadedRedDragonEntity dragon) {
-        dragon.setActionState(ApocalypseSevenHeadedRedDragonEntity.ACTION_FLY_END);
-        dragon.stopHovering();
-        dragon.level().playSound(null, dragon.blockPosition(), SoundEvents.ENDER_DRAGON_FLAP,
-                SoundSource.HOSTILE, 3.0F, 0.6F);
-        dragon.scheduleIn(FLY_END_TICKS, dragon::onPatternFinished);
-    }
 
     // ==================================================================
     // ⑧ 近接物理攻撃: claw x3 -> charge, and tail
