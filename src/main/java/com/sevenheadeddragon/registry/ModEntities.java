@@ -87,7 +87,6 @@ public final class ModEntities {
                             .clientTrackingRange(160)
                             .updateInterval(1)
                             .fireImmune()
-                            .noSummon()
                             .build("apocalypse_seven_headed_red_dragon"));
 
     /** 🐐 山羊ミサイル - the machine-gun projectile (30 rounds, power 4). */
