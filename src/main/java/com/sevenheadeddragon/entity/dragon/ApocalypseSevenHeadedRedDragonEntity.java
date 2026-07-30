@@ -131,19 +131,20 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
     private static final RawAnimation ANIM_CLAW = RawAnimation.begin().thenLoop("animation.dragon.claw");
     private static final RawAnimation ANIM_CHARGE = RawAnimation.begin().thenLoop("animation.dragon.attack_charge");
     private static final RawAnimation ANIM_TAIL =
-            RawAnimation.begin().then("animation.dragon.attack_tail", Animation.LoopType.PLAY_ONCE);
+            RawAnimation.begin().thenPlayXTimes("animation.dragon.attack_tail", 1).thenLoop("animation.dragon.idle");
     private static final RawAnimation ANIM_FLY_START =
-            RawAnimation.begin().then("animation.dragon.fly.start", Animation.LoopType.PLAY_ONCE);
+            RawAnimation.begin().thenPlayXTimes("animation.dragon.fly.start", 1).thenLoop("animation.dragon.fly");
     private static final RawAnimation ANIM_FLY = RawAnimation.begin().thenLoop("animation.dragon.fly");
     private static final RawAnimation ANIM_FLY_END =
-            RawAnimation.begin().then("animation.dragon.fly.end", Animation.LoopType.PLAY_ONCE);
+            RawAnimation.begin().thenPlayXTimes("animation.dragon.fly.end", 1).thenLoop("animation.dragon.idle");
 
     /** attack_bite_1 .. attack_bite_7, indexed 0-6. */
     private static final RawAnimation[] ANIM_BITES = new RawAnimation[7];
     static {
         for (int i = 0; i < 7; i++) {
             ANIM_BITES[i] = RawAnimation.begin()
-                    .then("animation.dragon.attack_bite_" + (i + 1), Animation.LoopType.PLAY_ONCE);
+                    .thenPlayXTimes("animation.dragon.attack_bite_" + (i + 1), 1)
+                    .thenLoop("animation.dragon.idle");
         }
     }
 
