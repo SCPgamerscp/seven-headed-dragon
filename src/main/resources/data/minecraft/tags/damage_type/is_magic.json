@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
-    "sevenheadeddragon:dragon_slaying_poison"
+    "sevenheadeddragon:dragon_slaying_poison",
+    "sevenheadeddragon:god_slaying",
+    "sevenheadeddragon:longinus_spear",
+    "sevenheadeddragon:wither_poison_cloud"
   ]
 }

@@ -26,3 +26,6 @@ forge*changelog.txt
 
 # Local build/debug logs
 *.log
+
+# Local sandbox toolchain (downloaded JDK)
+.tooling/

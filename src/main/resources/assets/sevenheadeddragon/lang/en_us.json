@@ -118,5 +118,44 @@
   "death.attack.sevenheadeddragon.void_damage": "%1$s was pulled into the void",
   "death.attack.sevenheadeddragon.void_damage.player": "%1$s was pulled into the void while trying to escape %2$s",
   "death.attack.sevenheadeddragon.water_vulnerability": "%1$s was washed away by the rain",
-  "death.attack.sevenheadeddragon.water_vulnerability.player": "%1$s was washed away by the rain while trying to escape %2$s"
+  "death.attack.sevenheadeddragon.water_vulnerability.player": "%1$s was washed away by the rain while trying to escape %2$s",
+
+  "entity.sevenheadeddragon.apocalypse_seven_headed_red_dragon": "Apocalypse Seven Headed Red Dragon",
+  "entity.sevenheadeddragon.goat_missile": "Goat Missile",
+  "entity.sevenheadeddragon.squid_missile": "Squid Missile",
+  "entity.sevenheadeddragon.longinus_spear": "Spear of Longinus",
+  "entity.sevenheadeddragon.rainbow_lightning": "Rainbow Lightning",
+  "entity.sevenheadeddragon.dragon_magic_circle": "Magic Circle",
+  "entity.sevenheadeddragon.timed_gimmick_creeper": "Timed Creeper",
+  "entity.sevenheadeddragon.debilitation_martyr": "Martyr of Debilitation",
+
+  "item.sevenheadeddragon.apocalypse_seven_headed_red_dragon_spawn_egg": "Apocalypse Seven Headed Red Dragon Spawn Egg",
+  "item.sevenheadeddragon.debilitation_martyr_spawn_egg": "Martyr of Debilitation Spawn Egg",
+  "item.sevenheadeddragon.timed_gimmick_creeper_spawn_egg": "Timed Creeper Spawn Egg",
+  "item.sevenheadeddragon.apocalypse_elytra": "Wings of the Apocalypse",
+
+  "effect.sevenheadeddragon.god_slaying": "God Slaying",
+  "effect.sevenheadeddragon.sin_pride": "Pride",
+  "effect.sevenheadeddragon.sin_wrath": "Wrath",
+  "effect.sevenheadeddragon.sin_envy": "Envy",
+  "effect.sevenheadeddragon.sin_sloth": "Sloth",
+  "effect.sevenheadeddragon.sin_greed": "Greed",
+  "effect.sevenheadeddragon.sin_gluttony": "Gluttony",
+  "effect.sevenheadeddragon.sin_lust": "Lust",
+
+  "death.attack.sevenheadeddragon.god_slaying": "%1$s was unmade by the God Slaying curse",
+  "death.attack.sevenheadeddragon.god_slaying.player": "%1$s was unmade by the God Slaying curse while trying to escape %2$s",
+  "death.attack.sevenheadeddragon.longinus_spear": "%1$s was impaled by the Spear of Longinus",
+  "death.attack.sevenheadeddragon.longinus_spear.player": "%1$s was impaled by the Spear of Longinus while trying to escape %2$s",
+  "death.attack.sevenheadeddragon.rainbow_lightning": "%1$s was struck down by seven-coloured lightning",
+  "death.attack.sevenheadeddragon.rainbow_lightning.player": "%1$s was struck down by seven-coloured lightning while trying to escape %2$s",
+  "death.attack.sevenheadeddragon.wither_poison_cloud": "%1$s withered away in a martyr's miasma",
+  "death.attack.sevenheadeddragon.wither_poison_cloud.player": "%1$s withered away in a martyr's miasma while trying to escape %2$s",
+
+  "message.sevenheadeddragon.red_dragon_progress": "Omen of the Apocalypse: %1$s / %2$s zombies slain",
+  "message.sevenheadeddragon.red_dragon_awakens": "The sky burns red... the Apocalypse Seven Headed Red Dragon awakens!",
+  "message.sevenheadeddragon.red_dragon_defeated": "The red dragon falls. The sky returns to blue.",
+
+  "advancements.sevenheadeddragon.kill_apocalypse_red_dragon.title": "Saviour of the World",
+  "advancements.sevenheadeddragon.kill_apocalypse_red_dragon.description": "Defeated the red dragon, the eternal enemy of God"
 }

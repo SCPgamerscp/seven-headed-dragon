@@ -4,6 +4,8 @@ import com.sevenheadeddragon.SevenHeadedDragon;
 import com.sevenheadeddragon.effect.AsphyxiationEffect;
 import com.sevenheadeddragon.effect.ControlReversalEffect;
 import com.sevenheadeddragon.effect.FireworkMarkEffect;
+import com.sevenheadeddragon.effect.GodSlayingEffect;
+import com.sevenheadeddragon.effect.SevenSinsEffect;
 import com.sevenheadeddragon.effect.InsecticideEffect;
 import com.sevenheadeddragon.effect.InsectifyEffect;
 import com.sevenheadeddragon.effect.LightningMarkEffect;
@@ -99,6 +101,40 @@ public final class ModEffects {
     // 16. ドラゴン殺しの毒 (Dragon-Slaying Poison) - Centipede Boss bite debuff, 10 magic dmg/sec, stops at 1 HP.
     public static final RegistryObject<MobEffect> DRAGON_SLAYING_POISON =
             EFFECTS.register("dragon_slaying_poison", com.sevenheadeddragon.effect.DragonSlayingPoisonEffect::new);
+
+    // ------------------------------------------------------------------
+    // 終末の七つ頭の赤い竜 (Apocalypse Seven Headed Red Dragon)
+    // ------------------------------------------------------------------
+
+    // 17. 神殺し (God Slaying) - Longinus Spear direct hit; strips 10% of MAX HP per second.
+    public static final RegistryObject<MobEffect> GOD_SLAYING =
+            EFFECTS.register("god_slaying", GodSlayingEffect::new);
+
+    // 18-24. 七つの大罪 (The Seven Deadly Sins) - one per dragon head, each
+    // -50% attack damage and -50% movement speed. Registered as seven distinct
+    // effects (not one stacking effect) so all seven can coexist on a victim
+    // that eats the full 7-bite combo.
+    public static final RegistryObject<MobEffect> SIN_PRIDE =
+            EFFECTS.register("sin_pride", () -> new SevenSinsEffect(SevenSinsEffect.Sin.PRIDE));
+    public static final RegistryObject<MobEffect> SIN_WRATH =
+            EFFECTS.register("sin_wrath", () -> new SevenSinsEffect(SevenSinsEffect.Sin.WRATH));
+    public static final RegistryObject<MobEffect> SIN_ENVY =
+            EFFECTS.register("sin_envy", () -> new SevenSinsEffect(SevenSinsEffect.Sin.ENVY));
+    public static final RegistryObject<MobEffect> SIN_SLOTH =
+            EFFECTS.register("sin_sloth", () -> new SevenSinsEffect(SevenSinsEffect.Sin.SLOTH));
+    public static final RegistryObject<MobEffect> SIN_GREED =
+            EFFECTS.register("sin_greed", () -> new SevenSinsEffect(SevenSinsEffect.Sin.GREED));
+    public static final RegistryObject<MobEffect> SIN_GLUTTONY =
+            EFFECTS.register("sin_gluttony", () -> new SevenSinsEffect(SevenSinsEffect.Sin.GLUTTONY));
+    public static final RegistryObject<MobEffect> SIN_LUST =
+            EFFECTS.register("sin_lust", () -> new SevenSinsEffect(SevenSinsEffect.Sin.LUST));
+
+    /**
+     * The seven sins in bite order (head 1 → head 7), so the attack pattern can
+     * simply index into this list as it walks through attack_bite_1..7.
+     */
+    public static final java.util.List<RegistryObject<MobEffect>> SEVEN_SINS = java.util.List.of(
+            SIN_PRIDE, SIN_WRATH, SIN_ENVY, SIN_SLOTH, SIN_GREED, SIN_GLUTTONY, SIN_LUST);
 
     private ModEffects() {}
 }
