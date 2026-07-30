@@ -55,18 +55,13 @@ public final class RedDragonAttackPatternManager {
 
     private RedDragonAttackPatternManager() {}
 
-    /** Ground-level melee & ranged patterns, picked at random each time. */
+    /** Ground-level patterns, picked at random each time. */
     private static final int PATTERN_SEVEN_BITE = 0;
-    private static final int PATTERN_GOAT_MACHINE_GUN = 1;
-    private static final int PATTERN_SQUID_VOLLEY = 2;
-    private static final int PATTERN_LONGINUS = 3;
-    private static final int PATTERN_RAINBOW_LIGHTNING = 4;
-    private static final int PATTERN_CREEPER_GIMMICK = 5;
-    private static final int PATTERN_MARTYR_SUMMON = 6;
-    private static final int PATTERN_FLYING_MAGIC = 7;
-    private static final int PATTERN_CLAW_CHARGE = 8;
-    private static final int PATTERN_TAIL = 9;
-    private static final int PATTERN_COUNT = 10;
+    private static final int PATTERN_MARTYR_SUMMON = 1;
+    private static final int PATTERN_CLAW_CHARGE = 2;
+    private static final int PATTERN_TAIL = 3;
+    private static final int PATTERN_FLYING_MAGIC = 4;
+    private static final int GROUND_PATTERN_COUNT = 5;
 
     /** Standard damage figure used by nearly every attack, per spec ("各20ダメージ"). */
     public static final float STANDARD_DAMAGE = 20.0F;
@@ -83,17 +78,12 @@ public final class RedDragonAttackPatternManager {
             return;
         }
 
-        switch (dragon.getRandom().nextInt(PATTERN_COUNT)) {
+        switch (dragon.getRandom().nextInt(GROUND_PATTERN_COUNT)) {
             case PATTERN_SEVEN_BITE -> startSevenBiteCombo(dragon, target);
-            case PATTERN_GOAT_MACHINE_GUN -> startGoatMachineGun(dragon, target);
-            case PATTERN_SQUID_VOLLEY -> startSquidVolley(dragon, target);
-            case PATTERN_LONGINUS -> startLonginusSpears(dragon, target);
-            case PATTERN_RAINBOW_LIGHTNING -> startRainbowLightning(dragon, target);
-            case PATTERN_CREEPER_GIMMICK -> startCreeperGimmick(dragon, target);
             case PATTERN_MARTYR_SUMMON -> startMartyrSummon(dragon, target);
-            case PATTERN_FLYING_MAGIC -> startFlyingMagicMode(dragon, target);
             case PATTERN_CLAW_CHARGE -> startClawCharge(dragon, target);
-            default -> startTailSwipe(dragon, target);
+            case PATTERN_TAIL -> startTailSwipe(dragon, target);
+            default -> startFlyingMagicMode(dragon, target);
         }
     }
 
