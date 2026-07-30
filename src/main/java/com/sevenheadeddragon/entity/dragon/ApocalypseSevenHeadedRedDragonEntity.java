@@ -375,9 +375,19 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
             // 前半30秒(1200〜601): 地上近接物理攻撃
             // 後半30秒(600〜1): 上空10ブロックに滞空し、空中魔法攻撃
             if (this.turnTimer <= 600 && !this.isHovering()) {
+                // 地上攻撃・タイマー・突進フラグを完全キャンセル・リセット
+                this.scheduledTasks.clear();
+                this.charging = false;
+                this.patternActive = false;
+                this.getNavigation().stop();
+
                 this.startHovering(this.getY() + 10.0D);
                 this.setActionState(ACTION_FLY_START);
-                this.scheduleIn(20, () -> this.setActionState(ACTION_FLY));
+                this.scheduleIn(20, () -> {
+                    if (this.isHovering()) {
+                        this.setActionState(ACTION_FLY);
+                    }
+                });
             }
 
             if (!this.patternActive && this.turnTimer > MIN_TICKS_FOR_NEW_PATTERN) {
