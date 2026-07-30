@@ -77,10 +77,10 @@ public class LonginusSpearEntity extends Projectile implements GeoEntity {
     public void dropFrom(double x, double y, double z) {
         this.setPos(x, y, z);
         this.setDeltaMovement(0.0D, -FALL_SPEED, 0.0D);
-        this.setXRot(90.0F); // point-down
+        this.setXRot(0.0F); // 垂直（まっすぐ立てて落下させる）
         this.setYRot(0.0F);
-        this.xRotO = this.getXRot();
-        this.yRotO = this.getYRot();
+        this.xRotO = 0.0F;
+        this.yRotO = 0.0F;
     }
 
     @Override
