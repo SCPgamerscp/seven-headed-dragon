@@ -222,16 +222,27 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
         this.entityData.set(DATA_PLAYER_TURN, value);
     }
 
+    private boolean isValidTarget(@Nullable LivingEntity entity) {
+        if (entity == null || !entity.isAlive()) return false;
+        if (entity instanceof Player player) {
+            return !player.isCreative() && !player.isSpectator();
+        }
+        return true;
+    }
+
     @Nullable
     public LivingEntity getFocusedTarget() {
         LivingEntity target = this.getTarget();
-        if (target != null && target.isAlive()) {
+        if (isValidTarget(target)) {
             return target;
         }
         Player nearestPlayer = this.level().getNearestPlayer(this, 64.0D);
-        if (nearestPlayer != null && nearestPlayer.isAlive()) {
+        if (isValidTarget(nearestPlayer)) {
             this.setTarget(nearestPlayer);
             return nearestPlayer;
+        }
+        if (this.getTarget() != null) {
+            this.setTarget(null);
         }
         return null;
     }
