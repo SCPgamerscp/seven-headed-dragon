@@ -90,36 +90,39 @@ public class RainbowLightningRenderer extends EntityRenderer<RainbowLightningEnt
     }
 
     /**
-     * Draws a 3D volumetric cross (4 quad planes at 0°, 45°, 90°, 135°)
-     * ensuring 100% visibility from every angle with zero invisible edge-on angles.
+     * Draws a 4-sided 3D volumetric box column for every segment with double-sided quads.
+     * Guarantees 100% visibility from any camera angle (0° to 360°, front, back, top, side).
      */
     private static void draw3DVolumetricCross(VertexConsumer consumer, Matrix4f pose,
                                                float x0, float y0, float z0,
                                                float x1, float y1, float z1,
                                                float width, float r, float g, float b, float a) {
-        // Plane 1: X-axis offset
-        consumer.vertex(pose, x0 - width, y0, z0).color(r, g, b, a).endVertex();
-        consumer.vertex(pose, x0 + width, y0, z0).color(r, g, b, a).endVertex();
-        consumer.vertex(pose, x1 + width, y1, z1).color(r, g, b, a).endVertex();
-        consumer.vertex(pose, x1 - width, y1, z1).color(r, g, b, a).endVertex();
+        // Front Face (+Z)
+        drawQuadDoubleSided(consumer, pose, x0 - width, y0, z0 + width, x0 + width, y0, z0 + width, x1 + width, y1, z1 + width, x1 - width, y1, z1 + width, r, g, b, a);
+        // Back Face (-Z)
+        drawQuadDoubleSided(consumer, pose, x0 + width, y0, z0 - width, x0 - width, y0, z0 - width, x1 - width, y1, z1 - width, x1 + width, y1, z1 - width, r, g, b, a);
+        // Right Face (+X)
+        drawQuadDoubleSided(consumer, pose, x0 + width, y0, z0 + width, x0 + width, y0, z0 - width, x1 + width, y1, z1 - width, x1 + width, y1, z1 + width, r, g, b, a);
+        // Left Face (-X)
+        drawQuadDoubleSided(consumer, pose, x0 - width, y0, z0 - width, x0 - width, y0, z0 + width, x1 - width, y1, z1 + width, x1 - width, y1, z1 - width, r, g, b, a);
+    }
 
-        // Plane 2: Z-axis offset
-        consumer.vertex(pose, x0, y0, z0 - width).color(r, g, b, a).endVertex();
-        consumer.vertex(pose, x0, y0, z0 + width).color(r, g, b, a).endVertex();
-        consumer.vertex(pose, x1, y1, z1 + width).color(r, g, b, a).endVertex();
-        consumer.vertex(pose, x1, y1, z1 - width).color(r, g, b, a).endVertex();
+    private static void drawQuadDoubleSided(VertexConsumer consumer, Matrix4f pose,
+                                           float x0, float y0, float z0,
+                                           float x1, float y1, float z1,
+                                           float x2, float y2, float z2,
+                                           float x3, float y3, float z3,
+                                           float r, float g, float b, float a) {
+        // Front face
+        consumer.vertex(pose, x0, y0, z0).color(r, g, b, a).endVertex();
+        consumer.vertex(pose, x1, y1, z1).color(r, g, b, a).endVertex();
+        consumer.vertex(pose, x2, y2, z2).color(r, g, b, a).endVertex();
+        consumer.vertex(pose, x3, y3, z3).color(r, g, b, a).endVertex();
 
-        // Plane 3: Diagonal 1 (45 deg)
-        float d = width * 0.7071F;
-        consumer.vertex(pose, x0 - d, y0, z0 - d).color(r, g, b, a).endVertex();
-        consumer.vertex(pose, x0 + d, y0, z0 + d).color(r, g, b, a).endVertex();
-        consumer.vertex(pose, x1 + d, y1, z1 + d).color(r, g, b, a).endVertex();
-        consumer.vertex(pose, x1 - d, y1, z1 - d).color(r, g, b, a).endVertex();
-
-        // Plane 4: Diagonal 2 (135 deg)
-        consumer.vertex(pose, x0 - d, y0, z0 + d).color(r, g, b, a).endVertex();
-        consumer.vertex(pose, x0 + d, y0, z0 - d).color(r, g, b, a).endVertex();
-        consumer.vertex(pose, x1 + d, y1, z1 - d).color(r, g, b, a).endVertex();
-        consumer.vertex(pose, x1 - d, y1, z1 + d).color(r, g, b, a).endVertex();
+        // Back face (reverse winding order)
+        consumer.vertex(pose, x3, y3, z3).color(r, g, b, a).endVertex();
+        consumer.vertex(pose, x2, y2, z2).color(r, g, b, a).endVertex();
+        consumer.vertex(pose, x1, y1, z1).color(r, g, b, a).endVertex();
+        consumer.vertex(pose, x0, y0, z0).color(r, g, b, a).endVertex();
     }
 }

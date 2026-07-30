@@ -242,13 +242,13 @@ public class RainbowLightningEntity extends Entity {
 
     @Override
     public boolean shouldRenderAtSqrDistance(double distanceSqr) {
-        return distanceSqr < 160.0D * 160.0D;
+        return distanceSqr < 256.0D * 256.0D;
     }
 
     @Override
     public AABB getBoundingBoxForCulling() {
         return new AABB(
-                this.getX() - 2.0D, this.getY() - 1.0D, this.getZ() - 2.0D,
-                this.getX() + 2.0D, this.getY() + BEAM_HEIGHT, this.getZ() + 2.0D);
+                this.getX() - 16.0D, this.getY() - 10.0D, this.getZ() - 16.0D,
+                this.getX() + 16.0D, this.getY() + BEAM_HEIGHT + 10.0D, this.getZ() + 16.0D);
     }
 }
