@@ -181,6 +181,11 @@ public class LonginusSpearEntity extends Projectile implements GeoEntity {
     }
 
     @Override
+    public boolean ignoreExplosion() {
+        return true; // Tells Minecraft's Explosion engine to skip applying explosion knockback to this spear
+    }
+
+    @Override
     public boolean isPushable() {
         return false;
     }
