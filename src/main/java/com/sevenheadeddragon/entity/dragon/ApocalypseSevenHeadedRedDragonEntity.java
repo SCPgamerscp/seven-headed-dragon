@@ -449,7 +449,18 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
      * makes the 5-second windows the only meaningful damage opportunity.
      */
     @Override
+    public boolean causeFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
+        return false;
+    }
+
+    @Override
+    protected int calculateFallDamage(float fallDistance, float damageMultiplier) {
+        return 0;
+    }
+
+    @Override
     public boolean hurt(DamageSource source, float amount) {
+        if (source.is(net.minecraft.world.damagesource.DamageTypes.FALL)) return false;
         if (!isPlayerTurn()) {
             if (!this.level().isClientSide) {
                 this.level().playSound(null, this.blockPosition(), SoundEvents.SHIELD_BLOCK,
