@@ -139,8 +139,17 @@ public class DebilitationMartyrEntity extends Monster implements GeoEntity {
     }
 
     @Override
+    public boolean canBeAffected(MobEffectInstance effect) {
+        if (effect.getEffect() == MobEffects.WITHER) {
+            return false;
+        }
+        return super.canBeAffected(effect);
+    }
+
+    @Override
     public boolean hurt(DamageSource source, float amount) {
         if (source.getEntity() instanceof ApocalypseSevenHeadedRedDragonEntity) return false;
+        if (source.is(net.minecraft.world.damagesource.DamageTypes.WITHER)) return false;
         return super.hurt(source, amount);
     }
 
