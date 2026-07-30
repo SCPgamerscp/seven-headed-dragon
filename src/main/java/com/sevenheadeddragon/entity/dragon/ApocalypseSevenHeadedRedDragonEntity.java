@@ -687,7 +687,13 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
             case ACTION_FLY_START -> state.getController().setAnimation(ANIM_FLY_START);
             case ACTION_FLY -> state.getController().setAnimation(ANIM_FLY);
             case ACTION_FLY_END -> state.getController().setAnimation(ANIM_FLY_END);
-            default -> state.getController().setAnimation(ANIM_IDLE);
+            default -> {
+                if (this.isHovering()) {
+                    state.getController().setAnimation(ANIM_FLY);
+                } else {
+                    state.getController().setAnimation(ANIM_IDLE);
+                }
+            }
         }
         return PlayState.CONTINUE;
     }
