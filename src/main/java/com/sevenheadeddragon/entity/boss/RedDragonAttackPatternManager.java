@@ -279,8 +279,13 @@ public final class RedDragonAttackPatternManager {
      */
     private static void runLonginusSpears(ApocalypseSevenHeadedRedDragonEntity dragon,
                                           LivingEntity target, Runnable onComplete) {
-        if (!dragon.isAlive() || target == null || !target.isAlive()
-                || !(dragon.level() instanceof ServerLevel serverLevel)) {
+        longinusWaveStep(dragon, target, 0, 5, onComplete);
+    }
+
+    private static void longinusWaveStep(ApocalypseSevenHeadedRedDragonEntity dragon, LivingEntity target,
+                                         int wave, int totalWaves, Runnable onComplete) {
+        if (!dragon.isAlive() || dragon.isPlayerTurn() || target == null || !target.isAlive()
+                || wave >= totalWaves || !(dragon.level() instanceof ServerLevel serverLevel)) {
             onComplete.run();
             return;
         }
@@ -290,17 +295,17 @@ public final class RedDragonAttackPatternManager {
 
         // 魔法陣: one large golden circle marking the whole strike zone.
         DragonMagicCircleEntity.spawn(serverLevel, center.x, groundY(serverLevel, center) + 0.05D, center.z,
-                0xFFD700, LONGINUS_CROSS_ARM * 2.0F + 2.0F, LONGINUS_TELEGRAPH_TICKS + 20);
+                0xFFD700, LONGINUS_CROSS_ARM * 2.0F + 2.0F, LONGINUS_TELEGRAPH_TICKS + 15);
 
         // Smaller circles marking each individual impact point, so the safe
         // diagonal gaps in the cross are unmistakable.
         for (Vec3 spot : spearSpots) {
             DragonMagicCircleEntity.spawn(serverLevel, spot.x, groundY(serverLevel, spot) + 0.06D, spot.z,
-                    0xFFE873, 1.6F, LONGINUS_TELEGRAPH_TICKS + 6);
+                    0xFFE873, 1.6F, LONGINUS_TELEGRAPH_TICKS + 4);
         }
 
         serverLevel.playSound(null, target.blockPosition(), SoundEvents.BEACON_ACTIVATE,
-                SoundSource.HOSTILE, 3.0F, 0.6F);
+                SoundSource.HOSTILE, 3.0F, 0.6F + wave * 0.05F);
         dragon.setActionState(ApocalypseSevenHeadedRedDragonEntity.ACTION_IDLE);
 
         dragon.scheduleIn(LONGINUS_TELEGRAPH_TICKS, () -> {
@@ -317,8 +322,8 @@ public final class RedDragonAttackPatternManager {
                     SoundSource.HOSTILE, 3.0F, 0.5F);
             shakeNearbyScreens(serverLevel, dragon, 3.0F, 10);
 
-            // Let them land before yielding to the next pattern.
-            dragon.scheduleIn(30, onComplete);
+            // 5回連続連打: 次の波へ移行
+            dragon.scheduleIn(20, () -> longinusWaveStep(dragon, target, wave + 1, totalWaves, onComplete));
         });
     }
 
