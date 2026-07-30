@@ -12,6 +12,7 @@ import com.sevenheadeddragon.network.ModNetworking;
 import com.sevenheadeddragon.network.ScreenShakePacket;
 import com.sevenheadeddragon.registry.ModEffects;
 import com.sevenheadeddragon.registry.ModEntities;
+import com.sevenheadeddragon.registry.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -318,8 +319,8 @@ public final class RedDragonAttackPatternManager {
                 spear.dropFrom(spot.x, groundY(serverLevel, spot) + LONGINUS_DROP_HEIGHT, spot.z);
                 serverLevel.addFreshEntity(spear);
             }
-            serverLevel.playSound(null, target.blockPosition(), SoundEvents.TRIDENT_THROW,
-                    SoundSource.HOSTILE, 3.0F, 0.5F);
+            serverLevel.playSound(null, target.blockPosition(), ModSounds.LONGINUS_SPEAR.get(),
+                    SoundSource.HOSTILE, 3.0F, 1.0F);
             shakeNearbyScreens(serverLevel, dragon, 3.0F, 10);
 
             // 5回連続連打: 次の波へ移行

@@ -16,5 +16,14 @@
         "stream": false
       }
     ]
+  },
+  "dragon.longinus": {
+    "subtitle": "subtitle.sevenheadeddragon.dragon.longinus",
+    "sounds": [
+      {
+        "name": "sevenheadeddragon:centipede/longinus",
+        "stream": false
+      }
+    ]
   }
 }
