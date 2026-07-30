@@ -93,7 +93,7 @@ public class DebilitationMartyrEntity extends Monster implements GeoEntity {
         cloud.setWaitTime(0);
         cloud.setDuration(40); // 2秒持続（毎秒再生成して常に新鮮な雲を保持）
         cloud.setRadiusPerTick(0.0F);
-        cloud.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 1, false, true, true));
+        cloud.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 4, false, true, true));
         cloud.setParticle(ParticleTypes.ENTITY_EFFECT);
         cloud.setOwner(this);
         this.level().addFreshEntity(cloud);
