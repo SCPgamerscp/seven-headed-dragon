@@ -149,10 +149,10 @@ public final class ModEntities {
                             .updateInterval(1)
                             .build("timed_gimmick_creeper"));
 
-    /** 衰弱の殉教者 - the Wither-cloud summon (HP 20, 7 at a time). */
+    /** 衰弱の殉教者 - stationary placed entity summon (HP 20, 7 at a time). */
     public static final RegistryObject<EntityType<DebilitationMartyrEntity>> DEBILITATION_MARTYR =
             ENTITY_TYPES.register("debilitation_martyr",
-                    () -> EntityType.Builder.of(DebilitationMartyrEntity::new, MobCategory.MONSTER)
+                    () -> EntityType.Builder.of(DebilitationMartyrEntity::new, MobCategory.MISC)
                             .sized(0.9F, 2.4F)
                             .clientTrackingRange(64)
                             .updateInterval(1)
