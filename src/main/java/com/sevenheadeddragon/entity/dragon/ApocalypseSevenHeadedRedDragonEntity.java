@@ -176,7 +176,7 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
                                                 Level level) {
         super(type, level);
         this.turnTimer = BOSS_TURN_TICKS;
-        this.setMaxUpStep(0.0F);
+        this.setMaxUpStep(5.0F);
         this.xpReward = EXPERIENCE_REWARD;
     }
 
