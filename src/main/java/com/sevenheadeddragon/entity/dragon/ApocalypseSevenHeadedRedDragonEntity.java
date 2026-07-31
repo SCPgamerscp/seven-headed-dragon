@@ -458,13 +458,13 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
 
     /** Displays the golden bold <b>YOUR TURN</b> title to everyone fighting the boss. */
     private void broadcastYourTurnTitle() {
-        Component title = Component.literal("YOUR TURN")
-                .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
-        for (ServerPlayer player : getEngagedPlayers()) {
-            if (player.isCreative() || player.isSpectator()) continue;
-            player.connection.send(new ClientboundSetTitlesAnimationPacket(2, PLAYER_TURN_TICKS - 10, 8));
-            player.connection.send(new ClientboundSetTitleTextPacket(title));
-            player.playNotifySound(SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.MASTER, 1.0F, 1.4F);
+        LivingEntity target = getFocusedTarget();
+        if (target instanceof ServerPlayer serverPlayer) {
+            if (serverPlayer.isCreative() || serverPlayer.isSpectator()) return;
+            serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(2, PLAYER_TURN_TICKS - 10, 8));
+            serverPlayer.connection.send(new ClientboundSetTitleTextPacket(
+                    Component.literal("YOUR TURN").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)));
+            serverPlayer.playNotifySound(SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.MASTER, 1.0F, 1.4F);
         }
     }
 
