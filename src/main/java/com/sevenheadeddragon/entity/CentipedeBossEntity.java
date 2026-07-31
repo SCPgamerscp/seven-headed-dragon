@@ -107,7 +107,7 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
         for (int i = 0; i < PART_COUNT; i++) {
             this.parts[i] = new CentipedePart(this, i, 2.0F, 2.0F);
         }
-        this.setMaxUpStep(4.0F);
+        this.setMaxUpStep(5.0F);
         this.youchuCooldown = 100 + this.random.nextInt(400);
     }
 
@@ -161,16 +161,16 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
 
     @Override
     protected PathNavigation createNavigation(Level level) {
-        return new WallClimberNavigation(this, level);
+        return super.createNavigation(level);
     }
 
     @Override
     public boolean onClimbable() {
-        return this.isClimbing();
+        return false;
     }
 
     public boolean isClimbing() {
-        return (this.entityData.get(DATA_FLAGS_ID) & 1) != 0;
+        return false;
     }
 
     public void setClimbing(boolean climbing) {
@@ -272,9 +272,6 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
     @Override
     public void tick() {
         super.tick();
-        if (!this.level().isClientSide) {
-            this.setClimbing(this.horizontalCollision);
-        }
     }
 
     @Override
