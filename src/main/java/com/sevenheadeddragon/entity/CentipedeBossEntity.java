@@ -107,7 +107,7 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
         for (int i = 0; i < PART_COUNT; i++) {
             this.parts[i] = new CentipedePart(this, i, 2.0F, 2.0F);
         }
-        this.setMaxUpStep(5.0F);
+        this.setMaxUpStep(4.0F);
         this.youchuCooldown = 100 + this.random.nextInt(400);
     }
 
@@ -161,22 +161,26 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
 
     @Override
     protected PathNavigation createNavigation(Level level) {
-        net.minecraft.world.entity.ai.navigation.GroundPathNavigation nav = new net.minecraft.world.entity.ai.navigation.GroundPathNavigation(this, level);
-        nav.setCanOpenDoors(true);
-        return nav;
+        return new WallClimberNavigation(this, level);
     }
 
     @Override
     public boolean onClimbable() {
-        return false;
+        return this.isClimbing();
     }
 
     public boolean isClimbing() {
-        return false;
+        return (this.entityData.get(DATA_FLAGS_ID) & 1) != 0;
     }
 
     public void setClimbing(boolean climbing) {
-        // No-op
+        byte b0 = this.entityData.get(DATA_FLAGS_ID);
+        if (climbing) {
+            b0 = (byte)(b0 | 1);
+        } else {
+            b0 = (byte)(b0 & -2);
+        }
+        this.entityData.set(DATA_FLAGS_ID, b0);
     }
 
     public boolean isPlayerTurn() {
@@ -189,18 +193,7 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
 
     @Nullable
     public LivingEntity getFocusedTarget() {
-        LivingEntity target = this.getTarget();
-        if (target != null && target.isAlive()) {
-            return target;
-        }
-        List<Player> players = this.level().getEntitiesOfClass(Player.class,
-                this.getBoundingBox().inflate(64.0D), p -> p.isAlive() && !p.isSpectator());
-        if (!players.isEmpty()) {
-            return players.get(0);
-        }
-        List<LivingEntity> mobs = this.level().getEntitiesOfClass(LivingEntity.class,
-                this.getBoundingBox().inflate(64.0D), e -> e != this && e.isAlive());
-        return mobs.isEmpty() ? null : mobs.get(0);
+        return this.getTarget();
     }
 
     public boolean isCastingMagic() {
@@ -279,17 +272,14 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
     @Override
     public void tick() {
         super.tick();
+        if (!this.level().isClientSide) {
+            this.setClimbing(this.horizontalCollision);
+        }
     }
 
     @Override
     public void aiStep() {
         super.aiStep();
-        this.setMaxUpStep(5.0F);
-        if (!this.level().isClientSide && !isPlayerTurn()) {
-            if (this.horizontalCollision && this.onGround()) {
-                this.setDeltaMovement(this.getDeltaMovement().x, 0.42D, this.getDeltaMovement().z);
-            }
-        }
         positionBodyParts();
 
         // Vanilla movement only tests the parent's small central box.  A long
@@ -611,19 +601,13 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
 
         @Override
         public boolean canUse() {
-            LivingEntity target = this.mob.getFocusedTarget();
-            byte state = this.mob.getActionState();
-            return !this.mob.isPlayerTurn() && target != null && target.isAlive() && !this.mob.isCastingMagic() && state != ACTION_BITING;
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            return canUse();
+            LivingEntity target = this.mob.getTarget();
+            return this.mob.circlingActive && target != null && target.isAlive() && !this.mob.isPlayerTurn();
         }
 
         @Override
         public void start() {
-            LivingEntity target = this.mob.getFocusedTarget();
+            LivingEntity target = this.mob.getTarget();
             if (target != null) {
                 Vec3 toMob = this.mob.position().subtract(target.position());
                 angle = Math.atan2(toMob.z, toMob.x);
@@ -632,7 +616,7 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
 
         @Override
         public void tick() {
-            LivingEntity target = this.mob.getFocusedTarget();
+            LivingEntity target = this.mob.getTarget();
             if (target == null) return;
 
             double dx = this.mob.getX() - target.getX();
@@ -643,13 +627,8 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
             double wayAngle = currentAngle + 0.6D;
             double wayX = target.getX() + radius * Math.cos(wayAngle);
             double wayZ = target.getZ() + radius * Math.sin(wayAngle);
-            
-            net.minecraft.core.BlockPos targetPos = new net.minecraft.core.BlockPos((int)Math.floor(wayX), (int)Math.floor(target.getY()), (int)Math.floor(wayZ));
-            double wayY = this.mob.level().getHeightmapPos(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, targetPos).getY();
 
-            this.mob.getLookControl().setLookAt(wayX, wayY, wayZ, 30.0F, 30.0F);
-            this.mob.getMoveControl().setWantedPosition(wayX, wayY, wayZ, speedModifier);
-            this.mob.getNavigation().moveTo(wayX, wayY, wayZ, speedModifier);
+            this.mob.getNavigation().moveTo(wayX, target.getY(), wayZ, speedModifier);
         }
     }
 }
