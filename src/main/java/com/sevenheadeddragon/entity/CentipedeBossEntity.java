@@ -161,7 +161,9 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
 
     @Override
     protected PathNavigation createNavigation(Level level) {
-        return super.createNavigation(level);
+        net.minecraft.world.entity.ai.navigation.GroundPathNavigation nav = new net.minecraft.world.entity.ai.navigation.GroundPathNavigation(this, level);
+        nav.setCanOpenDoors(true);
+        return nav;
     }
 
     @Override
@@ -174,13 +176,7 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
     }
 
     public void setClimbing(boolean climbing) {
-        byte b0 = this.entityData.get(DATA_FLAGS_ID);
-        if (climbing) {
-            b0 = (byte)(b0 | 1);
-        } else {
-            b0 = (byte)(b0 & -2);
-        }
-        this.entityData.set(DATA_FLAGS_ID, b0);
+        // No-op
     }
 
     public boolean isPlayerTurn() {
@@ -289,6 +285,11 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
     public void aiStep() {
         super.aiStep();
         this.setMaxUpStep(5.0F);
+        if (!this.level().isClientSide && !isPlayerTurn()) {
+            if (this.horizontalCollision && this.onGround()) {
+                this.setDeltaMovement(this.getDeltaMovement().x, 0.42D, this.getDeltaMovement().z);
+            }
+        }
         positionBodyParts();
 
         // Vanilla movement only tests the parent's small central box.  A long
