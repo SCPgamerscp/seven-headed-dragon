@@ -441,6 +441,7 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
     private void broadcastYourTurnTitle() {
         LivingEntity target = getFocusedTarget();
         if (target instanceof ServerPlayer serverPlayer) {
+            if (serverPlayer.isCreative() || serverPlayer.isSpectator()) return;
             serverPlayer.connection.send(new ClientboundSetTitleTextPacket(
                     Component.literal("your turn").withStyle(net.minecraft.ChatFormatting.GOLD, net.minecraft.ChatFormatting.BOLD)));
         }

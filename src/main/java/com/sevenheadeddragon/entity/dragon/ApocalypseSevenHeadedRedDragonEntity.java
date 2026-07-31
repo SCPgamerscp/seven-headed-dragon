@@ -461,6 +461,7 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
         Component title = Component.literal("YOUR TURN")
                 .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
         for (ServerPlayer player : getEngagedPlayers()) {
+            if (player.isCreative() || player.isSpectator()) continue;
             player.connection.send(new ClientboundSetTitlesAnimationPacket(2, PLAYER_TURN_TICKS - 10, 8));
             player.connection.send(new ClientboundSetTitleTextPacket(title));
             player.playNotifySound(SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.MASTER, 1.0F, 1.4F);
