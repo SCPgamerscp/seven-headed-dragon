@@ -142,11 +142,18 @@ public final class CentipedeAttackPatternManager {
         if (target != null && target.isAlive()) {
             double dx = target.getX() - boss.getX();
             double dz = target.getZ() - boss.getZ();
+            double dist = Math.sqrt(dx * dx + dz * dz);
             float targetYaw = (float) (Mth.atan2(dz, dx) * (180.0 / Math.PI)) - 90.0F;
             boss.setYRot(targetYaw);
             boss.yBodyRot = targetYaw;
             boss.yHeadRot = targetYaw;
-            boss.getNavigation().moveTo(target, 1.8);
+            
+            // Forward lunge momentum during bite animation
+            if (dist > 0.001D && elapsed >= 4 && elapsed <= 25) {
+                double lungeSpeed = 0.55D;
+                boss.setDeltaMovement(dx / dist * lungeSpeed, boss.getDeltaMovement().y, dz / dist * lungeSpeed);
+            }
+            boss.getNavigation().moveTo(target, 2.2);
 
             if (!currentHit && elapsed >= 4 && elapsed <= 25) {
                 boolean frontHit = false;
@@ -155,7 +162,7 @@ public final class CentipedeAttackPatternManager {
                     int checkLimit = Math.min(11, boss.getParts().length);
                     for (int p = 0; p < checkLimit; p++) {
                         var part = boss.getParts()[p];
-                        if (part != null && (part.getBoundingBox().inflate(1.5).intersects(target.getBoundingBox()) || part.distanceTo(target) < 5.5F)) {
+                        if (part != null && (part.getBoundingBox().inflate(2.5D).intersects(target.getBoundingBox()) || part.distanceTo(target) < 8.0F)) {
                             frontHit = true;
                             break;
                         }

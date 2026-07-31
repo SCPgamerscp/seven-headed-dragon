@@ -288,6 +288,7 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
     @Override
     public void aiStep() {
         super.aiStep();
+        this.setMaxUpStep(5.0F);
         positionBodyParts();
 
         // Vanilla movement only tests the parent's small central box.  A long
@@ -610,7 +611,8 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
         @Override
         public boolean canUse() {
             LivingEntity target = this.mob.getFocusedTarget();
-            return !this.mob.isPlayerTurn() && target != null && target.isAlive() && !this.mob.isCastingMagic();
+            byte state = this.mob.getActionState();
+            return !this.mob.isPlayerTurn() && target != null && target.isAlive() && !this.mob.isCastingMagic() && state != ACTION_BITING;
         }
 
         @Override
