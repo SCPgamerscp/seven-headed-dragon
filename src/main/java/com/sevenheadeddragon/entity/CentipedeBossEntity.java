@@ -193,7 +193,18 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
 
     @Nullable
     public LivingEntity getFocusedTarget() {
-        return this.getTarget();
+        LivingEntity target = this.getTarget();
+        if (target != null && target.isAlive()) {
+            return target;
+        }
+        List<Player> players = this.level().getEntitiesOfClass(Player.class,
+                this.getBoundingBox().inflate(64.0D), p -> p.isAlive() && !p.isSpectator());
+        if (!players.isEmpty()) {
+            return players.get(0);
+        }
+        List<LivingEntity> mobs = this.level().getEntitiesOfClass(LivingEntity.class,
+                this.getBoundingBox().inflate(64.0D), e -> e != this && e.isAlive());
+        return mobs.isEmpty() ? null : mobs.get(0);
     }
 
     public boolean isCastingMagic() {
@@ -237,8 +248,9 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(2, new CentipedeCircleGoal(this, 1.5D, 15.0F));
-        this.goalSelector.addGoal(3, new RandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(4, new MoveTowardsRestrictionGoal(this, 1.0D));
+        this.goalSelector.addGoal(3, new CentipedeApproachGoal(this, 1.25D));
+        this.goalSelector.addGoal(4, new RandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(5, new MoveTowardsRestrictionGoal(this, 1.0D));
 
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
@@ -579,9 +591,36 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
         return this.geoCache;
     }
 
-    // ------------------------------------------------------------------
-    // Circling movement (for the walking-AoE attack pattern)
-    // ------------------------------------------------------------------
+    private class CentipedeApproachGoal extends Goal {
+        private final CentipedeBossEntity mob;
+        private final double speedModifier;
+
+        CentipedeApproachGoal(CentipedeBossEntity mob, double speedModifier) {
+            this.mob = mob;
+            this.speedModifier = speedModifier;
+            this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            LivingEntity target = this.mob.getFocusedTarget();
+            return target != null && target.isAlive() && !this.mob.isPlayerTurn() && !this.mob.circlingActive && !this.mob.isCastingMagic();
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return canUse();
+        }
+
+        @Override
+        public void tick() {
+            LivingEntity target = this.mob.getFocusedTarget();
+            if (target != null) {
+                this.mob.getLookControl().setLookAt(target, 30.0F, 30.0F);
+                this.mob.getNavigation().moveTo(target, this.speedModifier);
+            }
+        }
+    }
 
     private class CentipedeCircleGoal extends Goal {
         private final CentipedeBossEntity mob;
@@ -598,13 +637,13 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
 
         @Override
         public boolean canUse() {
-            LivingEntity target = this.mob.getTarget();
+            LivingEntity target = this.mob.getFocusedTarget();
             return this.mob.circlingActive && target != null && target.isAlive() && !this.mob.isPlayerTurn();
         }
 
         @Override
         public void start() {
-            LivingEntity target = this.mob.getTarget();
+            LivingEntity target = this.mob.getFocusedTarget();
             if (target != null) {
                 Vec3 toMob = this.mob.position().subtract(target.position());
                 angle = Math.atan2(toMob.z, toMob.x);
@@ -613,7 +652,7 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
 
         @Override
         public void tick() {
-            LivingEntity target = this.mob.getTarget();
+            LivingEntity target = this.mob.getFocusedTarget();
             if (target == null) return;
 
             double dx = this.mob.getX() - target.getX();
