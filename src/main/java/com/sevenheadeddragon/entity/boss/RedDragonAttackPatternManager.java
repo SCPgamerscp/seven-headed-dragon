@@ -320,7 +320,7 @@ public final class RedDragonAttackPatternManager {
                 serverLevel.addFreshEntity(spear);
             }
             serverLevel.playSound(null, target.blockPosition(), ModSounds.LONGINUS_SPEAR.get(),
-                    SoundSource.HOSTILE, 3.0F, 1.0F);
+                    SoundSource.HOSTILE, 15.0F, 1.0F);
             shakeNearbyScreens(serverLevel, dragon, 3.0F, 10);
 
             // 5回連続連打: 次の波へ移行
