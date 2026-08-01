@@ -160,9 +160,9 @@ public class RainbowLightningEntity extends Entity {
 
     private void playStrikeSound() {
         this.level().playSound(null, this.blockPosition(), SoundEvents.LIGHTNING_BOLT_THUNDER,
-                SoundSource.HOSTILE, 5.0F, 0.8F + this.random.nextFloat() * 0.4F);
+                SoundSource.HOSTILE, 25.0F, 0.8F + this.random.nextFloat() * 0.4F);
         this.level().playSound(null, this.blockPosition(), SoundEvents.LIGHTNING_BOLT_IMPACT,
-                SoundSource.HOSTILE, 2.5F, 0.9F + this.random.nextFloat() * 0.4F);
+                SoundSource.HOSTILE, 12.5F, 0.9F + this.random.nextFloat() * 0.4F);
     }
 
     /** Applies {@link #DAMAGE} once to every living entity in the vertical column. */
