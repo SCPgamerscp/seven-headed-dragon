@@ -64,18 +64,31 @@ public class ApocalypseSevenHeadedRedDragonRenderer
 
             int coreAlpha = (int) (200.0F * (1.0F - f1));
 
-            // Radiant light beam pyramid quad strip
+            // Calculate 7-color Undertale soul rainbow HSV colors for rays
+            float hue1 = (float) (i % 7) / 7.0F;
+            int rgb1 = net.minecraft.util.Mth.hsvToRgb(hue1, 0.85F, 1.0F);
+            int r1 = (rgb1 >> 16) & 0xFF;
+            int g1 = (rgb1 >> 8) & 0xFF;
+            int b1 = rgb1 & 0xFF;
+
+            float hue2 = (hue1 + 1.0F / 7.0F) % 1.0F;
+            int rgb2 = net.minecraft.util.Mth.hsvToRgb(hue2, 0.85F, 1.0F);
+            int r2 = (rgb2 >> 16) & 0xFF;
+            int g2 = (rgb2 >> 8) & 0xFF;
+            int b2 = rgb2 & 0xFF;
+
+            // Radiant light beam pyramid quad strip with seven-color rainbow gradient
             consumer.vertex(matrix, 0.0F, 0.0F, 0.0F).color(255, 255, 255, coreAlpha).endVertex();
-            consumer.vertex(matrix, -0.866F * rayWidth, rayLength, -0.5F * rayWidth).color(255, 215, 0, 0).endVertex();
-            consumer.vertex(matrix, 0.866F * rayWidth, rayLength, -0.5F * rayWidth).color(255, 100, 100, 0).endVertex();
+            consumer.vertex(matrix, -0.866F * rayWidth, rayLength, -0.5F * rayWidth).color(r1, g1, b1, 0).endVertex();
+            consumer.vertex(matrix, 0.866F * rayWidth, rayLength, -0.5F * rayWidth).color(r2, g2, b2, 0).endVertex();
 
             consumer.vertex(matrix, 0.0F, 0.0F, 0.0F).color(255, 255, 255, coreAlpha).endVertex();
-            consumer.vertex(matrix, 0.866F * rayWidth, rayLength, -0.5F * rayWidth).color(255, 100, 100, 0).endVertex();
-            consumer.vertex(matrix, 0.0F, rayLength, 1.0F * rayWidth).color(255, 215, 0, 0).endVertex();
+            consumer.vertex(matrix, 0.866F * rayWidth, rayLength, -0.5F * rayWidth).color(r2, g2, b2, 0).endVertex();
+            consumer.vertex(matrix, 0.0F, rayLength, 1.0F * rayWidth).color(r1, g1, b1, 0).endVertex();
 
             consumer.vertex(matrix, 0.0F, 0.0F, 0.0F).color(255, 255, 255, coreAlpha).endVertex();
-            consumer.vertex(matrix, 0.0F, rayLength, 1.0F * rayWidth).color(255, 215, 0, 0).endVertex();
-            consumer.vertex(matrix, -0.866F * rayWidth, rayLength, -0.5F * rayWidth).color(255, 100, 100, 0).endVertex();
+            consumer.vertex(matrix, 0.0F, rayLength, 1.0F * rayWidth).color(r1, g1, b1, 0).endVertex();
+            consumer.vertex(matrix, -0.866F * rayWidth, rayLength, -0.5F * rayWidth).color(r2, g2, b2, 0).endVertex();
         }
 
         poseStack.popPose();
