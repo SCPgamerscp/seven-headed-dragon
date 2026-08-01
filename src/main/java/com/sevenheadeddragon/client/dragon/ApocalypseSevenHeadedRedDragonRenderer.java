@@ -77,18 +77,20 @@ public class ApocalypseSevenHeadedRedDragonRenderer
             int g2 = (rgb2 >> 8) & 0xFF;
             int b2 = rgb2 & 0xFF;
 
-            // Radiant light beam pyramid quad strip with seven-color rainbow gradient
-            consumer.vertex(matrix, 0.0F, 0.0F, 0.0F).color(255, 255, 255, coreAlpha).endVertex();
-            consumer.vertex(matrix, -0.866F * rayWidth, rayLength, -0.5F * rayWidth).color(r1, g1, b1, 0).endVertex();
-            consumer.vertex(matrix, 0.866F * rayWidth, rayLength, -0.5F * rayWidth).color(r2, g2, b2, 0).endVertex();
+            int edgeAlpha = (int) (coreAlpha * 0.6F);
 
-            consumer.vertex(matrix, 0.0F, 0.0F, 0.0F).color(255, 255, 255, coreAlpha).endVertex();
-            consumer.vertex(matrix, 0.866F * rayWidth, rayLength, -0.5F * rayWidth).color(r2, g2, b2, 0).endVertex();
-            consumer.vertex(matrix, 0.0F, rayLength, 1.0F * rayWidth).color(r1, g1, b1, 0).endVertex();
+            // Radiant light beam pyramid quad strip with vivid seven-color rainbow gradient
+            consumer.vertex(matrix, 0.0F, 0.0F, 0.0F).color(r1, g1, b1, coreAlpha).endVertex();
+            consumer.vertex(matrix, -0.866F * rayWidth, rayLength, -0.5F * rayWidth).color(r1, g1, b1, edgeAlpha).endVertex();
+            consumer.vertex(matrix, 0.866F * rayWidth, rayLength, -0.5F * rayWidth).color(r2, g2, b2, edgeAlpha).endVertex();
 
-            consumer.vertex(matrix, 0.0F, 0.0F, 0.0F).color(255, 255, 255, coreAlpha).endVertex();
-            consumer.vertex(matrix, 0.0F, rayLength, 1.0F * rayWidth).color(r1, g1, b1, 0).endVertex();
-            consumer.vertex(matrix, -0.866F * rayWidth, rayLength, -0.5F * rayWidth).color(r2, g2, b2, 0).endVertex();
+            consumer.vertex(matrix, 0.0F, 0.0F, 0.0F).color(r1, g1, b1, coreAlpha).endVertex();
+            consumer.vertex(matrix, 0.866F * rayWidth, rayLength, -0.5F * rayWidth).color(r2, g2, b2, edgeAlpha).endVertex();
+            consumer.vertex(matrix, 0.0F, rayLength, 1.0F * rayWidth).color(r1, g1, b1, edgeAlpha).endVertex();
+
+            consumer.vertex(matrix, 0.0F, 0.0F, 0.0F).color(r1, g1, b1, coreAlpha).endVertex();
+            consumer.vertex(matrix, 0.0F, rayLength, 1.0F * rayWidth).color(r1, g1, b1, edgeAlpha).endVertex();
+            consumer.vertex(matrix, -0.866F * rayWidth, rayLength, -0.5F * rayWidth).color(r2, g2, b2, edgeAlpha).endVertex();
         }
 
         poseStack.popPose();
