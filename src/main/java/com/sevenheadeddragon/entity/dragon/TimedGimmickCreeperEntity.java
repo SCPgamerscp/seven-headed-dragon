@@ -29,12 +29,11 @@ import net.minecraft.world.level.Level;
  * <em>not</em> explode ({@link #die} suppresses the blast), which is what
  * turns the mechanic into "撃破 vs. 被弾" rather than an unavoidable hit.
  * <p>
- * The remaining fuse time is synced to clients so the renderer can flash the
  * creeper white with increasing urgency as the countdown closes.
  */
-public class TimedGimmickCreeperEntity extends Monster {
+public class TimedGimmickCreeperEntity extends Monster implements net.minecraft.world.entity.OwnableEntity {
 
-    /** Explosion power, per spec ("爆発力 10（地形破壊なし）"). */
+    /** Explosion power, per spec ("爆破力 10（地形破壊なし）"). */
     public static final float EXPLOSION_POWER = 10.0F;
 
     /** Fuse length, per spec ("10秒後に即自爆"). */
@@ -49,8 +48,27 @@ public class TimedGimmickCreeperEntity extends Monster {
     /** Set while {@link #explode()} runs, so the resulting death does not re-trigger it. */
     private boolean detonating;
 
+    @javax.annotation.Nullable
+    private net.minecraft.world.entity.LivingEntity owner;
+
     public TimedGimmickCreeperEntity(EntityType<? extends TimedGimmickCreeperEntity> type, Level level) {
         super(type, level);
+    }
+
+    public void setOwner(@javax.annotation.Nullable net.minecraft.world.entity.LivingEntity owner) {
+        this.owner = owner;
+    }
+
+    @Override
+    @javax.annotation.Nullable
+    public net.minecraft.world.entity.LivingEntity getOwner() {
+        return this.owner;
+    }
+
+    @Override
+    @javax.annotation.Nullable
+    public java.util.UUID getOwnerUUID() {
+        return this.owner != null ? this.owner.getUUID() : null;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -123,7 +141,8 @@ public class TimedGimmickCreeperEntity extends Monster {
             serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.EXPLOSION_EMITTER,
                     this.getX(), this.getY() + 0.5, this.getZ(), 1, 0.0, 0.0, 0.0, 0.0);
         }
-        DragonExplosions.explodeNoGrief(this.level(), this, this.position(), EXPLOSION_POWER);
+        net.minecraft.world.entity.Entity attacker = this.getOwner() != null ? this.getOwner() : this;
+        DragonExplosions.explodeNoGrief(this.level(), attacker, this.position(), EXPLOSION_POWER);
         this.discard();
     }
 

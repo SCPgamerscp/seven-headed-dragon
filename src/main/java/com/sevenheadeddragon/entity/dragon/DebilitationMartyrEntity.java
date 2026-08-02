@@ -29,7 +29,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
  * 固定設置型のエンティティ。召喚位置の地面にバニラの毒雲（{@link AreaEffectCloud}）を
  * 実際に生成し、周囲にウィザー効果を付与する。
  */
-public class DebilitationMartyrEntity extends Monster implements GeoEntity {
+public class DebilitationMartyrEntity extends Monster implements GeoEntity, net.minecraft.world.entity.OwnableEntity {
 
     /** HP 20. */
     public static final double MAX_HEALTH = 20.0D;
@@ -41,8 +41,27 @@ public class DebilitationMartyrEntity extends Monster implements GeoEntity {
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
+    @javax.annotation.Nullable
+    private net.minecraft.world.entity.LivingEntity owner;
+
     public DebilitationMartyrEntity(EntityType<? extends DebilitationMartyrEntity> type, Level level) {
         super(type, level);
+    }
+
+    public void setOwner(@javax.annotation.Nullable net.minecraft.world.entity.LivingEntity owner) {
+        this.owner = owner;
+    }
+
+    @Override
+    @javax.annotation.Nullable
+    public net.minecraft.world.entity.LivingEntity getOwner() {
+        return this.owner;
+    }
+
+    @Override
+    @javax.annotation.Nullable
+    public java.util.UUID getOwnerUUID() {
+        return this.owner != null ? this.owner.getUUID() : null;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -95,7 +114,7 @@ public class DebilitationMartyrEntity extends Monster implements GeoEntity {
         cloud.setRadiusPerTick(0.0F);
         cloud.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 4, false, true, true));
         cloud.setParticle(ParticleTypes.ENTITY_EFFECT);
-        cloud.setOwner(this);
+        cloud.setOwner(this.getOwner() != null ? this.getOwner() : this);
         this.level().addFreshEntity(cloud);
     }
 

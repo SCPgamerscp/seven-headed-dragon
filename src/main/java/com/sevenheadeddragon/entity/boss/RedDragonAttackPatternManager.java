@@ -519,6 +519,7 @@ public final class RedDragonAttackPatternManager {
             creeper.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(creeper.blockPosition()),
                     MobSpawnType.MOB_SUMMONED, null, null);
             creeper.setTarget(target);
+            creeper.setOwner(dragon);
             serverLevel.addFreshEntity(creeper);
 
             serverLevel.sendParticles(ParticleTypes.LARGE_SMOKE, x, creeper.getY() + 1.0D, z,
@@ -565,6 +566,7 @@ public final class RedDragonAttackPatternManager {
             martyr.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(martyr.blockPosition()),
                     MobSpawnType.MOB_SUMMONED, null, null);
             martyr.setTarget(target);
+            martyr.setOwner(dragon);
             serverLevel.addFreshEntity(martyr);
 
             serverLevel.sendParticles(ParticleTypes.SOUL, x, martyr.getY() + 1.0D, z,
