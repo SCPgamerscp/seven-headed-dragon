@@ -562,10 +562,16 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
 
     private PlayState animationPredicate(AnimationState<CentipedeBossEntity> state) {
         switch (this.getActionState()) {
-            case ACTION_BITING -> state.getController().setAnimation(RawAnimation.begin().then("animation.biting", software.bernie.geckolib.core.animation.Animation.LoopType.PLAY_ONCE));
-            case ACTION_MAGIC_GETUP -> state.getController().setAnimation(RawAnimation.begin().then("animation.getup", software.bernie.geckolib.core.animation.Animation.LoopType.PLAY_ONCE));
+            case ACTION_BITING -> state.getController().setAnimation(RawAnimation.begin()
+                    .then("animation.biting", software.bernie.geckolib.core.animation.Animation.LoopType.PLAY_ONCE)
+                    .thenLoop("animation.centipede.walk"));
+            case ACTION_MAGIC_GETUP -> state.getController().setAnimation(RawAnimation.begin()
+                    .then("animation.getup", software.bernie.geckolib.core.animation.Animation.LoopType.PLAY_ONCE)
+                    .thenLoop("animation.magic.casting"));
             case ACTION_MAGIC_CASTING -> state.getController().setAnimation(RawAnimation.begin().thenLoop("animation.magic.casting"));
-            case ACTION_MAGIC_GETDOWN -> state.getController().setAnimation(RawAnimation.begin().then("animation.getdown", software.bernie.geckolib.core.animation.Animation.LoopType.PLAY_ONCE));
+            case ACTION_MAGIC_GETDOWN -> state.getController().setAnimation(RawAnimation.begin()
+                    .then("animation.getdown", software.bernie.geckolib.core.animation.Animation.LoopType.PLAY_ONCE)
+                    .thenLoop("animation.centipede.walk"));
             default -> {
                 if (state.isMoving()) {
                     state.getController().setAnimation(RawAnimation.begin().thenLoop("animation.centipede.walk"));
