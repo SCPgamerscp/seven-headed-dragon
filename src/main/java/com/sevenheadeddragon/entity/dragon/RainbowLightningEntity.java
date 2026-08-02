@@ -39,7 +39,7 @@ import java.util.Set;
  * The seven colours cycle through {@link #RAINBOW}, matching the seven heads
  * of the dragon and the seven bolts of the final homing sequence.
  */
-public class RainbowLightningEntity extends Entity {
+public class RainbowLightningEntity extends Entity implements net.minecraft.world.entity.OwnableEntity {
 
     /** Damage per bolt, per spec ("各雷 20ダメージ"). */
     public static final float DAMAGE = 20.0F;
@@ -87,6 +87,18 @@ public class RainbowLightningEntity extends Entity {
         super(type, level);
         this.noPhysics = true;
         this.noCulling = true;
+    }
+
+    @Override
+    @Nullable
+    public LivingEntity getOwner() {
+        return this.caster;
+    }
+
+    @Override
+    @Nullable
+    public java.util.UUID getOwnerUUID() {
+        return this.caster != null ? this.caster.getUUID() : null;
     }
 
     @Override
@@ -171,10 +183,11 @@ public class RainbowLightningEntity extends Entity {
                 this.getX() - HIT_RADIUS, this.getY() - 2.0D, this.getZ() - HIT_RADIUS,
                 this.getX() + HIT_RADIUS, this.getY() + BEAM_HEIGHT, this.getZ() + HIT_RADIUS);
 
+        LivingEntity attacker = this.getOwner() != null ? this.getOwner() : this.caster;
         for (LivingEntity victim : this.level().getEntitiesOfClass(LivingEntity.class, column,
                 e -> e.isAlive() && !(e instanceof ApocalypseSevenHeadedRedDragonEntity))) {
             if (!this.alreadyHit.add(victim)) continue;
-            victim.hurt(ModDamageTypes.source(victim, ModDamageTypes.RAINBOW_LIGHTNING, this, this.caster), DAMAGE);
+            victim.hurt(ModDamageTypes.source(victim, ModDamageTypes.RAINBOW_LIGHTNING, this, attacker), DAMAGE);
         }
 
         if (this.level() instanceof ServerLevel serverLevel) {
