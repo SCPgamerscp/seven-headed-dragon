@@ -15,6 +15,7 @@
 
   "effect.sevenheadeddragon.dragon_slaying_poison": "Dragon-Slaying Poison",
   "death.attack.sevenheadeddragon.dragon_slaying_poison": "%1$s was eaten away by dragon-slaying poison",
+  "death.attack.sevenheadeddragon.dragon_slaying_poison.player": "%1$s was eaten away by dragon-slaying poison while trying to escape %2$s",
 
   "subtitle.sevenheadeddragon.centipede.walk": "Centipede skitters",
   "subtitle.sevenheadeddragon.centipede.youchu": "Centipede screeches",
@@ -143,13 +144,13 @@
   "effect.sevenheadeddragon.sin_gluttony": "Gluttony",
   "effect.sevenheadeddragon.sin_lust": "Lust",
 
-  "death.attack.sevenheadeddragon.god_slaying": "%1$s was unmade by the God Slaying curse",
+  "death.attack.sevenheadeddragon.god_slaying": "%1$s was unmade by %2$s's God Slaying curse",
   "death.attack.sevenheadeddragon.god_slaying.player": "%1$s was unmade by the God Slaying curse while trying to escape %2$s",
-  "death.attack.sevenheadeddragon.longinus_spear": "%1$s was impaled by the Spear of Longinus",
+  "death.attack.sevenheadeddragon.longinus_spear": "%1$s was impaled by %2$s's Spear of Longinus",
   "death.attack.sevenheadeddragon.longinus_spear.player": "%1$s was impaled by the Spear of Longinus while trying to escape %2$s",
-  "death.attack.sevenheadeddragon.rainbow_lightning": "%1$s was struck down by seven-coloured lightning",
+  "death.attack.sevenheadeddragon.rainbow_lightning": "%1$s was struck down by %2$s's seven-coloured lightning",
   "death.attack.sevenheadeddragon.rainbow_lightning.player": "%1$s was struck down by seven-coloured lightning while trying to escape %2$s",
-  "death.attack.sevenheadeddragon.wither_poison_cloud": "%1$s withered away in a martyr's miasma",
+  "death.attack.sevenheadeddragon.wither_poison_cloud": "%1$s withered away in %2$s's martyr's miasma",
   "death.attack.sevenheadeddragon.wither_poison_cloud.player": "%1$s withered away in a martyr's miasma while trying to escape %2$s",
 
   "message.sevenheadeddragon.red_dragon_progress": "Omen of the Apocalypse: %1$s / %2$s zombies slain",

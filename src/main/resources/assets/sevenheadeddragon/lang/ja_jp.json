@@ -15,6 +15,7 @@
 
   "effect.sevenheadeddragon.dragon_slaying_poison": "ドラゴン殺しの毒",
   "death.attack.sevenheadeddragon.dragon_slaying_poison": "%1$sはドラゴン殺しの毒に蝕まれて死んだ",
+  "death.attack.sevenheadeddragon.dragon_slaying_poison.player": "%1$sは%2$sから逃げようとしてドラゴン殺しの毒に蝕まれて死んだ",
 
   "subtitle.sevenheadeddragon.centipede.walk": "ムカデが這う音",
   "subtitle.sevenheadeddragon.centipede.youchu": "ムカデの鳴き声",
@@ -143,13 +144,13 @@
   "effect.sevenheadeddragon.sin_gluttony": "暴食",
   "effect.sevenheadeddragon.sin_lust": "色欲",
 
-  "death.attack.sevenheadeddragon.god_slaying": "%1$sは神殺しの呪いに滅ぼされた",
+  "death.attack.sevenheadeddragon.god_slaying": "%1$sは%2$sの神殺しの呪いに滅ぼされた",
   "death.attack.sevenheadeddragon.god_slaying.player": "%1$sは%2$sの神殺しの呪いによって滅ぼされた",
-  "death.attack.sevenheadeddragon.longinus_spear": "%1$sはロンギヌスの槍に貫かれた",
+  "death.attack.sevenheadeddragon.longinus_spear": "%1$sは%2$sのロンギヌスの槍に貫かれた",
   "death.attack.sevenheadeddragon.longinus_spear.player": "%1$sは%2$sのロンギヌスの槍によって貫かれた",
-  "death.attack.sevenheadeddragon.rainbow_lightning": "%1$sは七色の雷に討たれた",
+  "death.attack.sevenheadeddragon.rainbow_lightning": "%1$sは%2$sの七色の雷に討たれた",
   "death.attack.sevenheadeddragon.rainbow_lightning.player": "%1$sは%2$sの七色の雷によって討たれた",
-  "death.attack.sevenheadeddragon.wither_poison_cloud": "%1$sは殉教者の瘴気に衰弱した",
+  "death.attack.sevenheadeddragon.wither_poison_cloud": "%1$sは%2$sの殉教者の瘴気に衰弱した",
   "death.attack.sevenheadeddragon.wither_poison_cloud.player": "%1$sは%2$sの殉教者の瘴気によって衰弱死した",
 
   "message.sevenheadeddragon.red_dragon_progress": "終末の予兆: ゾンビ %1$s / %2$s 体討伐",
