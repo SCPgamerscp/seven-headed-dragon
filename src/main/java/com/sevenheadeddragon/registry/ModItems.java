@@ -73,10 +73,5 @@ public final class ModItems {
             () -> new ForgeSpawnEggItem(ModEntities.TIMED_GIMMICK_CREEPER, 0x0DA70B, 0xFF3300,
                     new Item.Properties()));
 
-    /** 🪽 元熾天使の翼 (Apocalypse Elytra): Protection 100 + Unbreakable + Armor/Toughness/Knockback attributes. */
-    public static final RegistryObject<Item> APOCALYPSE_ELYTRA = ITEMS.register(
-            "apocalypse_elytra",
-            () -> new com.sevenheadeddragon.item.ApocalypseElytraItem(new Item.Properties()));
-
     private ModItems() {}
 }

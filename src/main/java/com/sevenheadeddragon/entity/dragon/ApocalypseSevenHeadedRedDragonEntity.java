@@ -652,7 +652,7 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
      * {@code ItemStack#enchant}, which would clamp it.
      */
     public static ItemStack createApocalypseElytra() {
-        ItemStack elytra = new ItemStack(com.sevenheadeddragon.registry.ModItems.APOCALYPSE_ELYTRA.get());
+        ItemStack elytra = new ItemStack(Items.ELYTRA);
         elytra.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 100);
         elytra.getOrCreateTag().putBoolean("Unbreakable", true);
         elytra.setHoverName(Component.translatable("item.sevenheadeddragon.apocalypse_elytra")
