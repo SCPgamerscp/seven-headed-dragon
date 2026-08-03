@@ -1,16 +1,16 @@
 {
-  "parent": "sevenheadeddragon:spawn_red_dragon",
+  "parent": "sevenheadeddragon:spawn_potion_master",
   "display": {
     "icon": {
-      "item": "minecraft:nether_star"
+      "item": "minecraft:glass_bottle"
     },
     "title": {
-      "translate": "advancements.sevenheadeddragon.kill_apocalypse_red_dragon.title"
+      "translate": "advancements.sevenheadeddragon.defeat_potion_master.title"
     },
     "description": {
-      "translate": "advancements.sevenheadeddragon.kill_apocalypse_red_dragon.description"
+      "translate": "advancements.sevenheadeddragon.defeat_potion_master.description"
     },
-    "frame": "challenge",
+    "frame": "task",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

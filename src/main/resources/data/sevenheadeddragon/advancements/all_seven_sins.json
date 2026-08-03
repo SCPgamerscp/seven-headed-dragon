@@ -2,15 +2,15 @@
   "parent": "sevenheadeddragon:spawn_red_dragon",
   "display": {
     "icon": {
-      "item": "minecraft:nether_star"
+      "item": "minecraft:wither_rose"
     },
     "title": {
-      "translate": "advancements.sevenheadeddragon.kill_apocalypse_red_dragon.title"
+      "translate": "advancements.sevenheadeddragon.all_seven_sins.title"
     },
     "description": {
-      "translate": "advancements.sevenheadeddragon.kill_apocalypse_red_dragon.description"
+      "translate": "advancements.sevenheadeddragon.all_seven_sins.description"
     },
-    "frame": "challenge",
+    "frame": "task",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

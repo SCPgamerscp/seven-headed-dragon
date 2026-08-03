@@ -1,16 +1,16 @@
 {
-  "parent": "sevenheadeddragon:spawn_red_dragon",
+  "parent": "sevenheadeddragon:spawn_centipede",
   "display": {
     "icon": {
-      "item": "minecraft:nether_star"
+      "item": "minecraft:spider_eye"
     },
     "title": {
-      "translate": "advancements.sevenheadeddragon.kill_apocalypse_red_dragon.title"
+      "translate": "advancements.sevenheadeddragon.defeat_centipede.title"
     },
     "description": {
-      "translate": "advancements.sevenheadeddragon.kill_apocalypse_red_dragon.description"
+      "translate": "advancements.sevenheadeddragon.defeat_centipede.description"
     },
-    "frame": "challenge",
+    "frame": "task",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

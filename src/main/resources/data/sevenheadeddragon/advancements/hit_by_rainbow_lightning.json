@@ -2,15 +2,15 @@
   "parent": "sevenheadeddragon:spawn_red_dragon",
   "display": {
     "icon": {
-      "item": "minecraft:nether_star"
+      "item": "minecraft:lightning_rod"
     },
     "title": {
-      "translate": "advancements.sevenheadeddragon.kill_apocalypse_red_dragon.title"
+      "translate": "advancements.sevenheadeddragon.hit_by_rainbow_lightning.title"
     },
     "description": {
-      "translate": "advancements.sevenheadeddragon.kill_apocalypse_red_dragon.description"
+      "translate": "advancements.sevenheadeddragon.hit_by_rainbow_lightning.description"
     },
-    "frame": "challenge",
+    "frame": "task",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

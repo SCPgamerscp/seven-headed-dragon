@@ -5,12 +5,12 @@
       "item": "minecraft:nether_star"
     },
     "title": {
-      "translate": "advancements.sevenheadeddragon.kill_apocalypse_red_dragon.title"
+      "translate": "advancements.sevenheadeddragon.god_slaying_effect.title"
     },
     "description": {
-      "translate": "advancements.sevenheadeddragon.kill_apocalypse_red_dragon.description"
+      "translate": "advancements.sevenheadeddragon.god_slaying_effect.description"
     },
-    "frame": "challenge",
+    "frame": "task",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

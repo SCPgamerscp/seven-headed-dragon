@@ -1,16 +1,16 @@
 {
-  "parent": "sevenheadeddragon:spawn_red_dragon",
+  "parent": "sevenheadeddragon:defeat_centipede",
   "display": {
     "icon": {
-      "item": "minecraft:nether_star"
+      "item": "sevenheadeddragon:fang_king_spawn_egg"
     },
     "title": {
-      "translate": "advancements.sevenheadeddragon.kill_apocalypse_red_dragon.title"
+      "translate": "advancements.sevenheadeddragon.spawn_fang_king.title"
     },
     "description": {
-      "translate": "advancements.sevenheadeddragon.kill_apocalypse_red_dragon.description"
+      "translate": "advancements.sevenheadeddragon.spawn_fang_king.description"
     },
-    "frame": "challenge",
+    "frame": "task",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

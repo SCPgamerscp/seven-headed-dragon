@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "sevenheadeddragon:potion_master_summon"
+    },
+    "title": {
+      "translate": "advancements.sevenheadeddragon.root.title"
+    },
+    "description": {
+      "translate": "advancements.sevenheadeddragon.root.description"
+    },
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "granted_in_code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "granted_in_code"
+    ]
+  ]
+}
