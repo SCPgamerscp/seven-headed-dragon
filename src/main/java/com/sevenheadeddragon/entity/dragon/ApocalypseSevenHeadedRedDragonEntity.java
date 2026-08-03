@@ -655,7 +655,7 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
         ItemStack elytra = new ItemStack(Items.ELYTRA);
         elytra.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 100);
         elytra.getOrCreateTag().putBoolean("Unbreakable", true);
-        elytra.setHoverName(Component.literal("元熾天使の翼")
+        elytra.setHoverName(Component.translatable("item.sevenheadeddragon.apocalypse_elytra")
                 .withStyle(style -> style.withColor(ChatFormatting.LIGHT_PURPLE).withBold(true).withItalic(false)));
         return elytra;
     }
