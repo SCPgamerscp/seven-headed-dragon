@@ -341,5 +341,14 @@ public final class ModAdvancementEvents {
         if (nearCentipede && stack.is(Items.HONEY_BOTTLE) && player.hasEffect(MobEffects.POISON)) {
             grant(player, "honey_cure_poison_in_centipede_fight");
         }
+
+        // 🔮 ボス戦中にエンダーパール使用 -> 「瞬間移動を逃亡に使うか戦術として使うか」
+        if (stack.is(Items.ENDER_PEARL)) {
+            boolean nearAnyBoss = player.level().getEntitiesOfClass(LivingEntity.class,
+                    player.getBoundingBox().inflate(64.0), ModAdvancementEvents::isAnyBoss).size() > 0;
+            if (nearAnyBoss) {
+                grant(player, "use_ender_pearl_in_boss_fight");
+            }
+        }
     }
 }

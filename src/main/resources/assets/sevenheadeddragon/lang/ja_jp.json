@@ -214,5 +214,7 @@
   "advancements.sevenheadeddragon.killed_by_dragon.title": "私が行くのは天国か?地獄か?",
   "advancements.sevenheadeddragon.killed_by_dragon.description": "赤い竜に倒された",
   "advancements.sevenheadeddragon.damaged_by_dragon.title": "地獄で焼かれるような痛み",
-  "advancements.sevenheadeddragon.damaged_by_dragon.description": "赤い竜由来の攻撃によるダメージを受けた"
+  "advancements.sevenheadeddragon.damaged_by_dragon.description": "赤い竜由来の攻撃によるダメージを受けた",
+  "advancements.sevenheadeddragon.use_ender_pearl_in_boss_fight.title": "瞬間移動を逃亡に使うか戦術として使うか",
+  "advancements.sevenheadeddragon.use_ender_pearl_in_boss_fight.description": "ボス戦中にエンダーパールを使用した"
 }

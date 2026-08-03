@@ -214,5 +214,7 @@
   "advancements.sevenheadeddragon.killed_by_dragon.title": "Am I going to Heaven or Hell?",
   "advancements.sevenheadeddragon.killed_by_dragon.description": "Slain by the Red Dragon",
   "advancements.sevenheadeddragon.damaged_by_dragon.title": "Pain like burning in Hell",
-  "advancements.sevenheadeddragon.damaged_by_dragon.description": "Took damage from an attack derived from the Red Dragon"
+  "advancements.sevenheadeddragon.damaged_by_dragon.description": "Took damage from an attack derived from the Red Dragon",
+  "advancements.sevenheadeddragon.use_ender_pearl_in_boss_fight.title": "Will you use teleportation to flee or as a tactic?",
+  "advancements.sevenheadeddragon.use_ender_pearl_in_boss_fight.description": "Used an Ender Pearl during a boss fight"
 }
