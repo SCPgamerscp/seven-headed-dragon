@@ -635,10 +635,13 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
 
         this.spawnAtLocation(createApocalypseElytra());
 
-        spawnStackedLoot(Items.DIAMOND_BLOCK, 128);
-        spawnStackedLoot(Items.ENCHANTED_GOLDEN_APPLE, 128);
-        spawnStackedLoot(Items.NETHER_STAR, 64);
-        spawnStackedLoot(Items.NETHERITE_BLOCK, 128);
+        int bonusBlocks = looting * 32;
+        int bonusStars = looting * 16;
+
+        spawnStackedLoot(Items.DIAMOND_BLOCK, 128 + bonusBlocks);
+        spawnStackedLoot(Items.ENCHANTED_GOLDEN_APPLE, 128 + bonusBlocks);
+        spawnStackedLoot(Items.NETHER_STAR, 64 + bonusStars);
+        spawnStackedLoot(Items.NETHERITE_BLOCK, 128 + bonusBlocks);
     }
 
     /**
