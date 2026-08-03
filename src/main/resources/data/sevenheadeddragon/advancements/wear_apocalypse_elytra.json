@@ -2,7 +2,7 @@
   "parent": "sevenheadeddragon:kill_apocalypse_red_dragon",
   "display": {
     "icon": {
-      "item": "sevenheadeddragon:apocalypse_elytra"
+      "item": "minecraft:elytra"
     },
     "title": {
       "translate": "advancements.sevenheadeddragon.wear_apocalypse_elytra.title"
