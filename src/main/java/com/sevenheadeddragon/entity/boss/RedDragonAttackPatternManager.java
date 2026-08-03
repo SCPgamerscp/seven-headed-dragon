@@ -137,12 +137,19 @@ public final class RedDragonAttackPatternManager {
         dragon.level().playSound(null, dragon.blockPosition(), SoundEvents.ENDER_DRAGON_GROWL,
                 SoundSource.HOSTILE, 1.6F, 1.1F + index * 0.06F);
 
-        // The damage lands a few ticks into the animation, on the "snap".
+        // The damage lands a few ticks into the animation, on the "snap" - hits all entities in range (AoE).
         dragon.scheduleIn(4, () -> {
-            if (!dragon.isAlive() || target == null || !target.isAlive()) return;
-            if (dragon.distanceTo(target) <= BITE_REACH) {
-                target.hurt(dragon.damageSources().mobAttack(dragon), STANDARD_DAMAGE);
-                applySin(target, index, dragon);
+            if (!dragon.isAlive()) return;
+            List<LivingEntity> victims = dragon.level().getEntitiesOfClass(LivingEntity.class,
+                    dragon.getBoundingBox().inflate(BITE_REACH),
+                    e -> e != dragon && e.isAlive()
+                            && !(e instanceof DebilitationMartyrEntity)
+                            && !(e instanceof TimedGimmickCreeperEntity)
+                            && e.distanceTo(dragon) <= BITE_REACH);
+
+            for (LivingEntity victim : victims) {
+                victim.hurt(dragon.damageSources().mobAttack(dragon), STANDARD_DAMAGE);
+                applySin(victim, index, dragon);
             }
         });
 
@@ -665,21 +672,29 @@ public final class RedDragonAttackPatternManager {
         }
 
         boolean hit = hasHit;
-        if (!hit && dragon.distanceTo(target) <= CHARGE_HIT_RANGE) {
-            target.hurt(dragon.damageSources().mobAttack(dragon), STANDARD_DAMAGE);
-            // 打ち上げ: launch the player high into the air. Applied directly to
-            // the velocity (not via knockback) so the boss's own 100% knockback
-            // resistance semantics and the player's Knockback Resistance gear
-            // cannot cancel this signature move.
-            target.setDeltaMovement(
-                    target.getDeltaMovement().x * 0.4D,
-                    CHARGE_LAUNCH_POWER,
-                    target.getDeltaMovement().z * 0.4D);
-            target.hurtMarked = true;
-            if (dragon.level() instanceof ServerLevel serverLevel) {
-                shakeNearbyScreens(serverLevel, dragon, 4.0F, 12);
-                serverLevel.sendParticles(ParticleTypes.SWEEP_ATTACK,
-                        target.getX(), target.getY() + 1.0D, target.getZ(), 6, 0.6D, 0.4D, 0.6D, 0.0D);
+        List<LivingEntity> victims = dragon.level().getEntitiesOfClass(LivingEntity.class,
+                dragon.getBoundingBox().inflate(CHARGE_HIT_RANGE),
+                e -> e != dragon && e.isAlive()
+                        && !(e instanceof DebilitationMartyrEntity)
+                        && !(e instanceof TimedGimmickCreeperEntity)
+                        && e.distanceTo(dragon) <= CHARGE_HIT_RANGE);
+
+        if (!victims.isEmpty()) {
+            for (LivingEntity victim : victims) {
+                if (!hit) {
+                    victim.hurt(dragon.damageSources().mobAttack(dragon), STANDARD_DAMAGE);
+                    // 打ち上げ: launch all entities in path high into the air.
+                    victim.setDeltaMovement(
+                            victim.getDeltaMovement().x * 0.4D,
+                            CHARGE_LAUNCH_POWER,
+                            victim.getDeltaMovement().z * 0.4D);
+                    victim.hurtMarked = true;
+                    if (dragon.level() instanceof ServerLevel serverLevel) {
+                        shakeNearbyScreens(serverLevel, dragon, 4.0F, 12);
+                        serverLevel.sendParticles(ParticleTypes.SWEEP_ATTACK,
+                                victim.getX(), victim.getY() + 1.0D, victim.getZ(), 6, 0.6D, 0.4D, 0.6D, 0.0D);
+                    }
+                }
             }
             hit = true;
         }
