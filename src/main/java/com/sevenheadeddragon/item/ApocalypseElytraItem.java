@@ -8,6 +8,8 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -84,6 +86,11 @@ public class ApocalypseElytraItem extends ArmorItem implements GeoItem {
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         if (entity instanceof Player player && player.getItemBySlot(EquipmentSlot.CHEST) == stack) {
+            // Apply/refresh Regeneration V (Amplifier 4) for 10 minutes (12000 ticks) every 5 seconds (100 ticks)
+            if (!level.isClientSide && (level.getGameTime() % 100 == 0 || !player.hasEffect(MobEffects.REGENERATION))) {
+                player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 20 * 60 * 10, 4, false, true, true));
+            }
+
             if (player.isFallFlying()) {
                 // Sprint / Space boost in flight!
                 if (player.isSprinting()) {
