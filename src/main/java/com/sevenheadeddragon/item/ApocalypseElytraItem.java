@@ -56,6 +56,7 @@ public class ApocalypseElytraItem extends ArmorItem implements GeoItem {
 
     private static final RawAnimation ANIM_IDLE = RawAnimation.begin().thenLoop("wings_idle");
     private static final RawAnimation ANIM_FALL = RawAnimation.begin().thenLoop("fall");
+    private static final RawAnimation ANIM_FLY = RawAnimation.begin().thenLoop("wings_fly");
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     private final Multimap<Attribute, AttributeModifier> defaultModifiers;
@@ -113,8 +114,12 @@ public class ApocalypseElytraItem extends ArmorItem implements GeoItem {
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "controller", 5, event -> {
             Object entity = event.getData(DataTickets.ENTITY);
-            if (entity instanceof LivingEntity living && living.isFallFlying()) {
-                return event.setAndContinue(ANIM_FALL);
+            if (entity instanceof LivingEntity living) {
+                if (living.isFallFlying()) {
+                    return event.setAndContinue(ANIM_FLY);
+                } else if (!living.onGround() && living.getDeltaMovement().y < -0.1D) {
+                    return event.setAndContinue(ANIM_FALL);
+                }
             }
             return event.setAndContinue(ANIM_IDLE);
         }));
