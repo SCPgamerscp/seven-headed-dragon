@@ -28,6 +28,8 @@ public final class ModNetworking {
                 ScreenShakePacket::encode, ScreenShakePacket::decode, ScreenShakePacket::handle);
         CHANNEL.registerMessage(nextId++, RedWorldPacket.class,
                 RedWorldPacket::encode, RedWorldPacket::decode, RedWorldPacket::handle);
+        CHANNEL.registerMessage(nextId++, WingBoostPacket.class,
+                WingBoostPacket::encode, WingBoostPacket::decode, WingBoostPacket::handle);
     }
 
     private ModNetworking() {}
