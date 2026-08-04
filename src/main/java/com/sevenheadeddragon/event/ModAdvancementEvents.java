@@ -255,7 +255,7 @@ public final class ModAdvancementEvents {
 
         // ⚡ エリトラ着用 -> 「元熾天使の翼」
         ItemStack chest = player.getItemBySlot(EquipmentSlot.CHEST);
-        if (!chest.isEmpty() && chest.is(Items.ELYTRA) && chest.hasTag() && chest.getTag().getBoolean("Unbreakable")) {
+        if (!chest.isEmpty() && (chest.is(ModItems.APOCALYPSE_ELYTRA.get()) || (chest.is(Items.ELYTRA) && chest.hasTag() && chest.getTag().getBoolean("Unbreakable")))) {
             grant(player, "wear_apocalypse_elytra");
         }
 
