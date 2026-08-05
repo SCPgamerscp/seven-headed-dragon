@@ -83,6 +83,11 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
         this.ageTicks++;
 
         Vec3 target = getTargetPos();
+        if (target.x == 0.0D && target.y == 0.0D && target.z == 0.0D) {
+            setTargetPos((float) getX(), (float) getY(), (float) getZ());
+            target = getTargetPos();
+        }
+
         double tx = target.x;
         double ty = target.y;
         double tz = target.z;
