@@ -807,7 +807,8 @@ public final class RedDragonAttackPatternManager {
             level.addFreshEntity(clone);
         }
 
-        dragon.scheduleIn(15, () -> spawnDiveClones(dragon, target, spawned + 1, total, onComplete));
+        // Wait 85 ticks (60s telegraph + 15s dive + 10s delay) for current dragon to finish diving before spawning next clone
+        dragon.scheduleIn(85, () -> spawnDiveClones(dragon, target, spawned + 1, total, onComplete));
     }
 
     /**
