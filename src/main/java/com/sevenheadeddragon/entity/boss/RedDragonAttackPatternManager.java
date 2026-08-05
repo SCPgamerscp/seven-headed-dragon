@@ -805,15 +805,6 @@ public final class RedDragonAttackPatternManager {
             com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity clone =
                     new com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity(level, pos.x, gy, pos.z);
             level.addFreshEntity(clone);
-
-            // Also spawn a 10-block red magic circle on the ground
-            com.sevenheadeddragon.entity.dragon.DragonMagicCircleEntity circle =
-                    new com.sevenheadeddragon.entity.dragon.DragonMagicCircleEntity(com.sevenheadeddragon.registry.ModEntities.DRAGON_MAGIC_CIRCLE.get(), level);
-            circle.setPos(pos.x, gy + 0.05D, pos.z);
-            circle.setSize(10.0F);
-            circle.setLifetime(60);
-            circle.setColor(0xFF0033);
-            level.addFreshEntity(circle);
         }
 
         dragon.scheduleIn(15, () -> spawnDiveClones(dragon, target, spawned + 1, total, onComplete));
