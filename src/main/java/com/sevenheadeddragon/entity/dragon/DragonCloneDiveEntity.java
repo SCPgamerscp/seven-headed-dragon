@@ -47,6 +47,7 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
 
     private int ageTicks = 0;
     private static final int TELEGRAPH_TICKS = 60; // 3 seconds grace period
+    private static final int DIVE_TICKS = 15; // 0.75 seconds spiral dive
 
     public DragonCloneDiveEntity(EntityType<?> type, Level level) {
         super(type, level);
@@ -87,7 +88,7 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
         double tz = target.z;
 
         if (this.level() instanceof ServerLevel serverLevel) {
-            // Telegraph Phase (0 to 60 ticks = 3 seconds)
+            // Phase 1: Telegraph Phase (0 to 60 ticks = 3 seconds)
             if (this.ageTicks <= TELEGRAPH_TICKS) {
                 // Spawn massive Enchantment particles in a 10-block radius circle on the ground
                 for (int i = 0; i < 20; i++) {
@@ -99,30 +100,27 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
                     serverLevel.sendParticles(ParticleTypes.ENCHANTED_HIT, px, ty + 0.2D, pz, 1, 0.0D, 0.1D, 0.0D, 0.0D);
                 }
 
-                // Hover high above
-                double currentY = ty + 25.0D * (1.0D - (double) this.ageTicks / (TELEGRAPH_TICKS * 2.0D));
-                setPos(tx, currentY, tz);
+                // Hover high above at Y + 25.0
+                setPos(tx, ty + 25.0D, tz);
             }
-            // Impact Phase at tick 60
+            // Phase 2: Spiral Dive Phase (61 to 75 ticks = 0.75 seconds)
+            else if (this.ageTicks < TELEGRAPH_TICKS + DIVE_TICKS) {
+                int diveElapsed = this.ageTicks - TELEGRAPH_TICKS;
+                double progress = (double) diveElapsed / (double) DIVE_TICKS;
+                double progressSq = progress * progress; // Exponential downward acceleration
+                double currentY = ty + 25.0D * (1.0D - progressSq);
+                setPos(tx, currentY, tz);
+
+                // Trail particles during descent
+                serverLevel.sendParticles(ParticleTypes.CRIT, tx, currentY, tz, 8, 0.5D, 0.5D, 0.5D, 0.1D);
+                serverLevel.sendParticles(ParticleTypes.FLAME, tx, currentY, tz, 5, 0.3D, 0.3D, 0.3D, 0.05D);
+            }
+            // Phase 3: Impact Phase (at tick 75)
             else {
-                // Rapidly slam to ground
                 setPos(tx, ty, tz);
 
-                // Power 10 explosion with NO terrain destruction
+                // Pure Power 10 explosion with NO terrain destruction (deals pure explosion damage & knockback)
                 serverLevel.explode(this, tx, ty, tz, 10.0F, false, Level.ExplosionInteraction.NONE);
-
-                // Deal 40 damage and launch nearby entities
-                AABB radiusBox = new AABB(tx - 10.0D, ty - 5.0D, tz - 10.0D, tx + 10.0D, ty + 10.0D, tz + 10.0D);
-                List<LivingEntity> victims = serverLevel.getEntitiesOfClass(LivingEntity.class, radiusBox,
-                        e -> e.isAlive() && !(e instanceof ApocalypseSevenHeadedRedDragonEntity)
-                                && !(e instanceof DebilitationMartyrEntity)
-                                && !(e instanceof TimedGimmickCreeperEntity)
-                                && e.distanceToSqr(tx, ty, tz) <= 100.0D);
-
-                for (LivingEntity victim : victims) {
-                    victim.hurt(serverLevel.damageSources().magic(), 40.0F);
-                    victim.setDeltaMovement(victim.getDeltaMovement().add(0.0D, 1.2D, 0.0D));
-                }
 
                 // Screen shake for nearby players
                 ScreenShakePacket packet = new ScreenShakePacket(4.0F, 12);
