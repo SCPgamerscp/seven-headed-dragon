@@ -91,13 +91,14 @@ public final class RedDragonAttackPatternManager {
      */
     private static void startRandomMagicAttack(ApocalypseSevenHeadedRedDragonEntity dragon,
                                                 LivingEntity target, Runnable onComplete) {
-        switch (dragon.getRandom().nextInt(6)) {
+        switch (dragon.getRandom().nextInt(7)) {
             case 0 -> runMartyrSummon(dragon, target, onComplete);
             case 1 -> runGoatMachineGun(dragon, target, onComplete);
             case 2 -> runSquidVolley(dragon, target, onComplete);
             case 3 -> runLonginusSpears(dragon, target, onComplete);
             case 4 -> runRainbowLightning(dragon, target, onComplete);
-            default -> runCreeperGimmick(dragon, target, onComplete);
+            case 5 -> runCreeperGimmick(dragon, target, onComplete);
+            default -> runDragonCloneDive(dragon, target, onComplete);
         }
     }
 
@@ -776,6 +777,46 @@ public final class RedDragonAttackPatternManager {
                 dragon.getX() + forward.x * 2.0D,
                 dragon.getY() + dragon.getBbHeight() * 0.75D,
                 dragon.getZ() + forward.z * 2.0D);
+    }
+
+    // ==================================================================
+    // ⑨ ドラゴンの回転急降下分身攻撃 (dragonfallattack 5-clone dive attack)
+    // ==================================================================
+
+    public static void startDragonCloneDive(ApocalypseSevenHeadedRedDragonEntity dragon, LivingEntity target) {
+        runDragonCloneDive(dragon, target, dragon::onPatternFinished);
+    }
+
+    private static void runDragonCloneDive(ApocalypseSevenHeadedRedDragonEntity dragon,
+                                           LivingEntity target, Runnable onComplete) {
+        spawnDiveClones(dragon, target, 0, 5, onComplete);
+    }
+
+    private static void spawnDiveClones(ApocalypseSevenHeadedRedDragonEntity dragon,
+                                        LivingEntity target, int spawned, int total, Runnable onComplete) {
+        if (!dragon.isAlive() || spawned >= total) {
+            onComplete.run();
+            return;
+        }
+
+        if (target != null && target.isAlive() && dragon.level() instanceof ServerLevel level) {
+            Vec3 pos = target.position();
+            double gy = groundY(level, pos);
+            com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity clone =
+                    new com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity(level, pos.x, gy, pos.z);
+            level.addFreshEntity(clone);
+
+            // Also spawn a 10-block red magic circle on the ground
+            com.sevenheadeddragon.entity.dragon.DragonMagicCircleEntity circle =
+                    new com.sevenheadeddragon.entity.dragon.DragonMagicCircleEntity(com.sevenheadeddragon.registry.ModEntities.DRAGON_MAGIC_CIRCLE.get(), level);
+            circle.setPos(pos.x, gy + 0.05D, pos.z);
+            circle.setSize(10.0F);
+            circle.setLifetime(60);
+            circle.setColor(0xFF0033);
+            level.addFreshEntity(circle);
+        }
+
+        dragon.scheduleIn(15, () -> spawnDiveClones(dragon, target, spawned + 1, total, onComplete));
     }
 
     /**

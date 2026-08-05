@@ -41,6 +41,7 @@ public final class ClientSetup {
         event.registerEntityRenderer(ModEntities.DRAGON_MAGIC_CIRCLE.get(), DragonMagicCircleRenderer::new);
         event.registerEntityRenderer(ModEntities.TIMED_GIMMICK_CREEPER.get(), TimedGimmickCreeperRenderer::new);
         event.registerEntityRenderer(ModEntities.DEBILITATION_MARTYR.get(), DebilitationMartyrRenderer::new);
+        event.registerEntityRenderer(ModEntities.DRAGON_CLONE_DIVE.get(), com.sevenheadeddragon.client.dragon.DragonCloneDiveRenderer::new);
     }
 
     private ClientSetup() {}

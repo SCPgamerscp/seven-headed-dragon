@@ -159,6 +159,17 @@ public final class ModEntities {
                             .fireImmune()
                             .build("debilitation_martyr"));
 
+    /** 🐉 ドラゴンの回転急降下分身 (5-clone dive attack, 3s telegraph, 10-block enchant particles, power 10 explosion). */
+    public static final RegistryObject<EntityType<com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity>> DRAGON_CLONE_DIVE =
+            ENTITY_TYPES.register("dragon_clone_dive",
+                    () -> EntityType.Builder.<com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity>of(com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity::new, MobCategory.MISC)
+                            .sized(4.0F, 3.0F)
+                            .clientTrackingRange(160)
+                            .updateInterval(1)
+                            .noSave()
+                            .fireImmune()
+                            .build("dragon_clone_dive"));
+
     public static void registerAttributes(EntityAttributeCreationEvent event) {
         event.put(POTION_MASTER.get(), PotionMasterEntity.createAttributes().build());
         event.put(FANG_KING.get(), FangKingEntity.createAttributes().build());
