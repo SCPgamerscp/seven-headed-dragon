@@ -49,6 +49,8 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
     private static final int TELEGRAPH_TICKS = 60; // 3 seconds grace period
     private static final int DIVE_TICKS = 15; // 0.75 seconds spiral dive
 
+    private LivingEntity owner;
+
     public DragonCloneDiveEntity(EntityType<?> type, Level level) {
         super(type, level);
         this.noPhysics = true;
@@ -58,6 +60,15 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
         this(ModEntities.DRAGON_CLONE_DIVE.get(), level);
         setTargetPos((float) targetX, (float) targetY, (float) targetZ);
         setPos(targetX, targetY + 25.0D, targetZ);
+    }
+
+    public DragonCloneDiveEntity(Level level, LivingEntity owner, double targetX, double targetY, double targetZ) {
+        this(level, targetX, targetY, targetZ);
+        this.owner = owner;
+    }
+
+    public LivingEntity getOwner() {
+        return this.owner;
     }
 
     @Override
@@ -124,8 +135,9 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
             else {
                 setPos(tx, ty, tz);
 
-                // Pure Power 10 explosion with NO terrain destruction (deals pure explosion damage & knockback)
-                serverLevel.explode(this, tx, ty, tz, 10.0F, false, Level.ExplosionInteraction.NONE);
+                // Pure Power 10 explosion with NO terrain destruction (deals pure dragon explosion damage & knockback)
+                Entity cause = this.owner != null ? this.owner : this;
+                serverLevel.explode(cause, tx, ty, tz, 10.0F, false, Level.ExplosionInteraction.NONE);
 
                 // Screen shake for nearby players
                 ScreenShakePacket packet = new ScreenShakePacket(4.0F, 12);

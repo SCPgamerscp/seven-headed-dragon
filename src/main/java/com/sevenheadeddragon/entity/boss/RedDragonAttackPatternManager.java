@@ -803,7 +803,7 @@ public final class RedDragonAttackPatternManager {
             Vec3 pos = target.position();
             double gy = groundY(level, pos);
             com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity clone =
-                    new com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity(level, pos.x, gy, pos.z);
+                    new com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity(level, dragon, pos.x, gy, pos.z);
             level.addFreshEntity(clone);
         }
 
