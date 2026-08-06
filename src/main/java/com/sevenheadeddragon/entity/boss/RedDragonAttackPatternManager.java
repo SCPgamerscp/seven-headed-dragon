@@ -812,7 +812,6 @@ public final class RedDragonAttackPatternManager {
                         double px = pos.x + Math.cos(angle) * radius;
                         double pz = pos.z + Math.sin(angle) * radius;
                         level.sendParticles(ParticleTypes.ENCHANT, px, gy + 0.1D, pz, 4, 0.1D, 0.2D, 0.1D, 0.5D);
-                        level.sendParticles(ParticleTypes.ENCHANTED_HIT, px, gy + 0.2D, pz, 2, 0.0D, 0.1D, 0.0D, 0.0D);
                     }
                 });
             }
