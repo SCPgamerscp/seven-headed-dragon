@@ -95,7 +95,7 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
 
         Vec3 target = getTargetPos();
         if (target.x == 0.0D && target.y == 0.0D && target.z == 0.0D) {
-            setTargetPos((float) getX(), (float) getY(), (float) getZ());
+            setTargetPos((float) getX(), (float) (getY() - 25.0D), (float) getZ());
             target = getTargetPos();
         }
 
@@ -104,25 +104,9 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
         double tz = target.z;
 
         if (this.level() instanceof ServerLevel serverLevel) {
-            // Phase 1: Telegraph Phase (0 to 60 ticks = 3 seconds)
-            if (this.ageTicks <= TELEGRAPH_TICKS) {
-                // Spawn massive Enchantment particles in a 10-block radius circle on the ground
-                for (int i = 0; i < 20; i++) {
-                    double angle = this.random.nextDouble() * Math.PI * 2.0D;
-                    double radius = this.random.nextDouble() * 10.0D;
-                    double px = tx + Math.cos(angle) * radius;
-                    double pz = tz + Math.sin(angle) * radius;
-                    serverLevel.sendParticles(ParticleTypes.ENCHANT, px, ty + 0.1D, pz, 3, 0.1D, 0.2D, 0.1D, 0.5D);
-                    serverLevel.sendParticles(ParticleTypes.ENCHANTED_HIT, px, ty + 0.2D, pz, 1, 0.0D, 0.1D, 0.0D, 0.0D);
-                }
-
-                // Hover high above at Y + 25.0
-                setPos(tx, ty + 25.0D, tz);
-            }
-            // Phase 2: Spiral Dive Phase (61 to 75 ticks = 0.75 seconds)
-            else if (this.ageTicks < TELEGRAPH_TICKS + DIVE_TICKS) {
-                int diveElapsed = this.ageTicks - TELEGRAPH_TICKS;
-                double progress = (double) diveElapsed / (double) DIVE_TICKS;
+            // Spiral Dive Phase (0 to 15 ticks = 0.75 seconds)
+            if (this.ageTicks < DIVE_TICKS) {
+                double progress = (double) this.ageTicks / (double) DIVE_TICKS;
                 double progressSq = progress * progress; // Exponential downward acceleration
                 double currentY = ty + 25.0D * (1.0D - progressSq);
                 setPos(tx, currentY, tz);
@@ -131,7 +115,7 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
                 serverLevel.sendParticles(ParticleTypes.CRIT, tx, currentY, tz, 8, 0.5D, 0.5D, 0.5D, 0.1D);
                 serverLevel.sendParticles(ParticleTypes.FLAME, tx, currentY, tz, 5, 0.3D, 0.3D, 0.3D, 0.05D);
             }
-            // Phase 3: Impact Phase (at tick 75)
+            // Impact Phase (at tick 15)
             else {
                 setPos(tx, ty, tz);
 

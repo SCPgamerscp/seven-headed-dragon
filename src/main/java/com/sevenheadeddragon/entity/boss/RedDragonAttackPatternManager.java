@@ -800,11 +800,31 @@ public final class RedDragonAttackPatternManager {
         }
 
         if (target != null && target.isAlive() && dragon.level() instanceof ServerLevel level) {
-            Vec3 pos = target.position();
-            double gy = groundY(level, pos);
-            com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity clone =
-                    new com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity(level, dragon, pos.x, gy, pos.z);
-            level.addFreshEntity(clone);
+            final Vec3 pos = target.position();
+            final double gy = groundY(level, pos);
+
+            // Phase 1: Dense ground particle telegraph for 3 seconds (60 ticks) - NO dragon entity in mid-air
+            for (int t = 0; t < 60; t += 2) {
+                dragon.scheduleIn(t, () -> {
+                    for (int i = 0; i < 40; i++) {
+                        double angle = dragon.getRandom().nextDouble() * Math.PI * 2.0D;
+                        double radius = dragon.getRandom().nextDouble() * 10.0D;
+                        double px = pos.x + Math.cos(angle) * radius;
+                        double pz = pos.z + Math.sin(angle) * radius;
+                        level.sendParticles(ParticleTypes.ENCHANT, px, gy + 0.1D, pz, 4, 0.1D, 0.2D, 0.1D, 0.5D);
+                        level.sendParticles(ParticleTypes.ENCHANTED_HIT, px, gy + 0.2D, pz, 2, 0.0D, 0.1D, 0.0D, 0.0D);
+                    }
+                });
+            }
+
+            // Phase 2: After 3 seconds (60 ticks), suddenly spawn dragon clone at Y+25 and dive down in 0.75s!
+            dragon.scheduleIn(60, () -> {
+                if (dragon.isAlive()) {
+                    com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity clone =
+                            new com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity(level, dragon, pos.x, gy, pos.z);
+                    level.addFreshEntity(clone);
+                }
+            });
         }
 
         // Wait 85 ticks (60s telegraph + 15s dive + 10s delay) for current dragon to finish diving before spawning next clone
