@@ -15,10 +15,10 @@ public final class RedWorldManager {
     /** How long (in ticks) the fade in / fade out of the red tint takes. */
     public static final int FADE_TICKS = 40;
 
-    /** Target fog / sky colour while the dragon lives. */
-    public static final float RED_R = 0.55f;
-    public static final float RED_G = 0.03f;
-    public static final float RED_B = 0.05f;
+    /** Target fog / sky colour while the dragon lives (pure RGB 255, 0, 0). */
+    public static final float RED_R = 1.0f;
+    public static final float RED_G = 0.0f;
+    public static final float RED_B = 0.0f;
 
     private static boolean active = false;
     private static float strength = 0.0f;
