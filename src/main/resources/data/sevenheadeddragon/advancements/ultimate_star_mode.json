@@ -1,0 +1,28 @@
+{
+  "parent": "sevenheadeddragon:root",
+  "display": {
+    "icon": {
+      "item": "sevenheadeddragon:energy_drink"
+    },
+    "title": {
+      "translate": "advancements.sevenheadeddragon.ultimate_star_mode.title"
+    },
+    "description": {
+      "translate": "advancements.sevenheadeddragon.ultimate_star_mode.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "granted_in_code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "granted_in_code"
+    ]
+  ]
+}

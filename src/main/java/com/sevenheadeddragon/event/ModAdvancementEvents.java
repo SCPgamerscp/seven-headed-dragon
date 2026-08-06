@@ -322,6 +322,13 @@ public final class ModAdvancementEvents {
         // 🧪 エナジードリンク使用 -> 「これ使えば100徹まで頑張れる!!」
         if (stack.is(ModItems.ENERGY_DRINK.get())) {
             grant(player, "drink_energy_drink");
+
+            // ボス戦中にエナジードリンク使用 -> 「最強のスター状態」
+            boolean nearAnyBoss = player.level().getEntitiesOfClass(LivingEntity.class,
+                    player.getBoundingBox().inflate(64.0), ModAdvancementEvents::isAnyBoss).size() > 0;
+            if (nearAnyBoss) {
+                grant(player, "ultimate_star_mode");
+            }
         }
 
         // ポーションマスター戦闘中のアイテム
