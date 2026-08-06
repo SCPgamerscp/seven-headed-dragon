@@ -803,10 +803,10 @@ public final class RedDragonAttackPatternManager {
             final Vec3 pos = target.position();
             final double gy = groundY(level, pos);
 
-            // Phase 1: Dense ground particle telegraph for 3 seconds (60 ticks) - NO dragon entity in mid-air
+            // Phase 1: Extremely dense ground particle telegraph (120 points, 3x density) for 3 seconds (60 ticks)
             for (int t = 0; t < 60; t += 2) {
                 dragon.scheduleIn(t, () -> {
-                    for (int i = 0; i < 40; i++) {
+                    for (int i = 0; i < 120; i++) {
                         double angle = dragon.getRandom().nextDouble() * Math.PI * 2.0D;
                         double radius = dragon.getRandom().nextDouble() * 10.0D;
                         double px = pos.x + Math.cos(angle) * radius;
