@@ -267,8 +267,14 @@ public final class ModAdvancementEvents {
 
         // ⚡ エリトラ着用 -> 「元熾天使の翼」
         ItemStack chest = player.getItemBySlot(EquipmentSlot.CHEST);
-        if (!chest.isEmpty() && (chest.is(ModItems.APOCALYPSE_ELYTRA.get()) || (chest.is(Items.ELYTRA) && chest.hasTag() && chest.getTag().getBoolean("Unbreakable")))) {
+        boolean wearingWings = !chest.isEmpty() && (chest.is(ModItems.APOCALYPSE_ELYTRA.get()) || (chest.is(Items.ELYTRA) && chest.hasTag() && chest.getTag().getBoolean("Unbreakable")));
+        if (wearingWings) {
             grant(player, "wear_apocalypse_elytra");
+
+            // 🔥 天使の翼着用中にネザー滞在 -> 「ルシファー?」
+            if (player.level().dimension() == net.minecraft.world.level.Level.NETHER) {
+                grant(player, "lucifer");
+            }
         }
 
         // ☠️ 「神殺し」エフェクト -> 「神を殺す絶望の槍」
