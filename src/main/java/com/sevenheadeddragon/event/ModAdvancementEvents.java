@@ -197,6 +197,18 @@ public final class ModAdvancementEvents {
             grant(player, "killed_by_dragon");
         }
 
+        // 🪽 元熾天使の翼着用中に落下死または激突死 -> 「天使も天から落ちる」
+        if (victim instanceof ServerPlayer player) {
+            ItemStack chest = player.getItemBySlot(EquipmentSlot.CHEST);
+            boolean wearingWings = !chest.isEmpty() && (chest.is(ModItems.APOCALYPSE_ELYTRA.get()) || (chest.is(Items.ELYTRA) && chest.hasTag() && chest.getTag().getBoolean("Unbreakable")));
+            if (wearingWings) {
+                net.minecraft.world.damagesource.DamageSource source = event.getSource();
+                if (source.is(net.minecraft.world.damagesource.DamageTypes.FALL) || source.is(net.minecraft.world.damagesource.DamageTypes.FLY_INTO_WALL)) {
+                    grant(player, "angel_falls_from_heaven");
+                }
+            }
+        }
+
         // ☠️ ボス戦中に10分以内で5回死亡 -> 「ゾンビ戦法するならエナジードリンク飲めば?」
         if (victim instanceof ServerPlayer player) {
             long now = player.level().getGameTime();
