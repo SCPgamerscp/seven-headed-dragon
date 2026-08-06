@@ -19,6 +19,7 @@
 
   "subtitle.sevenheadeddragon.centipede.walk": "Centipede skitters",
   "subtitle.sevenheadeddragon.centipede.youchu": "Centipede screeches",
+  "subtitle.sevenheadeddragon.dragon.longinus": "Spear of Longinus descends",
 
   "effect.sevenheadeddragon.percent_poison": "Percent Poison",
   "effect.sevenheadeddragon.undead_curse": "Undead Curse",
@@ -129,6 +130,7 @@
   "entity.sevenheadeddragon.dragon_magic_circle": "Magic Circle",
   "entity.sevenheadeddragon.timed_gimmick_creeper": "Timed Creeper",
   "entity.sevenheadeddragon.debilitation_martyr": "Martyr of Debilitation",
+  "entity.sevenheadeddragon.dragon_clone_dive": "Apocalypse Red Dragon Clone",
 
   "item.sevenheadeddragon.apocalypse_seven_headed_red_dragon_spawn_egg": "Apocalypse Seven Headed Red Dragon Spawn Egg",
   "item.sevenheadeddragon.debilitation_martyr_spawn_egg": "Martyr of Debilitation Spawn Egg",

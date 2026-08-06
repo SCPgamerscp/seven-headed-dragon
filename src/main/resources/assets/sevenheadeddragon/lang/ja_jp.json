@@ -19,6 +19,7 @@
 
   "subtitle.sevenheadeddragon.centipede.walk": "ムカデが這う音",
   "subtitle.sevenheadeddragon.centipede.youchu": "ムカデの鳴き声",
+  "subtitle.sevenheadeddragon.dragon.longinus": "神を殺す絶望の槍が降臨する音",
 
   "effect.sevenheadeddragon.percent_poison": "割合毒",
   "effect.sevenheadeddragon.undead_curse": "アンデッド化",
@@ -129,6 +130,7 @@
   "entity.sevenheadeddragon.dragon_magic_circle": "魔法陣",
   "entity.sevenheadeddragon.timed_gimmick_creeper": "時限クリーパー",
   "entity.sevenheadeddragon.debilitation_martyr": "衰弱の殉教者",
+  "entity.sevenheadeddragon.dragon_clone_dive": "終末の七つ頭の赤い竜の分身",
 
   "item.sevenheadeddragon.apocalypse_seven_headed_red_dragon_spawn_egg": "終末の七つ頭の赤い竜のスポーンエッグ",
   "item.sevenheadeddragon.debilitation_martyr_spawn_egg": "衰弱の殉教者のスポーンエッグ",
