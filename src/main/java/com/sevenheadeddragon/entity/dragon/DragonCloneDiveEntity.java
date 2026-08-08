@@ -95,7 +95,20 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
 
         Vec3 target = getTargetPos();
         if (target.x == 0.0D && target.y == 0.0D && target.z == 0.0D) {
-            setTargetPos((float) getX(), (float) (getY() - 25.0D), (float) getZ());
+            // Find ground Y via raycast downwards from current position
+            double gy = getY();
+            if (this.level() instanceof ServerLevel serverLevel) {
+                net.minecraft.world.phys.HitResult hit = serverLevel.clip(new net.minecraft.world.level.ClipContext(
+                        this.position(), new Vec3(getX(), getY() - 256.0D, getZ()),
+                        net.minecraft.world.level.ClipContext.Block.COLLIDER,
+                        net.minecraft.world.level.ClipContext.Fluid.NONE, this));
+                if (hit.getType() != net.minecraft.world.phys.HitResult.Type.MISS) {
+                    gy = hit.getLocation().y;
+                } else {
+                    gy = Math.max(serverLevel.getMinBuildHeight(), getY() - 25.0D);
+                }
+            }
+            setTargetPos((float) getX(), (float) gy, (float) getZ());
             target = getTargetPos();
         }
 
@@ -104,20 +117,19 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
         double tz = target.z;
 
         if (this.level() instanceof ServerLevel serverLevel) {
-            double progress = Math.min(1.0D, (double) this.ageTicks / (double) DIVE_TICKS);
-            double progressSq = progress * progress; // Exponential downward acceleration
-            double currentY = ty + 25.0D * (1.0D - progressSq);
+            // High-speed physical descent (~50 m/s = 2.5 blocks/tick)
+            double nextY = Math.max(ty, this.getY() - 2.5D);
 
-            // Ground / terrain collision check during descent
+            // Ground / terrain collision check between previous Y and next Y
             net.minecraft.world.phys.HitResult hit = serverLevel.clip(new net.minecraft.world.level.ClipContext(
-                    new Vec3(tx, this.yo, tz), new Vec3(tx, currentY, tz),
+                    new Vec3(tx, this.yo, tz), new Vec3(tx, nextY, tz),
                     net.minecraft.world.level.ClipContext.Block.COLLIDER,
                     net.minecraft.world.level.ClipContext.Fluid.NONE, this));
 
             boolean hitBlock = hit.getType() != net.minecraft.world.phys.HitResult.Type.MISS;
-            boolean reachedGround = currentY <= ty + 0.1D || this.ageTicks >= DIVE_TICKS;
+            boolean reachedTargetY = nextY <= ty + 0.1D;
 
-            if (hitBlock || reachedGround) {
+            if (hitBlock || reachedTargetY) {
                 double impactY = hitBlock ? hit.getLocation().y : ty;
                 setPos(tx, impactY, tz);
 
@@ -135,11 +147,16 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
 
                 this.discard();
             } else {
-                setPos(tx, currentY, tz);
+                setPos(tx, nextY, tz);
 
                 // Trail particles during descent
-                serverLevel.sendParticles(ParticleTypes.CRIT, tx, currentY, tz, 8, 0.5D, 0.5D, 0.5D, 0.1D);
-                serverLevel.sendParticles(ParticleTypes.FLAME, tx, currentY, tz, 5, 0.3D, 0.3D, 0.3D, 0.05D);
+                serverLevel.sendParticles(ParticleTypes.CRIT, tx, nextY, tz, 8, 0.5D, 0.5D, 0.5D, 0.1D);
+                serverLevel.sendParticles(ParticleTypes.FLAME, tx, nextY, tz, 5, 0.3D, 0.3D, 0.3D, 0.05D);
+            }
+
+            // Safety timeout after 10 seconds (200 ticks)
+            if (this.ageTicks > 200) {
+                this.discard();
             }
         }
     }
