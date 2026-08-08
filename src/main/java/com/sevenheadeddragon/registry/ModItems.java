@@ -63,16 +63,6 @@ public final class ModItems {
             () -> new ForgeSpawnEggItem(ModEntities.APOCALYPSE_RED_DRAGON, 0x8B0000, 0x2A0033,
                     new Item.Properties()));
 
-    public static final RegistryObject<Item> DEBILITATION_MARTYR_SPAWN_EGG = ITEMS.register(
-            "debilitation_martyr_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.DEBILITATION_MARTYR, 0x3A3A3A, 0x1B4A2B,
-                    new Item.Properties()));
-
-    public static final RegistryObject<Item> TIMED_GIMMICK_CREEPER_SPAWN_EGG = ITEMS.register(
-            "timed_gimmick_creeper_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.TIMED_GIMMICK_CREEPER, 0x0DA70B, 0xFF3300,
-                    new Item.Properties()));
-
     /** 🪽 元熾天使の翼 (Apocalypse Elytra): 3D GeckoLib Armor + Defense +3000 + Toughness +300 + Flight Boost. */
     public static final RegistryObject<Item> APOCALYPSE_ELYTRA = ITEMS.register(
             "apocalypse_elytra",

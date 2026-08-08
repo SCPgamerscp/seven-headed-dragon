@@ -23,8 +23,6 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.FANG_KING_SPAWN_EGG.get());
                         output.accept(ModItems.CENTIPEDE_SPAWN_EGG.get());
                         output.accept(ModItems.APOCALYPSE_RED_DRAGON_SPAWN_EGG.get());
-                        output.accept(ModItems.DEBILITATION_MARTYR_SPAWN_EGG.get());
-                        output.accept(ModItems.TIMED_GIMMICK_CREEPER_SPAWN_EGG.get());
                         // The final boss's signature reward, previewable in creative.
                         output.accept(com.sevenheadeddragon.entity.dragon
                                 .ApocalypseSevenHeadedRedDragonEntity.createApocalypseElytra());
