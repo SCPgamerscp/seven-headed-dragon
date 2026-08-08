@@ -826,8 +826,8 @@ public final class RedDragonAttackPatternManager {
             });
         }
 
-        // Wait 85 ticks (60s telegraph + 15s dive + 10s delay) for current dragon to finish diving before spawning next clone
-        dragon.scheduleIn(85, () -> spawnDiveClones(dragon, target, spawned + 1, total, onComplete));
+        // Wait 90 ticks (60t telegraph + 20t 1.0s dive + 10t delay) for current dragon to finish diving before spawning next clone
+        dragon.scheduleIn(90, () -> spawnDiveClones(dragon, target, spawned + 1, total, onComplete));
     }
 
     /**

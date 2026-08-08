@@ -47,9 +47,10 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
 
     private int ageTicks = 0;
     private static final int TELEGRAPH_TICKS = 60; // 3 seconds grace period
-    private static final int DIVE_TICKS = 15; // 0.75 seconds spiral dive
+    private static final int DIVE_TICKS = 20; // 1.0 second spiral dive
 
     private LivingEntity owner;
+    private double startY = -999.0D;
 
     public DragonCloneDiveEntity(EntityType<?> type, Level level) {
         super(type, level);
@@ -60,6 +61,7 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
         this(ModEntities.DRAGON_CLONE_DIVE.get(), level);
         setTargetPos((float) targetX, (float) targetY, (float) targetZ);
         setPos(targetX, targetY + 25.0D, targetZ);
+        this.startY = targetY + 25.0D;
     }
 
     public DragonCloneDiveEntity(Level level, LivingEntity owner, double targetX, double targetY, double targetZ) {
@@ -93,6 +95,10 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
         super.tick();
         this.ageTicks++;
 
+        if (this.startY < -900.0D) {
+            this.startY = getY();
+        }
+
         Vec3 target = getTargetPos();
         if (target.x == 0.0D && target.y == 0.0D && target.z == 0.0D) {
             // Find ground Y via raycast downwards from current position
@@ -117,8 +123,10 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
         double tz = target.z;
 
         if (this.level() instanceof ServerLevel serverLevel) {
-            // High-speed physical descent (~50 m/s = 2.5 blocks/tick)
-            double nextY = Math.max(ty, this.getY() - 2.5D);
+            double startHeight = Math.max(25.0D, this.startY - ty);
+            double progress = Math.min(1.0D, (double) this.ageTicks / (double) DIVE_TICKS);
+            double progressSq = progress * progress; // Smooth downward acceleration
+            double nextY = ty + startHeight * (1.0D - progressSq);
 
             // Ground / terrain collision check between previous Y and next Y
             net.minecraft.world.phys.HitResult hit = serverLevel.clip(new net.minecraft.world.level.ClipContext(
@@ -127,7 +135,7 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
                     net.minecraft.world.level.ClipContext.Fluid.NONE, this));
 
             boolean hitBlock = hit.getType() != net.minecraft.world.phys.HitResult.Type.MISS;
-            boolean reachedTargetY = nextY <= ty + 0.1D;
+            boolean reachedTargetY = nextY <= ty + 0.1D || this.ageTicks >= DIVE_TICKS;
 
             if (hitBlock || reachedTargetY) {
                 double impactY = hitBlock ? hit.getLocation().y : ty;
