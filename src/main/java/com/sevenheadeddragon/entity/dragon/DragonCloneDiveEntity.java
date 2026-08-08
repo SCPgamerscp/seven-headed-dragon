@@ -123,10 +123,8 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
         double tz = target.z;
 
         if (this.level() instanceof ServerLevel serverLevel) {
-            double startHeight = Math.max(25.0D, this.startY - ty);
-            double progress = Math.min(1.0D, (double) this.ageTicks / (double) DIVE_TICKS);
-            double progressSq = progress * progress; // Smooth downward acceleration
-            double nextY = ty + startHeight * (1.0D - progressSq);
+            // Fixed fall speed: 1.25 blocks/tick = 25m/s (25m height takes exactly 20 ticks / 1.0s)
+            double nextY = Math.max(ty, this.getY() - 1.25D);
 
             // Ground / terrain collision check between previous Y and next Y
             net.minecraft.world.phys.HitResult hit = serverLevel.clip(new net.minecraft.world.level.ClipContext(
@@ -135,7 +133,7 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
                     net.minecraft.world.level.ClipContext.Fluid.NONE, this));
 
             boolean hitBlock = hit.getType() != net.minecraft.world.phys.HitResult.Type.MISS;
-            boolean reachedTargetY = nextY <= ty + 0.1D || this.ageTicks >= DIVE_TICKS;
+            boolean reachedTargetY = nextY <= ty + 0.1D;
 
             if (hitBlock || reachedTargetY) {
                 double impactY = hitBlock ? hit.getLocation().y : ty;
@@ -162,8 +160,8 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
                 serverLevel.sendParticles(ParticleTypes.FLAME, tx, nextY, tz, 5, 0.3D, 0.3D, 0.3D, 0.05D);
             }
 
-            // Safety timeout after 10 seconds (200 ticks)
-            if (this.ageTicks > 200) {
+            // Safety timeout after 30 seconds (600 ticks)
+            if (this.ageTicks > 600) {
                 this.discard();
             }
         }
