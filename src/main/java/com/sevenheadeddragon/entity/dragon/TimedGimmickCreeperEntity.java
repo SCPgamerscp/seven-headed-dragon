@@ -74,7 +74,7 @@ public class TimedGimmickCreeperEntity extends Monster implements net.minecraft.
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, MAX_HEALTH)
-                .add(Attributes.MOVEMENT_SPEED, 0.16D) // Halved movement speed (from 0.32D)
+                .add(Attributes.MOVEMENT_SPEED, 0.25D) // Vanilla creeper movement speed
                 .add(Attributes.FOLLOW_RANGE, 32.0D)
                 .add(Attributes.ARMOR, 0.0D);
     }
