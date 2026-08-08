@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "sevenheadeddragon:item/centipede_black_dragon_eater_spawn_egg"
+  }
+}

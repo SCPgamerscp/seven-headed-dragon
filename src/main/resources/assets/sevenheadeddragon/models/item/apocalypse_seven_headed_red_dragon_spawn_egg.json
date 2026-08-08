@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "sevenheadeddragon:item/apocalypse_seven_headed_red_dragon_spawn_egg"
+  }
+}
