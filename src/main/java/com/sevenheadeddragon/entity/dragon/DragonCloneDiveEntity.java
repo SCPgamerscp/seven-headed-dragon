@@ -104,34 +104,42 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
         double tz = target.z;
 
         if (this.level() instanceof ServerLevel serverLevel) {
-            // Spiral Dive Phase (0 to 15 ticks = 0.75 seconds)
-            if (this.ageTicks < DIVE_TICKS) {
-                double progress = (double) this.ageTicks / (double) DIVE_TICKS;
-                double progressSq = progress * progress; // Exponential downward acceleration
-                double currentY = ty + 25.0D * (1.0D - progressSq);
-                setPos(tx, currentY, tz);
+            double progress = Math.min(1.0D, (double) this.ageTicks / (double) DIVE_TICKS);
+            double progressSq = progress * progress; // Exponential downward acceleration
+            double currentY = ty + 25.0D * (1.0D - progressSq);
 
-                // Trail particles during descent
-                serverLevel.sendParticles(ParticleTypes.CRIT, tx, currentY, tz, 8, 0.5D, 0.5D, 0.5D, 0.1D);
-                serverLevel.sendParticles(ParticleTypes.FLAME, tx, currentY, tz, 5, 0.3D, 0.3D, 0.3D, 0.05D);
-            }
-            // Impact Phase (at tick 15)
-            else {
-                setPos(tx, ty, tz);
+            // Ground / terrain collision check during descent
+            net.minecraft.world.phys.HitResult hit = serverLevel.clip(new net.minecraft.world.level.ClipContext(
+                    new Vec3(tx, this.yo, tz), new Vec3(tx, currentY, tz),
+                    net.minecraft.world.level.ClipContext.Block.COLLIDER,
+                    net.minecraft.world.level.ClipContext.Fluid.NONE, this));
 
-                // Pure Power 10 explosion with NO terrain destruction (deals pure dragon explosion damage & knockback)
+            boolean hitBlock = hit.getType() != net.minecraft.world.phys.HitResult.Type.MISS;
+            boolean reachedGround = currentY <= ty + 0.1D || this.ageTicks >= DIVE_TICKS;
+
+            if (hitBlock || reachedGround) {
+                double impactY = hitBlock ? hit.getLocation().y : ty;
+                setPos(tx, impactY, tz);
+
+                // Pure Power 10 explosion with NO terrain destruction at exact ground impact point
                 Entity cause = this.owner != null ? this.owner : this;
-                serverLevel.explode(cause, tx, ty, tz, 10.0F, false, Level.ExplosionInteraction.NONE);
+                serverLevel.explode(cause, tx, impactY, tz, 10.0F, false, Level.ExplosionInteraction.NONE);
 
                 // Screen shake for nearby players
                 ScreenShakePacket packet = new ScreenShakePacket(4.0F, 12);
                 for (ServerPlayer player : serverLevel.players()) {
-                    if (player.distanceToSqr(tx, ty, tz) <= 64.0D * 64.0D) {
+                    if (player.distanceToSqr(tx, impactY, tz) <= 64.0D * 64.0D) {
                         ModNetworking.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), packet);
                     }
                 }
 
                 this.discard();
+            } else {
+                setPos(tx, currentY, tz);
+
+                // Trail particles during descent
+                serverLevel.sendParticles(ParticleTypes.CRIT, tx, currentY, tz, 8, 0.5D, 0.5D, 0.5D, 0.1D);
+                serverLevel.sendParticles(ParticleTypes.FLAME, tx, currentY, tz, 5, 0.3D, 0.3D, 0.3D, 0.05D);
             }
         }
     }
