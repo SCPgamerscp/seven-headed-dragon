@@ -74,7 +74,7 @@ public class TimedGimmickCreeperEntity extends Monster implements net.minecraft.
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, MAX_HEALTH)
-                .add(Attributes.MOVEMENT_SPEED, 0.32D)
+                .add(Attributes.MOVEMENT_SPEED, 0.16D) // Halved movement speed (from 0.32D)
                 .add(Attributes.FOLLOW_RANGE, 32.0D)
                 .add(Attributes.ARMOR, 0.0D);
     }
@@ -87,11 +87,8 @@ public class TimedGimmickCreeperEntity extends Monster implements net.minecraft.
 
     @Override
     protected void registerGoals() {
-        // Deliberately minimal: it walks toward the player it was summoned
-        // against, but its threat comes purely from the fuse, so it needs no
-        // swell/attack AI of its own.
         this.goalSelector.addGoal(0, new net.minecraft.world.entity.ai.goal.FloatGoal(this));
-        this.goalSelector.addGoal(2, new net.minecraft.world.entity.ai.goal.MeleeAttackGoal(this, 1.0D, false));
+        this.goalSelector.addGoal(2, new ApproachTargetGoal(this, 1.0D));
         this.goalSelector.addGoal(5, new net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal(this, 0.8D));
         this.goalSelector.addGoal(6, new net.minecraft.world.entity.ai.goal.LookAtPlayerGoal(this,
                 net.minecraft.world.entity.player.Player.class, 8.0F));
@@ -99,6 +96,32 @@ public class TimedGimmickCreeperEntity extends Monster implements net.minecraft.
         this.targetSelector.addGoal(1, new net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal<>(
                 this, net.minecraft.world.entity.player.Player.class, true));
+    }
+
+    private static class ApproachTargetGoal extends net.minecraft.world.entity.ai.goal.Goal {
+        private final TimedGimmickCreeperEntity creeper;
+        private final double speedModifier;
+
+        public ApproachTargetGoal(TimedGimmickCreeperEntity creeper, double speedModifier) {
+            this.creeper = creeper;
+            this.speedModifier = speedModifier;
+            this.setFlags(java.util.EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            net.minecraft.world.entity.LivingEntity target = this.creeper.getTarget();
+            return target != null && target.isAlive();
+        }
+
+        @Override
+        public void tick() {
+            net.minecraft.world.entity.LivingEntity target = this.creeper.getTarget();
+            if (target != null) {
+                this.creeper.getLookControl().setLookAt(target, 30.0F, 30.0F);
+                this.creeper.getNavigation().moveTo(target, this.speedModifier);
+            }
+        }
     }
 
     /** Remaining fuse in ticks (synced, used by the renderer's flash effect). */
