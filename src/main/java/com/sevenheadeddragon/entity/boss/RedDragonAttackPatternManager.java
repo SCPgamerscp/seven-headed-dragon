@@ -803,8 +803,8 @@ public final class RedDragonAttackPatternManager {
             final Vec3 pos = target.position();
             final double gy = groundY(level, pos);
 
-            // Phase 1: Extremely dense ground particle telegraph (120 points, 3x density) for 3 seconds (60 ticks)
-            for (int t = 0; t < 60; t += 2) {
+            // Phase 1: Extremely dense ground particle telegraph (120 points, 3x density) for 2 seconds (40 ticks)
+            for (int t = 0; t < 40; t += 2) {
                 dragon.scheduleIn(t, () -> {
                     for (int i = 0; i < 120; i++) {
                         double angle = dragon.getRandom().nextDouble() * Math.PI * 2.0D;
@@ -816,8 +816,8 @@ public final class RedDragonAttackPatternManager {
                 });
             }
 
-            // Phase 2: After 3 seconds (60 ticks), suddenly spawn dragon clone at Y+25 and dive down in 0.75s!
-            dragon.scheduleIn(60, () -> {
+            // Phase 2: After 2 seconds (40 ticks), suddenly spawn dragon clone at Y+25 and dive down!
+            dragon.scheduleIn(40, () -> {
                 if (dragon.isAlive()) {
                     com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity clone =
                             new com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity(level, dragon, pos.x, gy, pos.z);
@@ -826,8 +826,8 @@ public final class RedDragonAttackPatternManager {
             });
         }
 
-        // Wait 90 ticks (60t telegraph + 20t 1.0s dive + 10t delay) for current dragon to finish diving before spawning next clone
-        dragon.scheduleIn(90, () -> spawnDiveClones(dragon, target, spawned + 1, total, onComplete));
+        // Wait 70 ticks (40t telegraph + 20t 1.0s dive + 10t delay) for current dragon to finish diving before spawning next clone
+        dragon.scheduleIn(70, () -> spawnDiveClones(dragon, target, spawned + 1, total, onComplete));
     }
 
     /**
