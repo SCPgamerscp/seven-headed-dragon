@@ -837,13 +837,14 @@ public final class RedDragonAttackPatternManager {
      */
     private static double groundY(ServerLevel level, Vec3 pos) {
         BlockPos base = BlockPos.containing(pos.x, pos.y, pos.z);
-        int surface = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, base.getX(), base.getZ());
-        // Prefer terrain near the reference Y so the attack does not jump to a
-        // roof far above (or a cave floor far below) the actual fight.
-        if (Math.abs(surface - pos.y) > 12.0D) {
-            return pos.y;
+        net.minecraft.world.phys.HitResult hit = level.clip(new net.minecraft.world.level.ClipContext(
+                pos, new Vec3(pos.x, level.getMinBuildHeight(), pos.z),
+                net.minecraft.world.level.ClipContext.Block.COLLIDER,
+                net.minecraft.world.level.ClipContext.Fluid.NONE, null));
+        if (hit.getType() != net.minecraft.world.phys.HitResult.Type.MISS) {
+            return hit.getLocation().y;
         }
-        return surface;
+        return level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, base.getX(), base.getZ());
     }
 
     /** Sends a screen-shake packet to every player near the dragon. */

@@ -118,28 +118,42 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
             target = getTargetPos();
         }
 
-        double tx = target.x;
-        double ty = target.y;
-        double tz = target.z;
+        double tx = this.getX();
+        double tz = this.getZ();
 
         if (this.level() instanceof ServerLevel serverLevel) {
-            // Fixed fall speed: 1.25 blocks/tick = 25m/s (25m height takes exactly 20 ticks / 1.0s)
-            double nextY = Math.max(ty, this.getY() - 1.25D);
+            // Fixed fall speed: 1.25 blocks/tick = 25m/s
+            double currentY = this.getY();
+            double nextY = currentY - 1.25D;
 
-            // Ground / terrain collision check between previous Y and next Y
+            // 1. Terrain / block collision check between previous Y and next Y
             net.minecraft.world.phys.HitResult hit = serverLevel.clip(new net.minecraft.world.level.ClipContext(
                     new Vec3(tx, this.yo, tz), new Vec3(tx, nextY, tz),
                     net.minecraft.world.level.ClipContext.Block.COLLIDER,
                     net.minecraft.world.level.ClipContext.Fluid.NONE, this));
 
             boolean hitBlock = hit.getType() != net.minecraft.world.phys.HitResult.Type.MISS;
-            boolean reachedTargetY = nextY <= ty + 0.1D;
 
-            if (hitBlock || reachedTargetY) {
-                double impactY = hitBlock ? hit.getLocation().y : ty;
+            // 2. Direct entity hit check along the dive shaft (like Longinus Spear)
+            boolean hitEntity = false;
+            double impactY = nextY;
+
+            if (hitBlock) {
+                impactY = hit.getLocation().y;
+            } else {
+                for (Entity entity : serverLevel.getEntities(this,
+                        this.getBoundingBox().inflate(0.5D, 1.0D, 0.5D),
+                        e -> e.isAlive() && e != this.owner && !(e instanceof DragonCloneDiveEntity))) {
+                    hitEntity = true;
+                    impactY = entity.getY();
+                    break;
+                }
+            }
+
+            if (hitBlock || hitEntity || nextY <= serverLevel.getMinBuildHeight()) {
                 setPos(tx, impactY, tz);
 
-                // Pure Power 10 explosion with NO terrain destruction at exact ground impact point
+                // Pure Power 10 explosion with NO terrain destruction at exact ground/entity impact point
                 Entity cause = this.owner != null ? this.owner : this;
                 serverLevel.explode(cause, tx, impactY, tz, 10.0F, false, Level.ExplosionInteraction.NONE);
 
