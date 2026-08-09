@@ -41,11 +41,11 @@ public final class ModItems {
      */
     public static final RegistryObject<Item> FANG_KING_SPAWN_EGG = ITEMS.register(
             "fang_king_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.FANG_KING, 0x2B2B2B, 0xE8E8E8, new Item.Properties()));
+            () -> new com.sevenheadeddragon.item.CustomBossSpawnEggItem(ModEntities.FANG_KING, 0x2B2B2B, 0xE8E8E8, new Item.Properties()));
 
     public static final RegistryObject<Item> CENTIPEDE_SPAWN_EGG = ITEMS.register(
             "centipede_black_dragon_eater_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.CENTIPEDE_BOSS, 0x1A1A1A, 0xB22222, new Item.Properties()));
+            () -> new com.sevenheadeddragon.item.CustomBossSpawnEggItem(ModEntities.CENTIPEDE_BOSS, 0x1A1A1A, 0xB22222, new Item.Properties()));
 
     // ------------------------------------------------------------------
     // 終末の七つ頭の赤い竜 (Apocalypse Seven Headed Red Dragon)
@@ -60,7 +60,7 @@ public final class ModItems {
      */
     public static final RegistryObject<Item> APOCALYPSE_RED_DRAGON_SPAWN_EGG = ITEMS.register(
             "apocalypse_seven_headed_red_dragon_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.APOCALYPSE_RED_DRAGON, 0x8B0000, 0x2A0033,
+            () -> new com.sevenheadeddragon.item.CustomBossSpawnEggItem(ModEntities.APOCALYPSE_RED_DRAGON, 0x8B0000, 0x2A0033,
                     new Item.Properties()));
 
     /** 🪽 元熾天使の翼 (Apocalypse Elytra): 3D GeckoLib Armor + Defense +3000 + Toughness +300 + Flight Boost. */
