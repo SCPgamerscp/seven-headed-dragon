@@ -54,7 +54,6 @@ public class DebilitationMartyrEntity extends Entity implements GeoEntity, net.m
 
     public DebilitationMartyrEntity(EntityType<? extends DebilitationMartyrEntity> type, Level level) {
         super(type, level);
-        this.noPhysics = true;
     }
 
     public void setOwner(@Nullable LivingEntity owner) {
@@ -104,6 +103,19 @@ public class DebilitationMartyrEntity extends Entity implements GeoEntity, net.m
     @Override
     public void tick() {
         super.tick();
+
+        // ArmorStand-like gravity physics: fall when in mid-air or when ground beneath is destroyed
+        if (!this.isNoGravity() && !this.onGround()) {
+            this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.04D, 0.0D));
+            this.move(net.minecraft.world.entity.MoverType.SELF, this.getDeltaMovement());
+            this.setDeltaMovement(this.getDeltaMovement().multiply(0.98D, 0.98D, 0.98D));
+        }
+
+        if (this.getY() < this.level().getMinBuildHeight() - 30) {
+            this.discard();
+            return;
+        }
+
         if (!this.level().isClientSide && this.tickCount % CLOUD_REFRESH_INTERVAL == 1) {
             spawnVanillaAreaEffectCloud();
         }
