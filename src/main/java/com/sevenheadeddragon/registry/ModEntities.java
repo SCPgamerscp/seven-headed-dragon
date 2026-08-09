@@ -176,7 +176,6 @@ public final class ModEntities {
         event.put(CENTIPEDE_BOSS.get(), CentipedeBossEntity.createAttributes().build());
         event.put(APOCALYPSE_RED_DRAGON.get(), ApocalypseSevenHeadedRedDragonEntity.createAttributes().build());
         event.put(TIMED_GIMMICK_CREEPER.get(), TimedGimmickCreeperEntity.createAttributes().build());
-        event.put(DEBILITATION_MARTYR.get(), DebilitationMartyrEntity.createAttributes().build());
     }
 
     private ModEntities() {}

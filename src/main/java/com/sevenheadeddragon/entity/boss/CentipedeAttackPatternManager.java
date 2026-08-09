@@ -152,7 +152,6 @@ public final class CentipedeAttackPatternManager {
                 List<LivingEntity> victims = boss.level().getEntitiesOfClass(LivingEntity.class,
                         boss.getBoundingBox().inflate(12.0D),
                         e -> e != boss && e.isAlive()
-                                && !(e instanceof com.sevenheadeddragon.entity.dragon.DebilitationMartyrEntity)
                                 && !(e instanceof com.sevenheadeddragon.entity.dragon.TimedGimmickCreeperEntity));
 
                 for (LivingEntity victim : victims) {

@@ -1,19 +1,22 @@
 package com.sevenheadeddragon.entity.dragon;
 
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobType;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.LivingEntity;
+
 import net.minecraft.world.level.Level;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -23,60 +26,69 @@ import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import javax.annotation.Nullable;
+
 /**
  * 衰弱の殉教者 (Debilitation Martyr).
  * <p>
- * 固定設置型のエンティティ。召喚位置の地面にバニラの毒雲（{@link AreaEffectCloud}）を
- * 実際に生成し、周囲にウィザー効果を付与する。
+ * 非モブ・固定設置型（トーテム）エンティティ。
+ * プレイヤー攻撃により撃破可能（HP 20）で、召喚位置にウィザー効果の毒雲を常時発生させる。
  */
-public class DebilitationMartyrEntity extends Monster implements GeoEntity, net.minecraft.world.entity.OwnableEntity {
+public class DebilitationMartyrEntity extends Entity implements GeoEntity, net.minecraft.world.entity.OwnableEntity {
 
-    /** HP 20. */
-    public static final double MAX_HEALTH = 20.0D;
+    /** MAX HP 20.0F. */
+    public static final float MAX_HEALTH = 20.0F;
 
     /** 毒雲の半径 (4ブロック). */
     public static final float CLOUD_RADIUS = 4.0F;
 
     private static final int CLOUD_REFRESH_INTERVAL = 20;
 
+    private static final EntityDataAccessor<Float> DATA_HEALTH =
+            SynchedEntityData.defineId(DebilitationMartyrEntity.class, EntityDataSerializers.FLOAT);
+
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
-    @javax.annotation.Nullable
-    private net.minecraft.world.entity.LivingEntity owner;
+    @Nullable
+    private LivingEntity owner;
 
     public DebilitationMartyrEntity(EntityType<? extends DebilitationMartyrEntity> type, Level level) {
         super(type, level);
+        this.noPhysics = true;
     }
 
-    public void setOwner(@javax.annotation.Nullable net.minecraft.world.entity.LivingEntity owner) {
+    public void setOwner(@Nullable LivingEntity owner) {
         this.owner = owner;
     }
 
     @Override
-    @javax.annotation.Nullable
-    public net.minecraft.world.entity.LivingEntity getOwner() {
+    @Nullable
+    public LivingEntity getOwner() {
         return this.owner;
     }
 
     @Override
-    @javax.annotation.Nullable
+    @Nullable
     public java.util.UUID getOwnerUUID() {
         return this.owner != null ? this.owner.getUUID() : null;
     }
 
-    public static AttributeSupplier.Builder createAttributes() {
-        return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, MAX_HEALTH)
-                .add(Attributes.MOVEMENT_SPEED, 0.0D)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
-                .add(Attributes.ATTACK_DAMAGE, 0.0D)
-                .add(Attributes.FOLLOW_RANGE, 0.0D)
-                .add(Attributes.ARMOR, 2.0D);
+    @Override
+    protected void defineSynchedData() {
+        this.entityData.define(DATA_HEALTH, MAX_HEALTH);
+    }
+
+    public float getHealth() {
+        return this.entityData.get(DATA_HEALTH);
+    }
+
+    public void setHealth(float health) {
+        this.entityData.set(DATA_HEALTH, Math.max(0.0F, health));
     }
 
     @Override
-    protected void registerGoals() {
-        // 設置型エンティティのため移動・追尾AIは使用しない
+    public boolean isPickable() {
+        return true;
     }
 
     @Override
@@ -85,18 +97,13 @@ public class DebilitationMartyrEntity extends Monster implements GeoEntity, net.
     }
 
     @Override
-    protected void doPush(Entity entity) {
+    public void push(Entity entity) {
         // 設置型のため押し出し無効
     }
 
     @Override
-    public MobType getMobType() {
-        return MobType.UNDEAD;
-    }
-
-    @Override
-    public void aiStep() {
-        super.aiStep();
+    public void tick() {
+        super.tick();
         if (!this.level().isClientSide && this.tickCount % CLOUD_REFRESH_INTERVAL == 1) {
             spawnVanillaAreaEffectCloud();
         }
@@ -114,62 +121,57 @@ public class DebilitationMartyrEntity extends Monster implements GeoEntity, net.
         cloud.setRadiusPerTick(0.0F);
         cloud.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 4, false, true, true));
         cloud.setParticle(ParticleTypes.ENTITY_EFFECT);
-        cloud.setOwner(this.getOwner() != null ? this.getOwner() : this);
+        if (this.getOwner() != null) {
+            cloud.setOwner(this.getOwner());
+        }
         this.level().addFreshEntity(cloud);
     }
 
     @Override
-    public void die(DamageSource damageSource) {
-        if (!this.level().isClientSide) {
-            this.level().playSound(null, this.blockPosition(), SoundEvents.WITHER_SKELETON_DEATH,
-                    SoundSource.HOSTILE, 1.0F, 1.1F);
-        }
-        super.die(damageSource);
-    }
-
-    @Override
-    protected SoundEvent getAmbientSound() {
-        return SoundEvents.WITHER_SKELETON_AMBIENT;
-    }
-
-    @Override
-    protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvents.WITHER_SKELETON_HURT;
-    }
-
-    @Override
-    protected SoundEvent getDeathSound() {
-        return SoundEvents.WITHER_SKELETON_DEATH;
-    }
-
-    @Override
-    public int getExperienceReward() {
-        return 0;
-    }
-
-    @Override
-    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
-        return false;
-    }
-
-    @Override
-    public boolean canChangeDimensions() {
-        return false;
-    }
-
-    @Override
-    public boolean canBeAffected(MobEffectInstance effect) {
-        if (effect.getEffect() == MobEffects.WITHER) {
-            return false;
-        }
-        return super.canBeAffected(effect);
-    }
-
-    @Override
     public boolean hurt(DamageSource source, float amount) {
+        if (this.level().isClientSide) return false;
         if (source.getEntity() instanceof ApocalypseSevenHeadedRedDragonEntity) return false;
-        if (source.is(net.minecraft.world.damagesource.DamageTypes.WITHER)) return false;
-        return super.hurt(source, amount);
+        if (source.is(DamageTypes.WITHER)) return false;
+
+        float nextHealth = getHealth() - amount;
+        setHealth(nextHealth);
+
+        if (this.level() instanceof ServerLevel serverLevel) {
+            serverLevel.playSound(null, this.blockPosition(), SoundEvents.WITHER_SKELETON_HURT,
+                    SoundSource.HOSTILE, 1.0F, 1.1F);
+            serverLevel.sendParticles(ParticleTypes.DAMAGE_INDICATOR, getX(), getY() + 1.2D, getZ(),
+                    (int) Math.max(1, amount), 0.3D, 0.5D, 0.3D, 0.1D);
+        }
+
+        if (nextHealth <= 0.0F) {
+            destroy();
+        }
+
+        return true;
+    }
+
+    private void destroy() {
+        if (this.level() instanceof ServerLevel serverLevel) {
+            serverLevel.playSound(null, this.blockPosition(), SoundEvents.WITHER_SKELETON_DEATH,
+                    SoundSource.HOSTILE, 1.2F, 0.9F);
+            serverLevel.sendParticles(ParticleTypes.LARGE_SMOKE, getX(), getY() + 1.0D, getZ(),
+                    15, 0.4D, 0.6D, 0.4D, 0.05D);
+            serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, getX(), getY() + 1.0D, getZ(),
+                    10, 0.3D, 0.5D, 0.3D, 0.05D);
+        }
+        this.discard();
+    }
+
+    @Override
+    protected void readAdditionalSaveData(CompoundTag tag) {
+        if (tag.contains("Health")) {
+            setHealth(tag.getFloat("Health"));
+        }
+    }
+
+    @Override
+    protected void addAdditionalSaveData(CompoundTag tag) {
+        tag.putFloat("Health", getHealth());
     }
 
     // ------------------------------------------------------------------

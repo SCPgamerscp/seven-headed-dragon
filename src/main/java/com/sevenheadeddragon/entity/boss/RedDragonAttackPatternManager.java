@@ -144,7 +144,6 @@ public final class RedDragonAttackPatternManager {
             List<LivingEntity> victims = dragon.level().getEntitiesOfClass(LivingEntity.class,
                     dragon.getBoundingBox().inflate(BITE_REACH),
                     e -> e != dragon && e.isAlive()
-                            && !(e instanceof DebilitationMartyrEntity)
                             && !(e instanceof TimedGimmickCreeperEntity)
                             && e.distanceTo(dragon) <= BITE_REACH);
 
@@ -572,9 +571,6 @@ public final class RedDragonAttackPatternManager {
             if (martyr == null) continue;
             martyr.moveTo(x, groundY(serverLevel, new Vec3(x, target.getY(), z)), z,
                     dragon.getRandom().nextFloat() * 360.0F, 0.0F);
-            martyr.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(martyr.blockPosition()),
-                    MobSpawnType.MOB_SUMMONED, null, null);
-            martyr.setTarget(target);
             martyr.setOwner(dragon);
             serverLevel.addFreshEntity(martyr);
 
@@ -677,7 +673,6 @@ public final class RedDragonAttackPatternManager {
         List<LivingEntity> victims = dragon.level().getEntitiesOfClass(LivingEntity.class,
                 dragon.getBoundingBox().inflate(CHARGE_HIT_RANGE),
                 e -> e != dragon && e.isAlive()
-                        && !(e instanceof DebilitationMartyrEntity)
                         && !(e instanceof TimedGimmickCreeperEntity)
                         && e.distanceTo(dragon) <= CHARGE_HIT_RANGE);
 
@@ -732,7 +727,6 @@ public final class RedDragonAttackPatternManager {
             List<LivingEntity> victims = dragon.level().getEntitiesOfClass(LivingEntity.class,
                     dragon.getBoundingBox().inflate(TAIL_REACH),
                     e -> e != dragon && e.isAlive()
-                            && !(e instanceof DebilitationMartyrEntity)
                             && !(e instanceof TimedGimmickCreeperEntity)
                             && e.distanceTo(dragon) <= TAIL_REACH);
 
