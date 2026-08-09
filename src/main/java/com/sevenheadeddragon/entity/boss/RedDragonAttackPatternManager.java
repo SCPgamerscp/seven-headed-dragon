@@ -323,8 +323,9 @@ public final class RedDragonAttackPatternManager {
                 return;
             }
             for (Vec3 spot : spearSpots) {
+                double dropY = Math.max(groundY(serverLevel, spot), target.getY()) + LONGINUS_DROP_HEIGHT;
                 LonginusSpearEntity spear = new LonginusSpearEntity(serverLevel, dragon);
-                spear.dropFrom(spot.x, groundY(serverLevel, spot) + LONGINUS_DROP_HEIGHT, spot.z);
+                spear.dropFrom(spot.x, dropY, spot.z);
                 serverLevel.addFreshEntity(spear);
             }
             serverLevel.playSound(null, target.blockPosition(), ModSounds.LONGINUS_SPEAR.get(),
@@ -802,6 +803,7 @@ public final class RedDragonAttackPatternManager {
         if (target != null && target.isAlive() && dragon.level() instanceof ServerLevel level) {
             final Vec3 pos = target.position();
             final double gy = groundY(level, pos);
+            final double targetY = Math.max(gy, pos.y);
 
             // Phase 1: Extremely dense ground particle telegraph (120 points, 3x density) for 2 seconds (40 ticks)
             for (int t = 0; t < 40; t += 2) {
@@ -816,11 +818,11 @@ public final class RedDragonAttackPatternManager {
                 });
             }
 
-            // Phase 2: After 2 seconds (40 ticks), suddenly spawn dragon clone at Y+25 and dive down!
+            // Phase 2: After 2 seconds (40 ticks), suddenly spawn dragon clone at targetY+25 and dive down!
             dragon.scheduleIn(40, () -> {
                 if (dragon.isAlive()) {
                     com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity clone =
-                            new com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity(level, dragon, pos.x, gy, pos.z);
+                            new com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity(level, dragon, pos.x, targetY, pos.z);
                     level.addFreshEntity(clone);
                 }
             });
