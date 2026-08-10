@@ -164,6 +164,15 @@ public final class ModAdvancementEvents {
             }
         }
 
+        // 🥊 ワンパン判定: ボスが最大体力の状態から一撃で撃破ダメージを受けた場合
+        if (isAnyBoss(victim) && victim.getHealth() >= victim.getMaxHealth() - 0.5F && event.getAmount() >= victim.getHealth()) {
+            if (attacker instanceof ServerPlayer player) {
+                grant(player, "one_punch_man");
+            } else if (direct instanceof ServerPlayer player) {
+                grant(player, "one_punch_man");
+            }
+        }
+
         // 🛡️ ドッジマスター: ボス戦中のプレイヤー被害記録
         if (victim instanceof ServerPlayer player) {
             for (BossFightTracker tracker : activeBossFights.values()) {
@@ -217,11 +226,6 @@ public final class ModAdvancementEvents {
         if (isAnyBoss(victim)) {
             BossFightTracker tracker = activeBossFights.remove(victim.getUUID());
             long now = victim.level().getGameTime();
-
-            // ワンパン判定: 最大体力からの即死
-            if (victim.getHealth() >= victim.getMaxHealth() - 0.5F && attacker instanceof ServerPlayer p) {
-                grant(p, "one_punch_man");
-            }
 
             for (ServerPlayer p : victim.level().getEntitiesOfClass(ServerPlayer.class, victim.getBoundingBox().inflate(64.0))) {
                 // ⏱️ 7分以内撃破 -> 「そこをどけ、私はRTA走者だ」
