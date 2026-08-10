@@ -595,8 +595,6 @@ public final class RedDragonAttackPatternManager {
     /** Claw wind-ups before the charge, per spec ("3回連続で行う"). */
     private static final int CLAW_REPEATS = 3;
     private static final int CLAW_ANIM_TICKS = 30;
-    private static final float CLAW_DAMAGE = 20.0F;
-    private static final double CLAW_REACH = 8.0D;
 
     /** Charge duration and speed. */
     private static final int CHARGE_DURATION_TICKS = 40;
@@ -630,13 +628,6 @@ public final class RedDragonAttackPatternManager {
         faceTarget(dragon, target);
         dragon.level().playSound(null, dragon.blockPosition(), SoundEvents.RAVAGER_ATTACK,
                 SoundSource.HOSTILE, 2.0F, 0.7F);
-
-        dragon.scheduleIn(10, () -> {
-            if (!dragon.isAlive() || !target.isAlive()) return;
-            if (dragon.distanceTo(target) <= CLAW_REACH) {
-                target.hurt(dragon.damageSources().mobAttack(dragon), CLAW_DAMAGE);
-            }
-        });
 
         dragon.scheduleIn(CLAW_ANIM_TICKS, () -> clawStep(dragon, target, done + 1));
     }
