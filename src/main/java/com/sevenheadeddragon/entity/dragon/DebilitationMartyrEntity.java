@@ -151,8 +151,9 @@ public class DebilitationMartyrEntity extends Entity implements GeoEntity, net.m
         if (this.level() instanceof ServerLevel serverLevel) {
             serverLevel.playSound(null, this.blockPosition(), SoundEvents.WITHER_SKELETON_HURT,
                     SoundSource.HOSTILE, 1.0F, 1.1F);
+            int particleCount = Math.min(20, (int) Math.max(1, amount));
             serverLevel.sendParticles(ParticleTypes.DAMAGE_INDICATOR, getX(), getY() + 1.2D, getZ(),
-                    (int) Math.max(1, amount), 0.3D, 0.5D, 0.3D, 0.1D);
+                    particleCount, 0.3D, 0.5D, 0.3D, 0.1D);
         }
 
         if (nextHealth <= 0.0F) {
