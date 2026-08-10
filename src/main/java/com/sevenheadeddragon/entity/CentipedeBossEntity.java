@@ -1,7 +1,6 @@
 package com.sevenheadeddragon.entity;
 
 import com.sevenheadeddragon.entity.boss.CentipedeAttackPatternManager;
-import com.sevenheadeddragon.registry.ModEffects;
 import com.sevenheadeddragon.registry.ModSounds;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.Mth;
@@ -19,7 +18,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobType;

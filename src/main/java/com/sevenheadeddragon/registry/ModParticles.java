@@ -4,7 +4,6 @@ import com.sevenheadeddragon.SevenHeadedDragon;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
 
 /**
  * Currently unused placeholder for future custom particle types

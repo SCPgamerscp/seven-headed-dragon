@@ -1,7 +1,6 @@
 package com.sevenheadeddragon.entity.dragon;
 
 import com.sevenheadeddragon.registry.ModEffects;
-import com.sevenheadeddragon.util.ModDamageTypes;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -44,8 +43,6 @@ public class LonginusSpearEntity extends Projectile implements GeoEntity {
     /** Explosion power, per spec ("爆発力 5 / 地形破壊なし"). */
     public static final float EXPLOSION_POWER = 5.0F;
 
-    /** Direct-impact damage, before the 神殺し damage-over-time begins. */
-    public static final float IMPACT_DAMAGE = 20.0F;
 
     /** 神殺し duration applied on a direct hit: 10 seconds = 10 ticks of 10% max HP. */
     public static final int GOD_SLAYING_DURATION_TICKS = 20 * 10;

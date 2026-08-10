@@ -1,7 +1,5 @@
 package com.sevenheadeddragon.entity.dragon;
 
-import com.sevenheadeddragon.client.dragon.DragonAssetModel;
-import com.sevenheadeddragon.entity.boss.RedDragonAttackPatternManager;
 import com.sevenheadeddragon.network.ModNetworking;
 import com.sevenheadeddragon.network.ScreenShakePacket;
 import com.sevenheadeddragon.registry.ModEntities;
@@ -16,7 +14,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -26,7 +23,6 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import java.util.List;
 
 /**
  * 🐉 ドラゴンの回転急降下分身 (Dragon Clone Dive Entity).

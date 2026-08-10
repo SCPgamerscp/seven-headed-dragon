@@ -4,7 +4,6 @@ import com.sevenheadeddragon.SevenHeadedDragon;
 import com.sevenheadeddragon.item.EnergyDrinkItem;
 import com.sevenheadeddragon.item.SummonItem;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;

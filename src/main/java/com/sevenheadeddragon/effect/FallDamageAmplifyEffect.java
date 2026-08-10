@@ -1,9 +1,7 @@
 package com.sevenheadeddragon.effect;
 
-import com.sevenheadeddragon.util.ModDamageTypes;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.entity.LivingEntity;
 
 /**
  * 落下ダメージ倍化 (Fall Damage Amplify)
