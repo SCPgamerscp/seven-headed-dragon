@@ -598,7 +598,7 @@ public final class RedDragonAttackPatternManager {
 
     /** Charge duration and speed. */
     private static final int CHARGE_DURATION_TICKS = 40;
-    private static final double CHARGE_SPEED = 1.875D; // 1.5x speed increase (1.25D * 1.5)
+    private static final double CHARGE_SPEED = 2.8125D; // Increased by 1.5x (1.875D * 1.5)
     private static final double CHARGE_HIT_RANGE = 4.5D;
     /** Upward launch imparted by a connecting charge ("プレイヤーを空高く打ち上げる"). */
     private static final double CHARGE_LAUNCH_POWER = 2.4D;
