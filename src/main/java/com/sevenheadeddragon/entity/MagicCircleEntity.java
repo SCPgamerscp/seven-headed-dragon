@@ -37,7 +37,8 @@ public class MagicCircleEntity extends Entity {
     /** Default telegraph duration before the circle disappears (in ticks). */
     private static final int DEFAULT_LIFETIME = 40;
 
-    private LivingEntity targetToTrack = null;
+    private LivingEntity ownerToTrack = null;
+    private LivingEntity targetToFace = null;
 
     public MagicCircleEntity(EntityType<?> type, Level level) {
         super(type, level);
@@ -77,19 +78,37 @@ public class MagicCircleEntity extends Entity {
     }
 
     public void startTracking(LivingEntity target) {
-        this.targetToTrack = target;
+        this.ownerToTrack = target;
+        this.targetToFace = target;
+    }
+
+    public void setOwnerAndTarget(LivingEntity owner, LivingEntity target) {
+        this.ownerToTrack = owner;
+        this.targetToFace = target;
     }
 
     @Override
     public void tick() {
         super.tick();
         if (!this.level().isClientSide) {
-            if (targetToTrack != null && targetToTrack.isAlive()) {
-                double yawRad = Math.toRadians(targetToTrack.getYRot());
-                double behindX = targetToTrack.getX() - Math.sin(yawRad) * 2.0;
-                double behindZ = targetToTrack.getZ() + Math.cos(yawRad) * 2.0;
-                this.setPos(behindX, targetToTrack.getY() + 1.5, behindZ);
-                this.setOrientationYaw(targetToTrack.getYRot());
+            if (ownerToTrack != null && ownerToTrack.isAlive()) {
+                double yawRad = Math.toRadians(ownerToTrack.getYRot());
+                double posX = ownerToTrack.getX() - Math.sin(yawRad) * 1.5;
+                double posZ = ownerToTrack.getZ() + Math.cos(yawRad) * 1.5;
+                this.setPos(posX, ownerToTrack.getY() + 1.8, posZ);
+            }
+
+            if (targetToFace != null && targetToFace.isAlive()) {
+                double dx = targetToFace.getX() - this.getX();
+                double dy = (targetToFace.getY() + targetToFace.getEyeHeight()) - this.getY();
+                double dz = targetToFace.getZ() - this.getZ();
+
+                float yaw = (float)(Math.atan2(dz, dx) * (180.0 / Math.PI)) - 90.0F;
+                double horizontalDist = Math.sqrt(dx * dx + dz * dz);
+                float pitch = (float)(-(Math.atan2(dy, horizontalDist) * (180.0 / Math.PI))) + 90.0F;
+
+                this.setOrientationYaw(-yaw);
+                this.setOrientationPitch(pitch);
             }
             
             int remaining = getLifetime() - 1;

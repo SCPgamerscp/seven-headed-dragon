@@ -12,6 +12,7 @@ import com.sevenheadeddragon.network.ModNetworking;
 import com.sevenheadeddragon.network.ScreenShakePacket;
 import com.sevenheadeddragon.registry.ModEffects;
 import com.sevenheadeddragon.registry.ModEntities;
+import com.sevenheadeddragon.registry.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -55,19 +56,6 @@ public final class RedDragonAttackPatternManager {
 
     private RedDragonAttackPatternManager() {}
 
-    /** Ground-level melee & ranged patterns, picked at random each time. */
-    private static final int PATTERN_SEVEN_BITE = 0;
-    private static final int PATTERN_GOAT_MACHINE_GUN = 1;
-    private static final int PATTERN_SQUID_VOLLEY = 2;
-    private static final int PATTERN_LONGINUS = 3;
-    private static final int PATTERN_RAINBOW_LIGHTNING = 4;
-    private static final int PATTERN_CREEPER_GIMMICK = 5;
-    private static final int PATTERN_MARTYR_SUMMON = 6;
-    private static final int PATTERN_FLYING_MAGIC = 7;
-    private static final int PATTERN_CLAW_CHARGE = 8;
-    private static final int PATTERN_TAIL = 9;
-    private static final int PATTERN_COUNT = 10;
-
     /** Standard damage figure used by nearly every attack, per spec ("各20ダメージ"). */
     public static final float STANDARD_DAMAGE = 20.0F;
 
@@ -77,38 +65,40 @@ public final class RedDragonAttackPatternManager {
     public static void startRandomAttack(ApocalypseSevenHeadedRedDragonEntity dragon) {
         LivingEntity target = dragon.getFocusedTarget();
         if (target == null || !target.isAlive()) {
-            // Nothing to attack - release the pattern lock so the boss retries
-            // next tick rather than stalling for the rest of its turn.
-            dragon.scheduleIn(10, dragon::onPatternFinished);
+            dragon.onPatternFinished();
             return;
         }
 
-        switch (dragon.getRandom().nextInt(PATTERN_COUNT)) {
-            case PATTERN_SEVEN_BITE -> startSevenBiteCombo(dragon, target);
-            case PATTERN_GOAT_MACHINE_GUN -> startGoatMachineGun(dragon, target);
-            case PATTERN_SQUID_VOLLEY -> startSquidVolley(dragon, target);
-            case PATTERN_LONGINUS -> startLonginusSpears(dragon, target);
-            case PATTERN_RAINBOW_LIGHTNING -> startRainbowLightning(dragon, target);
-            case PATTERN_CREEPER_GIMMICK -> startCreeperGimmick(dragon, target);
-            case PATTERN_MARTYR_SUMMON -> startMartyrSummon(dragon, target);
-            case PATTERN_FLYING_MAGIC -> startFlyingMagicMode(dragon, target);
-            case PATTERN_CLAW_CHARGE -> startClawCharge(dragon, target);
+        if (dragon.isHovering()) {
+            // 空中魔法フェーズ（後半30秒）: 上空10ブロックに浮遊したまま魔法6種を連打
+            startRandomMagicAttack(dragon, target, dragon::onPatternFinished);
+        } else {
+            // 地上物理フェーズ（前半30秒）: 地上で近接・物理攻撃3種を実行
+            startRandomGroundAttack(dragon, target);
+        }
+    }
+
+    private static void startRandomGroundAttack(ApocalypseSevenHeadedRedDragonEntity dragon, LivingEntity target) {
+        switch (dragon.getRandom().nextInt(3)) {
+            case 0 -> startSevenBiteCombo(dragon, target);
+            case 1 -> startClawCharge(dragon, target);
             default -> startTailSwipe(dragon, target);
         }
     }
 
     /**
-     * Picks one of the five <em>magic</em> patterns only - used by the flying
-     * mode, which repeats a magic attack five times from the air.
+     * 空中魔法・召喚攻撃6種（前半30秒の地上戦が終わり、上空へ浮上した後に連打）
      */
     private static void startRandomMagicAttack(ApocalypseSevenHeadedRedDragonEntity dragon,
-                                               LivingEntity target, Runnable onComplete) {
-        switch (dragon.getRandom().nextInt(5)) {
-            case 0 -> runGoatMachineGun(dragon, target, onComplete);
-            case 1 -> runSquidVolley(dragon, target, onComplete);
-            case 2 -> runLonginusSpears(dragon, target, onComplete);
-            case 3 -> runRainbowLightning(dragon, target, onComplete);
-            default -> runCreeperGimmick(dragon, target, onComplete);
+                                                LivingEntity target, Runnable onComplete) {
+        switch (dragon.getRandom().nextInt(7)) {
+            case 0 -> runMartyrSummon(dragon, target, onComplete);
+            case 1 -> runGoatMachineGun(dragon, target, onComplete);
+            case 2 -> runSquidVolley(dragon, target, onComplete);
+            case 3 -> runLonginusSpears(dragon, target, onComplete);
+            case 4 -> runRainbowLightning(dragon, target, onComplete);
+            case 5 -> runCreeperGimmick(dragon, target, onComplete);
+            default -> runDragonCloneDive(dragon, target, onComplete);
         }
     }
 
@@ -117,7 +107,7 @@ public final class RedDragonAttackPatternManager {
     // ==================================================================
 
     /** Ticks between consecutive bites - fast enough to feel like one combo. */
-    private static final int BITE_INTERVAL_TICKS = 9;
+    private static final int BITE_INTERVAL_TICKS = 16;
 
     /** Reach of each bite. */
     private static final double BITE_REACH = 9.0D;
@@ -130,6 +120,8 @@ public final class RedDragonAttackPatternManager {
      * leaves the player at a quarter of their offensive output and crawling.
      */
     private static void startSevenBiteCombo(ApocalypseSevenHeadedRedDragonEntity dragon, LivingEntity target) {
+        dragon.getNavigation().stop();
+        dragon.setDeltaMovement(0.0D, dragon.getDeltaMovement().y, 0.0D);
         biteStep(dragon, target, 0);
     }
 
@@ -139,17 +131,25 @@ public final class RedDragonAttackPatternManager {
             return;
         }
 
+        dragon.getNavigation().stop();
+        dragon.setDeltaMovement(0.0D, dragon.getDeltaMovement().y, 0.0D);
         dragon.playBite(index);
         faceTarget(dragon, target);
         dragon.level().playSound(null, dragon.blockPosition(), SoundEvents.ENDER_DRAGON_GROWL,
                 SoundSource.HOSTILE, 1.6F, 1.1F + index * 0.06F);
 
-        // The damage lands a few ticks into the animation, on the "snap".
+        // The damage lands a few ticks into the animation, on the "snap" - hits all entities in range (AoE).
         dragon.scheduleIn(4, () -> {
-            if (!dragon.isAlive() || target == null || !target.isAlive()) return;
-            if (dragon.distanceTo(target) <= BITE_REACH) {
-                target.hurt(dragon.damageSources().mobAttack(dragon), STANDARD_DAMAGE);
-                applySin(target, index, dragon);
+            if (!dragon.isAlive()) return;
+            List<LivingEntity> victims = dragon.level().getEntitiesOfClass(LivingEntity.class,
+                    dragon.getBoundingBox().inflate(BITE_REACH),
+                    e -> e != dragon && e.isAlive()
+                            && !(e instanceof TimedGimmickCreeperEntity)
+                            && e.distanceTo(dragon) <= BITE_REACH);
+
+            for (LivingEntity victim : victims) {
+                victim.hurt(dragon.damageSources().mobAttack(dragon), STANDARD_DAMAGE);
+                applySin(victim, index, dragon);
             }
         });
 
@@ -287,8 +287,13 @@ public final class RedDragonAttackPatternManager {
      */
     private static void runLonginusSpears(ApocalypseSevenHeadedRedDragonEntity dragon,
                                           LivingEntity target, Runnable onComplete) {
-        if (!dragon.isAlive() || target == null || !target.isAlive()
-                || !(dragon.level() instanceof ServerLevel serverLevel)) {
+        longinusWaveStep(dragon, target, 0, 5, onComplete);
+    }
+
+    private static void longinusWaveStep(ApocalypseSevenHeadedRedDragonEntity dragon, LivingEntity target,
+                                         int wave, int totalWaves, Runnable onComplete) {
+        if (!dragon.isAlive() || dragon.isPlayerTurn() || target == null || !target.isAlive()
+                || wave >= totalWaves || !(dragon.level() instanceof ServerLevel serverLevel)) {
             onComplete.run();
             return;
         }
@@ -298,17 +303,17 @@ public final class RedDragonAttackPatternManager {
 
         // 魔法陣: one large golden circle marking the whole strike zone.
         DragonMagicCircleEntity.spawn(serverLevel, center.x, groundY(serverLevel, center) + 0.05D, center.z,
-                0xFFD700, LONGINUS_CROSS_ARM * 2.0F + 2.0F, LONGINUS_TELEGRAPH_TICKS + 20);
+                0xFFD700, LONGINUS_CROSS_ARM * 2.0F + 2.0F, LONGINUS_TELEGRAPH_TICKS + 15);
 
         // Smaller circles marking each individual impact point, so the safe
         // diagonal gaps in the cross are unmistakable.
         for (Vec3 spot : spearSpots) {
             DragonMagicCircleEntity.spawn(serverLevel, spot.x, groundY(serverLevel, spot) + 0.06D, spot.z,
-                    0xFFE873, 1.6F, LONGINUS_TELEGRAPH_TICKS + 6);
+                    0xFFE873, 1.6F, LONGINUS_TELEGRAPH_TICKS + 4);
         }
 
         serverLevel.playSound(null, target.blockPosition(), SoundEvents.BEACON_ACTIVATE,
-                SoundSource.HOSTILE, 3.0F, 0.6F);
+                SoundSource.HOSTILE, 3.0F, 0.6F + wave * 0.05F);
         dragon.setActionState(ApocalypseSevenHeadedRedDragonEntity.ACTION_IDLE);
 
         dragon.scheduleIn(LONGINUS_TELEGRAPH_TICKS, () -> {
@@ -317,16 +322,17 @@ public final class RedDragonAttackPatternManager {
                 return;
             }
             for (Vec3 spot : spearSpots) {
+                double dropY = Math.max(groundY(serverLevel, spot), target.getY()) + LONGINUS_DROP_HEIGHT;
                 LonginusSpearEntity spear = new LonginusSpearEntity(serverLevel, dragon);
-                spear.dropFrom(spot.x, groundY(serverLevel, spot) + LONGINUS_DROP_HEIGHT, spot.z);
+                spear.dropFrom(spot.x, dropY, spot.z);
                 serverLevel.addFreshEntity(spear);
             }
-            serverLevel.playSound(null, target.blockPosition(), SoundEvents.TRIDENT_THROW,
-                    SoundSource.HOSTILE, 3.0F, 0.5F);
+            serverLevel.playSound(null, target.blockPosition(), ModSounds.LONGINUS_SPEAR.get(),
+                    SoundSource.HOSTILE, 15.0F, 1.0F);
             shakeNearbyScreens(serverLevel, dragon, 3.0F, 10);
 
-            // Let them land before yielding to the next pattern.
-            dragon.scheduleIn(30, onComplete);
+            // 5回連続連打: 次の波へ移行
+            dragon.scheduleIn(20, () -> longinusWaveStep(dragon, target, wave + 1, totalWaves, onComplete));
         });
     }
 
@@ -521,6 +527,7 @@ public final class RedDragonAttackPatternManager {
             creeper.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(creeper.blockPosition()),
                     MobSpawnType.MOB_SUMMONED, null, null);
             creeper.setTarget(target);
+            creeper.setOwner(dragon);
             serverLevel.addFreshEntity(creeper);
 
             serverLevel.sendParticles(ParticleTypes.LARGE_SMOKE, x, creeper.getY() + 1.0D, z,
@@ -547,10 +554,10 @@ public final class RedDragonAttackPatternManager {
      * a persistent Wither cloud until killed, so ignoring them compounds
      * quickly with everything else the dragon is doing.
      */
-    private static void startMartyrSummon(ApocalypseSevenHeadedRedDragonEntity dragon, LivingEntity target) {
+    private static void runMartyrSummon(ApocalypseSevenHeadedRedDragonEntity dragon, LivingEntity target, Runnable onComplete) {
         if (!dragon.isAlive() || target == null || !target.isAlive()
                 || !(dragon.level() instanceof ServerLevel serverLevel)) {
-            dragon.onPatternFinished();
+            onComplete.run();
             return;
         }
 
@@ -564,9 +571,7 @@ public final class RedDragonAttackPatternManager {
             if (martyr == null) continue;
             martyr.moveTo(x, groundY(serverLevel, new Vec3(x, target.getY(), z)), z,
                     dragon.getRandom().nextFloat() * 360.0F, 0.0F);
-            martyr.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(martyr.blockPosition()),
-                    MobSpawnType.MOB_SUMMONED, null, null);
-            martyr.setTarget(target);
+            martyr.setOwner(dragon);
             serverLevel.addFreshEntity(martyr);
 
             serverLevel.sendParticles(ParticleTypes.SOUL, x, martyr.getY() + 1.0D, z,
@@ -576,73 +581,12 @@ public final class RedDragonAttackPatternManager {
         serverLevel.playSound(null, dragon.blockPosition(), SoundEvents.WITHER_SPAWN,
                 SoundSource.HOSTILE, 2.0F, 1.4F);
 
-        dragon.scheduleIn(30, dragon::onPatternFinished);
+        dragon.scheduleIn(30, onComplete);
     }
 
     // ==================================================================
-    // ⑦ 飛行・魔法詠唱モード
+    // ⑦ 飛行・魔法詠唱モード（30秒間の空中フェーズ）
     // ==================================================================
-
-    /** Hover altitude above the ground, per spec ("上空10ブロック"). */
-    private static final double FLY_ALTITUDE = 10.0D;
-    /** fly.start animation length before the magic begins. */
-    private static final int FLY_START_TICKS = 20;
-    /** Magic repetitions while airborne, per spec ("5回繰り返し"). */
-    private static final int FLY_MAGIC_REPEATS = 5;
-    /** fly.end animation length after landing begins. */
-    private static final int FLY_END_TICKS = 20;
-
-    /**
-     * The signature spellcasting sequence:
-     * {@code fly.start} → rise 10 blocks → loop {@code fly} while casting five
-     * consecutive magic attacks (missiles / spears / lightning / creepers) →
-     * {@code fly.end} and land.
-     */
-    private static void startFlyingMagicMode(ApocalypseSevenHeadedRedDragonEntity dragon, LivingEntity target) {
-        if (!dragon.isAlive() || target == null || !target.isAlive()) {
-            dragon.onPatternFinished();
-            return;
-        }
-
-        dragon.setActionState(ApocalypseSevenHeadedRedDragonEntity.ACTION_FLY_START);
-        dragon.getNavigation().stop();
-        dragon.level().playSound(null, dragon.blockPosition(), SoundEvents.ENDER_DRAGON_FLAP,
-                SoundSource.HOSTILE, 3.0F, 0.8F);
-
-        dragon.scheduleIn(FLY_START_TICKS, () -> {
-            if (!dragon.isAlive() || dragon.isPlayerTurn()) {
-                dragon.stopHovering();
-                dragon.onPatternFinished();
-                return;
-            }
-            dragon.startHovering(dragon.getY() + FLY_ALTITUDE);
-            dragon.setActionState(ApocalypseSevenHeadedRedDragonEntity.ACTION_FLY);
-            flyingMagicStep(dragon, target, 0);
-        });
-    }
-
-    private static void flyingMagicStep(ApocalypseSevenHeadedRedDragonEntity dragon,
-                                        LivingEntity target, int castsDone) {
-        if (!dragon.isAlive() || dragon.isPlayerTurn() || castsDone >= FLY_MAGIC_REPEATS
-                || target == null || !target.isAlive()) {
-            endFlight(dragon);
-            return;
-        }
-
-        // Keep the fly loop playing and stay locked onto the target.
-        dragon.setActionState(ApocalypseSevenHeadedRedDragonEntity.ACTION_FLY);
-        faceTarget(dragon, target);
-
-        startRandomMagicAttack(dragon, target, () -> flyingMagicStep(dragon, target, castsDone + 1));
-    }
-
-    private static void endFlight(ApocalypseSevenHeadedRedDragonEntity dragon) {
-        dragon.setActionState(ApocalypseSevenHeadedRedDragonEntity.ACTION_FLY_END);
-        dragon.stopHovering();
-        dragon.level().playSound(null, dragon.blockPosition(), SoundEvents.ENDER_DRAGON_FLAP,
-                SoundSource.HOSTILE, 3.0F, 0.6F);
-        dragon.scheduleIn(FLY_END_TICKS, dragon::onPatternFinished);
-    }
 
     // ==================================================================
     // ⑧ 近接物理攻撃: claw x3 -> charge, and tail
@@ -656,7 +600,7 @@ public final class RedDragonAttackPatternManager {
 
     /** Charge duration and speed. */
     private static final int CHARGE_DURATION_TICKS = 40;
-    private static final double CHARGE_SPEED = 1.25D;
+    private static final double CHARGE_SPEED = 1.875D; // 1.5x speed increase (1.25D * 1.5)
     private static final double CHARGE_HIT_RANGE = 4.5D;
     /** Upward launch imparted by a connecting charge ("プレイヤーを空高く打ち上げる"). */
     private static final double CHARGE_LAUNCH_POWER = 2.4D;
@@ -680,6 +624,8 @@ public final class RedDragonAttackPatternManager {
             return;
         }
 
+        dragon.getNavigation().stop();
+        dragon.setDeltaMovement(0.0D, dragon.getDeltaMovement().y, 0.0D);
         dragon.setActionState(ApocalypseSevenHeadedRedDragonEntity.ACTION_CLAW);
         faceTarget(dragon, target);
         dragon.level().playSound(null, dragon.blockPosition(), SoundEvents.RAVAGER_ATTACK,
@@ -724,21 +670,28 @@ public final class RedDragonAttackPatternManager {
         }
 
         boolean hit = hasHit;
-        if (!hit && dragon.distanceTo(target) <= CHARGE_HIT_RANGE) {
-            target.hurt(dragon.damageSources().mobAttack(dragon), STANDARD_DAMAGE);
-            // 打ち上げ: launch the player high into the air. Applied directly to
-            // the velocity (not via knockback) so the boss's own 100% knockback
-            // resistance semantics and the player's Knockback Resistance gear
-            // cannot cancel this signature move.
-            target.setDeltaMovement(
-                    target.getDeltaMovement().x * 0.4D,
-                    CHARGE_LAUNCH_POWER,
-                    target.getDeltaMovement().z * 0.4D);
-            target.hurtMarked = true;
-            if (dragon.level() instanceof ServerLevel serverLevel) {
-                shakeNearbyScreens(serverLevel, dragon, 4.0F, 12);
-                serverLevel.sendParticles(ParticleTypes.SWEEP_ATTACK,
-                        target.getX(), target.getY() + 1.0D, target.getZ(), 6, 0.6D, 0.4D, 0.6D, 0.0D);
+        List<LivingEntity> victims = dragon.level().getEntitiesOfClass(LivingEntity.class,
+                dragon.getBoundingBox().inflate(CHARGE_HIT_RANGE),
+                e -> e != dragon && e.isAlive()
+                        && !(e instanceof TimedGimmickCreeperEntity)
+                        && e.distanceTo(dragon) <= CHARGE_HIT_RANGE);
+
+        if (!victims.isEmpty()) {
+            for (LivingEntity victim : victims) {
+                if (!hit) {
+                    victim.hurt(dragon.damageSources().mobAttack(dragon), STANDARD_DAMAGE);
+                    // 打ち上げ: launch all entities in path high into the air.
+                    victim.setDeltaMovement(
+                            victim.getDeltaMovement().x * 0.4D,
+                            CHARGE_LAUNCH_POWER,
+                            victim.getDeltaMovement().z * 0.4D);
+                    victim.hurtMarked = true;
+                    if (dragon.level() instanceof ServerLevel serverLevel) {
+                        shakeNearbyScreens(serverLevel, dragon, 4.0F, 12);
+                        serverLevel.sendParticles(ParticleTypes.SWEEP_ATTACK,
+                                victim.getX(), victim.getY() + 1.0D, victim.getZ(), 6, 0.6D, 0.4D, 0.6D, 0.0D);
+                    }
+                }
             }
             hit = true;
         }
@@ -774,7 +727,6 @@ public final class RedDragonAttackPatternManager {
             List<LivingEntity> victims = dragon.level().getEntitiesOfClass(LivingEntity.class,
                     dragon.getBoundingBox().inflate(TAIL_REACH),
                     e -> e != dragon && e.isAlive()
-                            && !(e instanceof DebilitationMartyrEntity)
                             && !(e instanceof TimedGimmickCreeperEntity)
                             && e.distanceTo(dragon) <= TAIL_REACH);
 
@@ -822,6 +774,58 @@ public final class RedDragonAttackPatternManager {
                 dragon.getZ() + forward.z * 2.0D);
     }
 
+    // ==================================================================
+    // ⑨ ドラゴンの回転急降下分身攻撃 (dragonfallattack 5-clone dive attack)
+    // ==================================================================
+
+    public static void startDragonCloneDive(ApocalypseSevenHeadedRedDragonEntity dragon, LivingEntity target) {
+        runDragonCloneDive(dragon, target, dragon::onPatternFinished);
+    }
+
+    private static void runDragonCloneDive(ApocalypseSevenHeadedRedDragonEntity dragon,
+                                           LivingEntity target, Runnable onComplete) {
+        spawnDiveClones(dragon, target, 0, 5, onComplete);
+    }
+
+    private static void spawnDiveClones(ApocalypseSevenHeadedRedDragonEntity dragon,
+                                        LivingEntity target, int spawned, int total, Runnable onComplete) {
+        if (!dragon.isAlive() || spawned >= total) {
+            onComplete.run();
+            return;
+        }
+
+        if (target != null && target.isAlive() && dragon.level() instanceof ServerLevel level) {
+            final Vec3 pos = target.position();
+            final double gy = groundY(level, pos);
+            final double targetY = Math.max(gy, pos.y);
+
+            // Phase 1: Extremely dense ground particle telegraph (120 points, 3x density) for 2 seconds (40 ticks)
+            for (int t = 0; t < 40; t += 2) {
+                dragon.scheduleIn(t, () -> {
+                    for (int i = 0; i < 120; i++) {
+                        double angle = dragon.getRandom().nextDouble() * Math.PI * 2.0D;
+                        double radius = dragon.getRandom().nextDouble() * 10.0D;
+                        double px = pos.x + Math.cos(angle) * radius;
+                        double pz = pos.z + Math.sin(angle) * radius;
+                        level.sendParticles(ParticleTypes.ENCHANT, px, gy + 0.1D, pz, 4, 0.1D, 0.2D, 0.1D, 0.5D);
+                    }
+                });
+            }
+
+            // Phase 2: After 2 seconds (40 ticks), suddenly spawn dragon clone at targetY+25 and dive down!
+            dragon.scheduleIn(40, () -> {
+                if (dragon.isAlive()) {
+                    com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity clone =
+                            new com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity(level, dragon, pos.x, targetY, pos.z);
+                    level.addFreshEntity(clone);
+                }
+            });
+        }
+
+        // Wait 70 ticks (40t telegraph + 20t 1.0s dive + 10t delay) for current dragon to finish diving before spawning next clone
+        dragon.scheduleIn(70, () -> spawnDiveClones(dragon, target, spawned + 1, total, onComplete));
+    }
+
     /**
      * Resolves the ground height at a horizontal position, so lightning bolts,
      * magic circles and spear impacts all sit on the actual terrain instead of
@@ -829,13 +833,14 @@ public final class RedDragonAttackPatternManager {
      */
     private static double groundY(ServerLevel level, Vec3 pos) {
         BlockPos base = BlockPos.containing(pos.x, pos.y, pos.z);
-        int surface = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, base.getX(), base.getZ());
-        // Prefer terrain near the reference Y so the attack does not jump to a
-        // roof far above (or a cave floor far below) the actual fight.
-        if (Math.abs(surface - pos.y) > 12.0D) {
-            return pos.y;
+        net.minecraft.world.phys.HitResult hit = level.clip(new net.minecraft.world.level.ClipContext(
+                pos, new Vec3(pos.x, level.getMinBuildHeight(), pos.z),
+                net.minecraft.world.level.ClipContext.Block.COLLIDER,
+                net.minecraft.world.level.ClipContext.Fluid.NONE, null));
+        if (hit.getType() != net.minecraft.world.phys.HitResult.Type.MISS) {
+            return hit.getLocation().y;
         }
-        return surface;
+        return level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, base.getX(), base.getZ());
     }
 
     /** Sends a screen-shake packet to every player near the dragon. */

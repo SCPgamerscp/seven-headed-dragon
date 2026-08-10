@@ -40,7 +40,6 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -213,6 +212,7 @@ public class FangKingEntity extends SpellcasterIllager {
     private void broadcastYourTurnTitle() {
         LivingEntity target = getFocusedTarget();
         if (target instanceof ServerPlayer serverPlayer) {
+            if (serverPlayer.isCreative() || serverPlayer.isSpectator()) return;
             serverPlayer.connection.send(new ClientboundSetTitleTextPacket(
                     Component.literal("your turn").withStyle(net.minecraft.ChatFormatting.GOLD, net.minecraft.ChatFormatting.BOLD)));
         }

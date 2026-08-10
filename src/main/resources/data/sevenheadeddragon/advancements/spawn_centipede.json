@@ -1,0 +1,28 @@
+{
+  "parent": "sevenheadeddragon:defeat_potion_master",
+  "display": {
+    "icon": {
+      "item": "sevenheadeddragon:centipede_black_dragon_eater_spawn_egg"
+    },
+    "title": {
+      "translate": "advancements.sevenheadeddragon.spawn_centipede.title"
+    },
+    "description": {
+      "translate": "advancements.sevenheadeddragon.spawn_centipede.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "granted_in_code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "granted_in_code"
+    ]
+  ]
+}

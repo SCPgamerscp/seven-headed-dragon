@@ -1,0 +1,28 @@
+{
+  "parent": "sevenheadeddragon:root",
+  "display": {
+    "icon": {
+      "item": "minecraft:clock"
+    },
+    "title": {
+      "translate": "advancements.sevenheadeddragon.rta_runner.title"
+    },
+    "description": {
+      "translate": "advancements.sevenheadeddragon.rta_runner.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "granted_in_code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "granted_in_code"
+    ]
+  ]
+}

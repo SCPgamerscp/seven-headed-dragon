@@ -1,0 +1,28 @@
+{
+  "parent": "sevenheadeddragon:defeat_fang_king",
+  "display": {
+    "icon": {
+      "item": "sevenheadeddragon:apocalypse_seven_headed_red_dragon_spawn_egg"
+    },
+    "title": {
+      "translate": "advancements.sevenheadeddragon.spawn_red_dragon.title"
+    },
+    "description": {
+      "translate": "advancements.sevenheadeddragon.spawn_red_dragon.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "granted_in_code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "granted_in_code"
+    ]
+  ]
+}

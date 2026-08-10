@@ -1,0 +1,28 @@
+{
+  "parent": "sevenheadeddragon:spawn_centipede",
+  "display": {
+    "icon": {
+      "item": "minecraft:honey_bottle"
+    },
+    "title": {
+      "translate": "advancements.sevenheadeddragon.honey_cure_poison_in_centipede_fight.title"
+    },
+    "description": {
+      "translate": "advancements.sevenheadeddragon.honey_cure_poison_in_centipede_fight.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "granted_in_code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "granted_in_code"
+    ]
+  ]
+}

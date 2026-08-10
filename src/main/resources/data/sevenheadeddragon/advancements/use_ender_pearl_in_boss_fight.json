@@ -1,0 +1,28 @@
+{
+  "parent": "sevenheadeddragon:root",
+  "display": {
+    "icon": {
+      "item": "minecraft:ender_pearl"
+    },
+    "title": {
+      "translate": "advancements.sevenheadeddragon.use_ender_pearl_in_boss_fight.title"
+    },
+    "description": {
+      "translate": "advancements.sevenheadeddragon.use_ender_pearl_in_boss_fight.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "granted_in_code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "granted_in_code"
+    ]
+  ]
+}

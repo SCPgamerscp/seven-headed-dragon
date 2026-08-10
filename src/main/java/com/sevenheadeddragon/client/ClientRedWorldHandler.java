@@ -27,16 +27,34 @@ public class ClientRedWorldHandler {
     private static final float FOG_FAR_AT_FULL = 96.0F;
     private static final float FOG_NEAR_AT_FULL = 8.0F;
 
+    private static com.sevenheadeddragon.client.dragon.DragonBossMusicInstance activeMusic = null;
+
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
             RedWorldManager.tick();
+
+            Minecraft mc = Minecraft.getInstance();
+            if (RedWorldManager.isActive()) {
+                if (activeMusic == null || activeMusic.isStopped() || !mc.getSoundManager().isActive(activeMusic)) {
+                    activeMusic = new com.sevenheadeddragon.client.dragon.DragonBossMusicInstance();
+                    mc.getSoundManager().play(activeMusic);
+                }
+            } else {
+                if (activeMusic != null && activeMusic.isStopped()) {
+                    activeMusic = null;
+                }
+            }
         }
     }
 
     @SubscribeEvent
     public static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
         RedWorldManager.reset();
+        if (activeMusic != null) {
+            Minecraft.getInstance().getSoundManager().stop(activeMusic);
+            activeMusic = null;
+        }
     }
 
     @SubscribeEvent

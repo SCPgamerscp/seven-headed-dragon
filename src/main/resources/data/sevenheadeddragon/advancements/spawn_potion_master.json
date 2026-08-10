@@ -1,0 +1,28 @@
+{
+  "parent": "sevenheadeddragon:root",
+  "display": {
+    "icon": {
+      "item": "sevenheadeddragon:potion_master_summon"
+    },
+    "title": {
+      "translate": "advancements.sevenheadeddragon.spawn_potion_master.title"
+    },
+    "description": {
+      "translate": "advancements.sevenheadeddragon.spawn_potion_master.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "granted_in_code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "granted_in_code"
+    ]
+  ]
+}

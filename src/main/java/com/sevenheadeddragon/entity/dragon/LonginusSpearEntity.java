@@ -1,7 +1,6 @@
 package com.sevenheadeddragon.entity.dragon;
 
 import com.sevenheadeddragon.registry.ModEffects;
-import com.sevenheadeddragon.util.ModDamageTypes;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -44,8 +43,6 @@ public class LonginusSpearEntity extends Projectile implements GeoEntity {
     /** Explosion power, per spec ("爆発力 5 / 地形破壊なし"). */
     public static final float EXPLOSION_POWER = 5.0F;
 
-    /** Direct-impact damage, before the 神殺し damage-over-time begins. */
-    public static final float IMPACT_DAMAGE = 20.0F;
 
     /** 神殺し duration applied on a direct hit: 10 seconds = 10 ticks of 10% max HP. */
     public static final int GOD_SLAYING_DURATION_TICKS = 20 * 10;
@@ -77,10 +74,10 @@ public class LonginusSpearEntity extends Projectile implements GeoEntity {
     public void dropFrom(double x, double y, double z) {
         this.setPos(x, y, z);
         this.setDeltaMovement(0.0D, -FALL_SPEED, 0.0D);
-        this.setXRot(90.0F); // point-down
+        this.setXRot(0.0F); // 垂直（まっすぐ立てて落下させる）
         this.setYRot(0.0F);
-        this.xRotO = this.getXRot();
-        this.yRotO = this.getYRot();
+        this.xRotO = 0.0F;
+        this.yRotO = 0.0F;
     }
 
     @Override
@@ -142,7 +139,6 @@ public class LonginusSpearEntity extends Projectile implements GeoEntity {
 
         if (result.getEntity() instanceof LivingEntity victim) {
             Entity owner = this.getOwner();
-            victim.hurt(ModDamageTypes.source(victim, ModDamageTypes.LONGINUS_SPEAR), IMPACT_DAMAGE);
             victim.addEffect(new MobEffectInstance(ModEffects.GOD_SLAYING.get(),
                     GOD_SLAYING_DURATION_TICKS, 0, false, true, true),
                     owner instanceof LivingEntity livingOwner ? livingOwner : null);
@@ -178,6 +174,16 @@ public class LonginusSpearEntity extends Projectile implements GeoEntity {
     @Override
     protected void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
+    }
+
+    @Override
+    public boolean ignoreExplosion() {
+        return true; // Tells Minecraft's Explosion engine to skip applying explosion knockback to this spear
+    }
+
+    @Override
+    public boolean isPushable() {
+        return false;
     }
 
     @Override

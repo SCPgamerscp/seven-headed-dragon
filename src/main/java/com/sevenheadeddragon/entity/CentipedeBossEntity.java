@@ -1,7 +1,6 @@
 package com.sevenheadeddragon.entity;
 
 import com.sevenheadeddragon.entity.boss.CentipedeAttackPatternManager;
-import com.sevenheadeddragon.registry.ModEffects;
 import com.sevenheadeddragon.registry.ModSounds;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.Mth;
@@ -19,7 +18,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobType;
@@ -441,6 +439,7 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
     private void broadcastYourTurnTitle() {
         LivingEntity target = getFocusedTarget();
         if (target instanceof ServerPlayer serverPlayer) {
+            if (serverPlayer.isCreative() || serverPlayer.isSpectator()) return;
             serverPlayer.connection.send(new ClientboundSetTitleTextPacket(
                     Component.literal("your turn").withStyle(net.minecraft.ChatFormatting.GOLD, net.minecraft.ChatFormatting.BOLD)));
         }
@@ -561,10 +560,16 @@ public class CentipedeBossEntity extends Monster implements GeoEntity {
 
     private PlayState animationPredicate(AnimationState<CentipedeBossEntity> state) {
         switch (this.getActionState()) {
-            case ACTION_BITING -> state.getController().setAnimation(RawAnimation.begin().then("animation.biting", software.bernie.geckolib.core.animation.Animation.LoopType.PLAY_ONCE));
-            case ACTION_MAGIC_GETUP -> state.getController().setAnimation(RawAnimation.begin().then("animation.getup", software.bernie.geckolib.core.animation.Animation.LoopType.PLAY_ONCE));
+            case ACTION_BITING -> state.getController().setAnimation(RawAnimation.begin()
+                    .then("animation.biting", software.bernie.geckolib.core.animation.Animation.LoopType.PLAY_ONCE)
+                    .thenLoop("animation.centipede.walk"));
+            case ACTION_MAGIC_GETUP -> state.getController().setAnimation(RawAnimation.begin()
+                    .then("animation.getup", software.bernie.geckolib.core.animation.Animation.LoopType.PLAY_ONCE)
+                    .thenLoop("animation.magic.casting"));
             case ACTION_MAGIC_CASTING -> state.getController().setAnimation(RawAnimation.begin().thenLoop("animation.magic.casting"));
-            case ACTION_MAGIC_GETDOWN -> state.getController().setAnimation(RawAnimation.begin().then("animation.getdown", software.bernie.geckolib.core.animation.Animation.LoopType.PLAY_ONCE));
+            case ACTION_MAGIC_GETDOWN -> state.getController().setAnimation(RawAnimation.begin()
+                    .then("animation.getdown", software.bernie.geckolib.core.animation.Animation.LoopType.PLAY_ONCE)
+                    .thenLoop("animation.centipede.walk"));
             default -> {
                 if (state.isMoving()) {
                     state.getController().setAnimation(RawAnimation.begin().thenLoop("animation.centipede.walk"));

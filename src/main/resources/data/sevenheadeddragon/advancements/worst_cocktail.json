@@ -1,0 +1,28 @@
+{
+  "parent": "sevenheadeddragon:root",
+  "display": {
+    "icon": {
+      "item": "minecraft:dragon_breath"
+    },
+    "title": {
+      "translate": "advancements.sevenheadeddragon.worst_cocktail.title"
+    },
+    "description": {
+      "translate": "advancements.sevenheadeddragon.worst_cocktail.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "granted_in_code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "granted_in_code"
+    ]
+  ]
+}

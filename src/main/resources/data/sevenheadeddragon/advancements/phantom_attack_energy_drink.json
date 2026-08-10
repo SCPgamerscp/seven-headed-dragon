@@ -1,0 +1,28 @@
+{
+  "parent": "sevenheadeddragon:drink_energy_drink",
+  "display": {
+    "icon": {
+      "item": "minecraft:phantom_membrane"
+    },
+    "title": {
+      "translate": "advancements.sevenheadeddragon.phantom_attack_energy_drink.title"
+    },
+    "description": {
+      "translate": "advancements.sevenheadeddragon.phantom_attack_energy_drink.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "granted_in_code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "granted_in_code"
+    ]
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "parent": "sevenheadeddragon:root",
+  "display": {
+    "icon": {
+      "item": "minecraft:feather"
+    },
+    "title": {
+      "translate": "advancements.sevenheadeddragon.dodge_master.title"
+    },
+    "description": {
+      "translate": "advancements.sevenheadeddragon.dodge_master.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "granted_in_code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "granted_in_code"
+    ]
+  ]
+}

@@ -1,11 +1,9 @@
 package com.sevenheadeddragon.client.dragon;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import com.sevenheadeddragon.entity.dragon.LonginusSpearEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.util.Mth;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 /**
@@ -27,10 +25,6 @@ public class LonginusSpearRenderer extends GeoEntityRenderer<LonginusSpearEntity
                           com.mojang.blaze3d.vertex.VertexConsumer buffer,
                           boolean isReRender, float partialTick, int packedLight,
                           int packedOverlay, float red, float green, float blue, float alpha) {
-        poseStack.mulPose(Axis.YP.rotationDegrees(
-                Mth.rotLerp(partialTick, animatable.yRotO, animatable.getYRot())));
-        poseStack.mulPose(Axis.XP.rotationDegrees(
-                Mth.lerp(partialTick, animatable.xRotO, animatable.getXRot())));
         super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender,
                 partialTick, packedLight, packedOverlay, red, green, blue, alpha);
     }

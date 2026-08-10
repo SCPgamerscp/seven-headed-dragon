@@ -87,7 +87,6 @@ public final class ModEntities {
                             .clientTrackingRange(160)
                             .updateInterval(1)
                             .fireImmune()
-                            .noSummon()
                             .build("apocalypse_seven_headed_red_dragon"));
 
     /** 🐐 山羊ミサイル - the machine-gun projectile (30 rounds, power 4). */
@@ -150,15 +149,26 @@ public final class ModEntities {
                             .updateInterval(1)
                             .build("timed_gimmick_creeper"));
 
-    /** 衰弱の殉教者 - the Wither-cloud summon (HP 20, 7 at a time). */
+    /** 衰弱の殉教者 - stationary placed entity summon (HP 20, 7 at a time). */
     public static final RegistryObject<EntityType<DebilitationMartyrEntity>> DEBILITATION_MARTYR =
             ENTITY_TYPES.register("debilitation_martyr",
-                    () -> EntityType.Builder.of(DebilitationMartyrEntity::new, MobCategory.MONSTER)
+                    () -> EntityType.Builder.of(DebilitationMartyrEntity::new, MobCategory.MISC)
                             .sized(0.9F, 2.4F)
                             .clientTrackingRange(64)
                             .updateInterval(1)
                             .fireImmune()
                             .build("debilitation_martyr"));
+
+    /** 🐉 ドラゴンの回転急降下分身 (5-clone dive attack, 3s telegraph, 10-block enchant particles, power 10 explosion). */
+    public static final RegistryObject<EntityType<com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity>> DRAGON_CLONE_DIVE =
+            ENTITY_TYPES.register("dragon_clone_dive",
+                    () -> EntityType.Builder.<com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity>of(com.sevenheadeddragon.entity.dragon.DragonCloneDiveEntity::new, MobCategory.MISC)
+                            .sized(4.0F, 3.0F)
+                            .clientTrackingRange(160)
+                            .updateInterval(1)
+                            .noSave()
+                            .fireImmune()
+                            .build("dragon_clone_dive"));
 
     public static void registerAttributes(EntityAttributeCreationEvent event) {
         event.put(POTION_MASTER.get(), PotionMasterEntity.createAttributes().build());
@@ -166,7 +176,6 @@ public final class ModEntities {
         event.put(CENTIPEDE_BOSS.get(), CentipedeBossEntity.createAttributes().build());
         event.put(APOCALYPSE_RED_DRAGON.get(), ApocalypseSevenHeadedRedDragonEntity.createAttributes().build());
         event.put(TIMED_GIMMICK_CREEPER.get(), TimedGimmickCreeperEntity.createAttributes().build());
-        event.put(DEBILITATION_MARTYR.get(), DebilitationMartyrEntity.createAttributes().build());
     }
 
     private ModEntities() {}

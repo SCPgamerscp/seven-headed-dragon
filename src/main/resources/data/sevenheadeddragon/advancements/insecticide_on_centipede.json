@@ -1,0 +1,28 @@
+{
+  "parent": "sevenheadeddragon:spawn_centipede",
+  "display": {
+    "icon": {
+      "item": "minecraft:fermented_spider_eye"
+    },
+    "title": {
+      "translate": "advancements.sevenheadeddragon.insecticide_on_centipede.title"
+    },
+    "description": {
+      "translate": "advancements.sevenheadeddragon.insecticide_on_centipede.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "granted_in_code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "granted_in_code"
+    ]
+  ]
+}

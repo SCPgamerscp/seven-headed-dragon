@@ -16,5 +16,23 @@
         "stream": false
       }
     ]
+  },
+  "dragon.longinus": {
+    "subtitle": "subtitle.sevenheadeddragon.dragon.longinus",
+    "sounds": [
+      {
+        "name": "sevenheadeddragon:centipede/longinus",
+        "stream": false
+      }
+    ]
+  },
+  "dragon.bgm": {
+    "subtitle": "subtitle.sevenheadeddragon.dragon.bgm",
+    "sounds": [
+      {
+        "name": "sevenheadeddragon:dragon/ode_to_joy",
+        "stream": true
+      }
+    ]
   }
 }

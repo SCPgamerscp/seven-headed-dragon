@@ -1,4 +1,5 @@
 {
+  "parent": "sevenheadeddragon:spawn_red_dragon",
   "display": {
     "icon": {
       "item": "minecraft:nether_star"

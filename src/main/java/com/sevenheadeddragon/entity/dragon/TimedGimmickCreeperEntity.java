@@ -29,12 +29,11 @@ import net.minecraft.world.level.Level;
  * <em>not</em> explode ({@link #die} suppresses the blast), which is what
  * turns the mechanic into "撃破 vs. 被弾" rather than an unavoidable hit.
  * <p>
- * The remaining fuse time is synced to clients so the renderer can flash the
  * creeper white with increasing urgency as the countdown closes.
  */
-public class TimedGimmickCreeperEntity extends Monster {
+public class TimedGimmickCreeperEntity extends Monster implements net.minecraft.world.entity.OwnableEntity {
 
-    /** Explosion power, per spec ("爆発力 10（地形破壊なし）"). */
+    /** Explosion power, per spec ("爆破力 10（地形破壊なし）"). */
     public static final float EXPLOSION_POWER = 10.0F;
 
     /** Fuse length, per spec ("10秒後に即自爆"). */
@@ -49,14 +48,33 @@ public class TimedGimmickCreeperEntity extends Monster {
     /** Set while {@link #explode()} runs, so the resulting death does not re-trigger it. */
     private boolean detonating;
 
+    @javax.annotation.Nullable
+    private net.minecraft.world.entity.LivingEntity owner;
+
     public TimedGimmickCreeperEntity(EntityType<? extends TimedGimmickCreeperEntity> type, Level level) {
         super(type, level);
+    }
+
+    public void setOwner(@javax.annotation.Nullable net.minecraft.world.entity.LivingEntity owner) {
+        this.owner = owner;
+    }
+
+    @Override
+    @javax.annotation.Nullable
+    public net.minecraft.world.entity.LivingEntity getOwner() {
+        return this.owner;
+    }
+
+    @Override
+    @javax.annotation.Nullable
+    public java.util.UUID getOwnerUUID() {
+        return this.owner != null ? this.owner.getUUID() : null;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, MAX_HEALTH)
-                .add(Attributes.MOVEMENT_SPEED, 0.32D)
+                .add(Attributes.MOVEMENT_SPEED, 0.25D) // Vanilla creeper movement speed
                 .add(Attributes.FOLLOW_RANGE, 32.0D)
                 .add(Attributes.ARMOR, 0.0D);
     }
@@ -69,11 +87,8 @@ public class TimedGimmickCreeperEntity extends Monster {
 
     @Override
     protected void registerGoals() {
-        // Deliberately minimal: it walks toward the player it was summoned
-        // against, but its threat comes purely from the fuse, so it needs no
-        // swell/attack AI of its own.
         this.goalSelector.addGoal(0, new net.minecraft.world.entity.ai.goal.FloatGoal(this));
-        this.goalSelector.addGoal(2, new net.minecraft.world.entity.ai.goal.MeleeAttackGoal(this, 1.0D, false));
+        this.goalSelector.addGoal(2, new ApproachTargetGoal(this, 1.0D));
         this.goalSelector.addGoal(5, new net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal(this, 0.8D));
         this.goalSelector.addGoal(6, new net.minecraft.world.entity.ai.goal.LookAtPlayerGoal(this,
                 net.minecraft.world.entity.player.Player.class, 8.0F));
@@ -81,6 +96,32 @@ public class TimedGimmickCreeperEntity extends Monster {
         this.targetSelector.addGoal(1, new net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal<>(
                 this, net.minecraft.world.entity.player.Player.class, true));
+    }
+
+    private static class ApproachTargetGoal extends net.minecraft.world.entity.ai.goal.Goal {
+        private final TimedGimmickCreeperEntity creeper;
+        private final double speedModifier;
+
+        public ApproachTargetGoal(TimedGimmickCreeperEntity creeper, double speedModifier) {
+            this.creeper = creeper;
+            this.speedModifier = speedModifier;
+            this.setFlags(java.util.EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            net.minecraft.world.entity.LivingEntity target = this.creeper.getTarget();
+            return target != null && target.isAlive();
+        }
+
+        @Override
+        public void tick() {
+            net.minecraft.world.entity.LivingEntity target = this.creeper.getTarget();
+            if (target != null) {
+                this.creeper.getLookControl().setLookAt(target, 30.0F, 30.0F);
+                this.creeper.getNavigation().moveTo(target, this.speedModifier);
+            }
+        }
     }
 
     /** Remaining fuse in ticks (synced, used by the renderer's flash effect). */
@@ -123,7 +164,8 @@ public class TimedGimmickCreeperEntity extends Monster {
             serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.EXPLOSION_EMITTER,
                     this.getX(), this.getY() + 0.5, this.getZ(), 1, 0.0, 0.0, 0.0, 0.0);
         }
-        DragonExplosions.explodeNoGrief(this.level(), this, this.position(), EXPLOSION_POWER);
+        net.minecraft.world.entity.Entity attacker = this.getOwner() != null ? this.getOwner() : this;
+        DragonExplosions.explodeNoGrief(this.level(), attacker, this.position(), EXPLOSION_POWER);
         this.discard();
     }
 

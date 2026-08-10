@@ -52,7 +52,7 @@ public final class FangKingAttackPatternManager {
     }
 
     private static void startFangPattern(FangKingEntity boss, LivingEntity target, int patternType) {
-        spawnMagicCircleTelegraph(boss);
+        spawnMagicCircleTelegraph(boss, target);
         boss.scheduleIn(MAGIC_CIRCLE_TELEGRAPH_TICKS, () -> {
             if (!boss.isAlive() || !target.isAlive()) {
                 boss.onPatternFinished();
@@ -71,15 +71,14 @@ public final class FangKingAttackPatternManager {
         });
     }
 
-    /** Spawns a one-off {@link MagicCircleEntity} behind the boss, facing outward and floating vertically, as the stage-1 "an attack is coming" telegraph. */
-    private static void spawnMagicCircleTelegraph(FangKingEntity boss) {
+    /** Spawns a magic-circle telegraph facing directly towards the target player at eye level. */
+    private static void spawnMagicCircleTelegraph(FangKingEntity boss, LivingEntity target) {
         if (!(boss.level() instanceof ServerLevel serverLevel)) return;
         MagicCircleEntity circle = ModEntities.MAGIC_CIRCLE.get().create(serverLevel);
         if (circle == null) return;
 
         circle.setLifetime(MAGIC_CIRCLE_TELEGRAPH_TICKS);
-        circle.setOrientationPitch(90.0f); // Make it stand vertically
-        circle.startTracking(boss); // Follow the boss dynamically
+        circle.setOwnerAndTarget(boss, target);
         
         serverLevel.addFreshEntity(circle);
     }

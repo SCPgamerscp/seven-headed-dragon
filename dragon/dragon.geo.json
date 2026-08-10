@@ -5,7 +5,7 @@
 			"description": {
 				"identifier": "geometry.dragon",
 				"texture_width": 256,
-				"texture_height": 256,
+				"texture_height": 356,
 				"visible_bounds_width": 20,
 				"visible_bounds_height": 8.5,
 				"visible_bounds_offset": [0, 3.75, 0]
@@ -551,8 +551,8 @@
 					"pivot": [12, 77, -22],
 					"mirror": true,
 					"cubes": [
-						{"origin": [12, 73, -26], "size": [56, 8, 8], "uv": [112, 88]},
-						{"origin": [12, 77, -20], "size": [56, 0, 56], "uv": [-56, 88]}
+						{"origin": [12, 73, -26], "size": [56, 8, 8], "uv": [112, 88], "mirror": false},
+						{"origin": [12, 77, -20], "size": [56, 0, 56], "uv": [-56, 200], "mirror": false}
 					]
 				},
 				{
@@ -561,8 +561,8 @@
 					"pivot": [68, 77, -22],
 					"mirror": true,
 					"cubes": [
-						{"origin": [68, 75, -24], "size": [56, 4, 4], "uv": [112, 136]},
-						{"origin": [68, 77, -20], "size": [56, 0, 56], "uv": [-56, 144]}
+						{"origin": [68, 75, -24], "size": [56, 4, 4], "uv": [112, 136], "mirror": false},
+						{"origin": [68, 77, -20], "size": [56, 0, 56], "uv": [-56, 256], "mirror": false}
 					]
 				},
 				{

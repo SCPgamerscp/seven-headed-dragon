@@ -1,0 +1,28 @@
+{
+  "parent": "sevenheadeddragon:root",
+  "display": {
+    "icon": {
+      "item": "sevenheadeddragon:apocalypse_elytra"
+    },
+    "title": {
+      "translate": "advancements.sevenheadeddragon.angel_falls_from_heaven.title"
+    },
+    "description": {
+      "translate": "advancements.sevenheadeddragon.angel_falls_from_heaven.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "granted_in_code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "granted_in_code"
+    ]
+  ]
+}

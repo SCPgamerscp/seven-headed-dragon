@@ -149,25 +149,31 @@ public final class CentipedeAttackPatternManager {
             boss.getNavigation().moveTo(target, 1.8);
 
             if (!currentHit && elapsed >= 4 && elapsed <= 25) {
-                boolean frontHit = false;
-                if (boss.getParts() != null && boss.getParts().length > 0) {
-                    // Test all front-half body parts (head to center: parts[0] through parts[10])
-                    int checkLimit = Math.min(11, boss.getParts().length);
-                    for (int p = 0; p < checkLimit; p++) {
-                        var part = boss.getParts()[p];
-                        if (part != null && (part.getBoundingBox().inflate(1.5).intersects(target.getBoundingBox()) || part.distanceTo(target) < 5.5F)) {
-                            frontHit = true;
-                            break;
-                        }
-                    }
-                } else if (boss.distanceTo(target) < 12.0F) {
-                    frontHit = true;
-                }
+                List<LivingEntity> victims = boss.level().getEntitiesOfClass(LivingEntity.class,
+                        boss.getBoundingBox().inflate(12.0D),
+                        e -> e != boss && e.isAlive()
+                                && !(e instanceof com.sevenheadeddragon.entity.dragon.TimedGimmickCreeperEntity));
 
-                if (frontHit) {
-                    target.hurt(boss.damageSources().mobAttack(boss), BITE_DAMAGE);
-                    target.addEffect(new MobEffectInstance(ModEffects.DRAGON_SLAYING_POISON.get(), BITE_POISON_DURATION_TICKS, 0));
-                    currentHit = true;
+                for (LivingEntity victim : victims) {
+                    boolean frontHit = false;
+                    if (boss.getParts() != null && boss.getParts().length > 0) {
+                        int checkLimit = Math.min(11, boss.getParts().length);
+                        for (int p = 0; p < checkLimit; p++) {
+                            var part = boss.getParts()[p];
+                            if (part != null && (part.getBoundingBox().inflate(1.5D).intersects(victim.getBoundingBox()) || part.distanceTo(victim) < 5.5F)) {
+                                frontHit = true;
+                                break;
+                            }
+                        }
+                    } else if (boss.distanceTo(victim) < 12.0F) {
+                        frontHit = true;
+                    }
+
+                    if (frontHit) {
+                        victim.hurt(boss.damageSources().mobAttack(boss), BITE_DAMAGE);
+                        victim.addEffect(new MobEffectInstance(ModEffects.DRAGON_SLAYING_POISON.get(), BITE_POISON_DURATION_TICKS, 0));
+                        currentHit = true;
+                    }
                 }
             }
         }

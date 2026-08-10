@@ -39,7 +39,7 @@ import java.util.Set;
  * The seven colours cycle through {@link #RAINBOW}, matching the seven heads
  * of the dragon and the seven bolts of the final homing sequence.
  */
-public class RainbowLightningEntity extends Entity {
+public class RainbowLightningEntity extends Entity implements net.minecraft.world.entity.OwnableEntity {
 
     /** Damage per bolt, per spec ("各雷 20ダメージ"). */
     public static final float DAMAGE = 20.0F;
@@ -87,6 +87,18 @@ public class RainbowLightningEntity extends Entity {
         super(type, level);
         this.noPhysics = true;
         this.noCulling = true;
+    }
+
+    @Override
+    @Nullable
+    public LivingEntity getOwner() {
+        return this.caster;
+    }
+
+    @Override
+    @Nullable
+    public java.util.UUID getOwnerUUID() {
+        return this.caster != null ? this.caster.getUUID() : null;
     }
 
     @Override
@@ -159,8 +171,10 @@ public class RainbowLightningEntity extends Entity {
     }
 
     private void playStrikeSound() {
+        this.level().playSound(null, this.blockPosition(), SoundEvents.LIGHTNING_BOLT_THUNDER,
+                SoundSource.HOSTILE, 25.0F, 0.8F + this.random.nextFloat() * 0.4F);
         this.level().playSound(null, this.blockPosition(), SoundEvents.LIGHTNING_BOLT_IMPACT,
-                SoundSource.HOSTILE, 1.6F, 0.9F + this.random.nextFloat() * 0.4F);
+                SoundSource.HOSTILE, 12.5F, 0.9F + this.random.nextFloat() * 0.4F);
     }
 
     /** Applies {@link #DAMAGE} once to every living entity in the vertical column. */
@@ -169,10 +183,11 @@ public class RainbowLightningEntity extends Entity {
                 this.getX() - HIT_RADIUS, this.getY() - 2.0D, this.getZ() - HIT_RADIUS,
                 this.getX() + HIT_RADIUS, this.getY() + BEAM_HEIGHT, this.getZ() + HIT_RADIUS);
 
+        LivingEntity attacker = this.getOwner() != null ? this.getOwner() : this.caster;
         for (LivingEntity victim : this.level().getEntitiesOfClass(LivingEntity.class, column,
                 e -> e.isAlive() && !(e instanceof ApocalypseSevenHeadedRedDragonEntity))) {
             if (!this.alreadyHit.add(victim)) continue;
-            victim.hurt(ModDamageTypes.source(victim, ModDamageTypes.RAINBOW_LIGHTNING), DAMAGE);
+            victim.hurt(ModDamageTypes.source(victim, ModDamageTypes.RAINBOW_LIGHTNING, this, attacker), DAMAGE);
         }
 
         if (this.level() instanceof ServerLevel serverLevel) {
@@ -240,13 +255,13 @@ public class RainbowLightningEntity extends Entity {
 
     @Override
     public boolean shouldRenderAtSqrDistance(double distanceSqr) {
-        return distanceSqr < 160.0D * 160.0D;
+        return distanceSqr < 256.0D * 256.0D;
     }
 
     @Override
     public AABB getBoundingBoxForCulling() {
         return new AABB(
-                this.getX() - 2.0D, this.getY() - 1.0D, this.getZ() - 2.0D,
-                this.getX() + 2.0D, this.getY() + BEAM_HEIGHT, this.getZ() + 2.0D);
+                this.getX() - 16.0D, this.getY() - 10.0D, this.getZ() - 16.0D,
+                this.getX() + 16.0D, this.getY() + BEAM_HEIGHT + 10.0D, this.getZ() + 16.0D);
     }
 }

@@ -128,23 +128,23 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
     // ------------------------------------------------------------------
 
     private static final RawAnimation ANIM_IDLE = RawAnimation.begin().thenLoop("animation.dragon.idle");
-    private static final RawAnimation ANIM_CLAW =
-            RawAnimation.begin().then("animation.dragon.claw", Animation.LoopType.PLAY_ONCE);
+    private static final RawAnimation ANIM_CLAW = RawAnimation.begin().thenLoop("animation.dragon.claw");
     private static final RawAnimation ANIM_CHARGE = RawAnimation.begin().thenLoop("animation.dragon.attack_charge");
     private static final RawAnimation ANIM_TAIL =
-            RawAnimation.begin().then("animation.dragon.attack_tail", Animation.LoopType.PLAY_ONCE);
+            RawAnimation.begin().thenPlayXTimes("animation.dragon.attack_tail", 1).thenLoop("animation.dragon.idle");
     private static final RawAnimation ANIM_FLY_START =
-            RawAnimation.begin().then("animation.dragon.fly.start", Animation.LoopType.PLAY_ONCE);
+            RawAnimation.begin().thenPlayXTimes("animation.dragon.fly.start", 1).thenLoop("animation.dragon.fly");
     private static final RawAnimation ANIM_FLY = RawAnimation.begin().thenLoop("animation.dragon.fly");
     private static final RawAnimation ANIM_FLY_END =
-            RawAnimation.begin().then("animation.dragon.fly.end", Animation.LoopType.PLAY_ONCE);
+            RawAnimation.begin().thenPlayXTimes("animation.dragon.fly.end", 1).thenLoop("animation.dragon.idle");
 
     /** attack_bite_1 .. attack_bite_7, indexed 0-6. */
     private static final RawAnimation[] ANIM_BITES = new RawAnimation[7];
     static {
         for (int i = 0; i < 7; i++) {
             ANIM_BITES[i] = RawAnimation.begin()
-                    .then("animation.dragon.attack_bite_" + (i + 1), Animation.LoopType.PLAY_ONCE);
+                    .thenPlayXTimes("animation.dragon.attack_bite_" + (i + 1), 1)
+                    .thenLoop("animation.dragon.idle");
         }
     }
 
@@ -176,7 +176,7 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
                                                 Level level) {
         super(type, level);
         this.turnTimer = BOSS_TURN_TICKS;
-        this.setMaxUpStep(0.0F);
+        this.setMaxUpStep(5.0F);
         this.xpReward = EXPERIENCE_REWARD;
     }
 
@@ -222,15 +222,35 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
         this.entityData.set(DATA_PLAYER_TURN, value);
     }
 
+    private boolean isValidTarget(@Nullable LivingEntity entity) {
+        if (entity == null || !entity.isAlive()) return false;
+        if (entity instanceof Player player) {
+            return !player.isCreative() && !player.isSpectator();
+        }
+        return true;
+    }
+
     @Nullable
     public LivingEntity getFocusedTarget() {
-        return this.getTarget();
+        LivingEntity target = this.getTarget();
+        if (isValidTarget(target)) {
+            return target;
+        }
+        Player nearestPlayer = this.level().getNearestPlayer(this, 64.0D);
+        if (isValidTarget(nearestPlayer)) {
+            this.setTarget(nearestPlayer);
+            return nearestPlayer;
+        }
+        if (this.getTarget() != null) {
+            this.setTarget(null);
+        }
+        return null;
     }
 
     /** Called by the pattern manager once a pattern is completely finished. */
     public void onPatternFinished() {
         this.patternActive = false;
-        setActionState(ACTION_IDLE);
+        setActionState(this.isHovering() ? ACTION_FLY : ACTION_IDLE);
     }
 
     // ------------------------------------------------------------------
@@ -238,8 +258,14 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
     // ------------------------------------------------------------------
 
     public void setActionState(byte state) {
+        if (state == ACTION_IDLE && this.isHovering()) {
+            state = ACTION_FLY;
+        }
+        byte currentState = getActionState();
         this.entityData.set(DATA_ACTION_STATE, state);
-        this.entityData.set(DATA_ANIM_TICKET, this.entityData.get(DATA_ANIM_TICKET) + 1);
+        if (currentState != state || (state != ACTION_IDLE && state != ACTION_FLY)) {
+            this.entityData.set(DATA_ANIM_TICKET, this.entityData.get(DATA_ANIM_TICKET) + 1);
+        }
     }
 
     public byte getActionState() {
@@ -356,15 +382,33 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
         tickHover();
 
         if (isPlayerTurn()) {
-            // プレイヤーターン: total shutdown. No movement, no navigation, no
-            // new attacks - the entire point is a clean, safe damage window.
+            // プレイヤーターン: 地上に停止して無防備
             this.getNavigation().stop();
             this.setDeltaMovement(0.0D, this.isHovering() ? 0.0D : this.getDeltaMovement().y, 0.0D);
-        } else if (!this.patternActive && this.turnTimer > MIN_TICKS_FOR_NEW_PATTERN) {
-            // No cooldown whatsoever: the instant one combo ends the next
-            // begins, producing the spec's "切れ目なく怒涛の勢い".
-            this.patternActive = true;
-            RedDragonAttackPatternManager.startRandomAttack(this);
+        } else {
+            // ボスターン（計60秒 / 1200 ticks）:
+            // 前半30秒(1200〜601): 地上近接物理攻撃
+            // 後半30秒(600〜1): 上空10ブロックに滞空し、空中魔法攻撃
+            if (this.turnTimer <= 600 && !this.isHovering()) {
+                // 地上攻撃・タイマー・突進フラグを完全キャンセル・リセット
+                this.scheduledTasks.clear();
+                this.charging = false;
+                this.patternActive = false;
+                this.getNavigation().stop();
+
+                this.startHovering(this.getY() + 10.0D);
+                this.setActionState(ACTION_FLY_START);
+                this.scheduleIn(20, () -> {
+                    if (this.isHovering()) {
+                        this.setActionState(ACTION_FLY);
+                    }
+                });
+            }
+
+            if (!this.patternActive && this.turnTimer > MIN_TICKS_FOR_NEW_PATTERN) {
+                this.patternActive = true;
+                RedDragonAttackPatternManager.startRandomAttack(this);
+            }
         }
 
         if (--this.turnTimer <= 0) {
@@ -394,24 +438,33 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
         this.patternActive = false;
         this.charging = false;
         this.scheduledTasks.clear();
-        setActionState(ACTION_IDLE);
 
         if (nextIsPlayerTurn) {
-            // Land before freezing, so the player is never handed a turn
-            // against an unreachable airborne target.
-            stopHovering();
+            // ボスターン終了: 着地してプレイヤーの反撃ターン開始
+            if (this.isHovering()) {
+                setActionState(ACTION_FLY_END);
+                scheduleIn(20, () -> {
+                    stopHovering();
+                    setActionState(ACTION_IDLE);
+                });
+            } else {
+                setActionState(ACTION_IDLE);
+            }
             broadcastYourTurnTitle();
+        } else {
+            setActionState(ACTION_IDLE);
         }
     }
 
     /** Displays the golden bold <b>YOUR TURN</b> title to everyone fighting the boss. */
     private void broadcastYourTurnTitle() {
-        Component title = Component.literal("YOUR TURN")
-                .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
-        for (ServerPlayer player : getEngagedPlayers()) {
-            player.connection.send(new ClientboundSetTitlesAnimationPacket(2, PLAYER_TURN_TICKS - 10, 8));
-            player.connection.send(new ClientboundSetTitleTextPacket(title));
-            player.playNotifySound(SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.MASTER, 1.0F, 1.4F);
+        LivingEntity target = getFocusedTarget();
+        if (target instanceof ServerPlayer serverPlayer) {
+            if (serverPlayer.isCreative() || serverPlayer.isSpectator()) return;
+            serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(2, PLAYER_TURN_TICKS - 10, 8));
+            serverPlayer.connection.send(new ClientboundSetTitleTextPacket(
+                    Component.literal("YOUR TURN").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)));
+            serverPlayer.playNotifySound(SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.MASTER, 1.0F, 1.4F);
         }
     }
 
@@ -425,7 +478,18 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
      * makes the 5-second windows the only meaningful damage opportunity.
      */
     @Override
+    public boolean causeFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
+        return false;
+    }
+
+    @Override
+    protected int calculateFallDamage(float fallDistance, float damageMultiplier) {
+        return 0;
+    }
+
+    @Override
     public boolean hurt(DamageSource source, float amount) {
+        if (source.is(net.minecraft.world.damagesource.DamageTypes.FALL)) return false;
         if (!isPlayerTurn()) {
             if (!this.level().isClientSide) {
                 this.level().playSound(null, this.blockPosition(), SoundEvents.SHIELD_BLOCK,
@@ -514,33 +578,40 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
     protected void tickDeath() {
         ++this.deathTime;
 
+        // Ender-dragon style slow upward float into the sky during death sequence
+        this.setDeltaMovement(0.0D, 0.08D, 0.0D);
+        this.move(net.minecraft.world.entity.MoverType.SELF, this.getDeltaMovement());
+
         if (this.level() instanceof ServerLevel serverLevel) {
-            // A column of light climbing out of the corpse.
-            for (int i = 0; i < 6; i++) {
+            // Intense End-Rod light columns and explosions
+            for (int i = 0; i < 8; i++) {
                 serverLevel.sendParticles(ParticleTypes.END_ROD,
-                        this.getX() + (this.random.nextDouble() - 0.5D) * 6.0D,
-                        this.getY() + this.random.nextDouble() * 20.0D,
-                        this.getZ() + (this.random.nextDouble() - 0.5D) * 6.0D,
-                        1, 0.0D, 0.35D, 0.0D, 0.06D);
-            }
-            if (this.deathTime % 8 == 0) {
-                serverLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER,
                         this.getX() + (this.random.nextDouble() - 0.5D) * 8.0D,
-                        this.getY() + this.random.nextDouble() * 6.0D,
+                        this.getY() + this.random.nextDouble() * 12.0D,
                         this.getZ() + (this.random.nextDouble() - 0.5D) * 8.0D,
+                        2, 0.0D, 0.4D, 0.0D, 0.08D);
+            }
+            if (this.deathTime % 5 == 0) {
+                serverLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER,
+                        this.getX() + (this.random.nextDouble() - 0.5D) * 10.0D,
+                        this.getY() + this.random.nextDouble() * 8.0D,
+                        this.getZ() + (this.random.nextDouble() - 0.5D) * 10.0D,
+                        2, 0.0D, 0.0D, 0.0D, 0.0D);
+                serverLevel.sendParticles(ParticleTypes.FLASH,
+                        this.getX() + (this.random.nextDouble() - 0.5D) * 6.0D,
+                        this.getY() + this.random.nextDouble() * 6.0D,
+                        this.getZ() + (this.random.nextDouble() - 0.5D) * 6.0D,
                         1, 0.0D, 0.0D, 0.0D, 0.0D);
                 this.level().playSound(null, this.blockPosition(), SoundEvents.GENERIC_EXPLODE,
-                        SoundSource.HOSTILE, 3.0F, 0.5F);
+                        SoundSource.HOSTILE, 3.0F, 0.5F + (this.deathTime / 200.0F) * 0.5F);
             }
-            if (this.deathTime == 1) {
+            if (this.deathTime == 1 || this.deathTime == 100) {
                 this.level().playSound(null, this.blockPosition(), SoundEvents.ENDER_DRAGON_DEATH,
-                        SoundSource.HOSTILE, 4.0F, 0.6F);
+                        SoundSource.HOSTILE, 5.0F, 0.6F);
             }
         }
 
         if (this.deathTime >= 200 && !this.level().isClientSide) {
-            // Vanilla's XP payout is capped per orb, so 100,000 EXP is emitted
-            // in bulk here rather than through the normal small-orb drip.
             dropExperienceBulk();
             this.remove(Entity.RemovalReason.KILLED);
             this.gameEvent(net.minecraft.world.level.gameevent.GameEvent.ENTITY_DIE);
@@ -564,10 +635,13 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
 
         this.spawnAtLocation(createApocalypseElytra());
 
-        spawnStackedLoot(Items.DIAMOND_BLOCK, 128);
-        spawnStackedLoot(Items.ENCHANTED_GOLDEN_APPLE, 128);
-        spawnStackedLoot(Items.NETHER_STAR, 64);
-        spawnStackedLoot(Items.NETHERITE_BLOCK, 128);
+        int bonusBlocks = looting * 32;
+        int bonusStars = looting * 16;
+
+        spawnStackedLoot(Items.DIAMOND_BLOCK, 128 + bonusBlocks);
+        spawnStackedLoot(Items.ENCHANTED_GOLDEN_APPLE, 128 + bonusBlocks);
+        spawnStackedLoot(Items.NETHER_STAR, 64 + bonusStars);
+        spawnStackedLoot(Items.NETHERITE_BLOCK, 128 + bonusBlocks);
     }
 
     /**
@@ -578,11 +652,9 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
      * {@code ItemStack#enchant}, which would clamp it.
      */
     public static ItemStack createApocalypseElytra() {
-        ItemStack elytra = new ItemStack(Items.ELYTRA);
+        ItemStack elytra = new ItemStack(com.sevenheadeddragon.registry.ModItems.APOCALYPSE_ELYTRA.get());
         elytra.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 100);
         elytra.getOrCreateTag().putBoolean("Unbreakable", true);
-        elytra.setHoverName(Component.translatable("item.sevenheadeddragon.apocalypse_elytra")
-                .withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD));
         return elytra;
     }
 
@@ -649,21 +721,60 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
     // GeckoLib
     // ------------------------------------------------------------------
 
+    /** Tracks the last {@code DATA_ANIM_TICKET} value this client has already reacted to. */
+    private int lastSeenAnimTicket = -1;
+
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "main", 3, this::animationPredicate));
     }
 
     private PlayState animationPredicate(AnimationState<ApocalypseSevenHeadedRedDragonEntity> state) {
+        // DATA_ANIM_TICKET is bumped on every setActionState() call, including
+        // repeats of the same action (e.g. two tail swipes in a row). Without
+        // this, GeckoLib's "don't restart an already-playing animation"
+        // optimisation can silently skip replaying a one-shot clip like the
+        // tail swipe when the same action state is retriggered back-to-back.
+        int ticket = this.entityData.get(DATA_ANIM_TICKET);
+        if (ticket != this.lastSeenAnimTicket) {
+            this.lastSeenAnimTicket = ticket;
+            state.getController().forceAnimationReset();
+        }
+
+        String defaultLoop = this.isHovering() ? "animation.dragon.fly" : "animation.dragon.idle";
         switch (getActionState()) {
-            case ACTION_BITE -> state.getController().setAnimation(ANIM_BITES[getBiteIndex()]);
-            case ACTION_CLAW -> state.getController().setAnimation(ANIM_CLAW);
-            case ACTION_CHARGE -> state.getController().setAnimation(ANIM_CHARGE);
-            case ACTION_TAIL -> state.getController().setAnimation(ANIM_TAIL);
-            case ACTION_FLY_START -> state.getController().setAnimation(ANIM_FLY_START);
-            case ACTION_FLY -> state.getController().setAnimation(ANIM_FLY);
-            case ACTION_FLY_END -> state.getController().setAnimation(ANIM_FLY_END);
-            default -> state.getController().setAnimation(ANIM_IDLE);
+            case ACTION_BITE -> state.getController().setAnimation(
+                    RawAnimation.begin().thenPlayXTimes("animation.dragon.attack_bite_" + (getBiteIndex() + 1), 1)
+                            .thenLoop(defaultLoop)
+            );
+            case ACTION_CLAW -> state.getController().setAnimation(
+                    RawAnimation.begin().thenLoop("animation.dragon.claw")
+            );
+            case ACTION_CHARGE -> state.getController().setAnimation(
+                    RawAnimation.begin().thenLoop("animation.dragon.attack_charge")
+            );
+            case ACTION_TAIL -> state.getController().setAnimation(
+                    RawAnimation.begin().thenPlayXTimes("animation.dragon.attack_tail", 1)
+                            .thenLoop(defaultLoop)
+            );
+            case ACTION_FLY_START -> state.getController().setAnimation(
+                    RawAnimation.begin().thenPlayXTimes("animation.dragon.fly.start", 1)
+                            .thenLoop("animation.dragon.fly")
+            );
+            case ACTION_FLY -> state.getController().setAnimation(
+                    RawAnimation.begin().thenLoop("animation.dragon.fly")
+            );
+            case ACTION_FLY_END -> state.getController().setAnimation(
+                    RawAnimation.begin().thenPlayXTimes("animation.dragon.fly.end", 1)
+                            .thenLoop("animation.dragon.idle")
+            );
+            default -> {
+                if (this.isHovering()) {
+                    state.getController().setAnimation(ANIM_FLY);
+                } else {
+                    state.getController().setAnimation(ANIM_IDLE);
+                }
+            }
         }
         return PlayState.CONTINUE;
     }
@@ -700,7 +811,9 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
             return target != null && target.isAlive()
                     && !this.dragon.isPlayerTurn()
                     && !this.dragon.isCharging()
-                    && !this.dragon.isHovering();
+                    && !this.dragon.isHovering()
+                    && this.dragon.getActionState() != ACTION_BITE
+                    && this.dragon.getActionState() != ACTION_CLAW;
         }
 
         @Override

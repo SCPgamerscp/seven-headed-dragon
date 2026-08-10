@@ -1,16 +1,18 @@
 package com.sevenheadeddragon.client.dragon;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import com.sevenheadeddragon.entity.dragon.ApocalypseSevenHeadedRedDragonEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.util.RandomSource;
+import org.joml.Matrix4f;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 /**
- * Renders 終末の七つ頭の赤い竜.
- * <p>
- * Per spec (「モデルサイズ: 1.0倍」) the model is rendered at its authored scale -
- * no {@code poseStack.scale(...)} is applied.
+ * Renders 終末の七つ頭の赤い竜 with Ender-Dragon style death light beam rays.
  */
 public class ApocalypseSevenHeadedRedDragonRenderer
         extends GeoEntityRenderer<ApocalypseSevenHeadedRedDragonEntity> {
@@ -21,6 +23,77 @@ public class ApocalypseSevenHeadedRedDragonRenderer
     public ApocalypseSevenHeadedRedDragonRenderer(EntityRendererProvider.Context context) {
         super(context, new ApocalypseSevenHeadedRedDragonModel());
         this.shadowRadius = 4.0F;
+    }
+
+    @Override
+    public void render(ApocalypseSevenHeadedRedDragonEntity entity, float entityYaw,
+                       float partialTick, PoseStack poseStack, MultiBufferSource bufferSource,
+                       int packedLight) {
+        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+
+        if (entity.deathTime > 0) {
+            float deathProgress = ((float) entity.deathTime + partialTick) / 200.0F;
+            renderDeathLightBeams(entity, deathProgress, poseStack, bufferSource);
+        }
+    }
+
+    /**
+     * Recreates vanilla Ender Dragon's radiant 3D light beams shooting out of
+     * the dragon's torso during its 10-second death sequence.
+     */
+    private void renderDeathLightBeams(ApocalypseSevenHeadedRedDragonEntity entity, float progress,
+                                       PoseStack poseStack, MultiBufferSource bufferSource) {
+        float f1 = (progress > 0.8F) ? (progress - 0.8F) / 0.2F : 0.0F;
+        RandomSource random = RandomSource.create(432L);
+        VertexConsumer consumer = bufferSource.getBuffer(RenderType.lightning());
+
+        poseStack.pushPose();
+        poseStack.translate(0.0D, 3.5D, 0.0D);
+
+        for (int i = 0; (float) i < (progress + progress * progress) / 2.0F * 60.0F; ++i) {
+            poseStack.mulPose(Axis.XP.rotationDegrees(random.nextFloat() * 360.0F));
+            poseStack.mulPose(Axis.YP.rotationDegrees(random.nextFloat() * 360.0F));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(random.nextFloat() * 360.0F));
+            poseStack.mulPose(Axis.XP.rotationDegrees(random.nextFloat() * 360.0F));
+            poseStack.mulPose(Axis.YP.rotationDegrees(random.nextFloat() * 360.0F));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(random.nextFloat() * 360.0F + progress * 90.0F));
+
+            float rayLength = random.nextFloat() * 20.0F + 5.0F + progress * 15.0F;
+            float rayWidth = random.nextFloat() * 2.5F + 1.0F + progress * 2.0F;
+            Matrix4f matrix = poseStack.last().pose();
+
+            int coreAlpha = (int) (200.0F * (1.0F - f1));
+
+            // Calculate 7-color Undertale soul rainbow HSV colors for rays
+            float hue1 = (float) (i % 7) / 7.0F;
+            int rgb1 = net.minecraft.util.Mth.hsvToRgb(hue1, 0.85F, 1.0F);
+            int r1 = (rgb1 >> 16) & 0xFF;
+            int g1 = (rgb1 >> 8) & 0xFF;
+            int b1 = rgb1 & 0xFF;
+
+            float hue2 = (hue1 + 1.0F / 7.0F) % 1.0F;
+            int rgb2 = net.minecraft.util.Mth.hsvToRgb(hue2, 0.85F, 1.0F);
+            int r2 = (rgb2 >> 16) & 0xFF;
+            int g2 = (rgb2 >> 8) & 0xFF;
+            int b2 = rgb2 & 0xFF;
+
+            int edgeAlpha = (int) (coreAlpha * 0.6F);
+
+            // Radiant light beam pyramid quad strip with vivid seven-color rainbow gradient
+            consumer.vertex(matrix, 0.0F, 0.0F, 0.0F).color(r1, g1, b1, coreAlpha).endVertex();
+            consumer.vertex(matrix, -0.866F * rayWidth, rayLength, -0.5F * rayWidth).color(r1, g1, b1, edgeAlpha).endVertex();
+            consumer.vertex(matrix, 0.866F * rayWidth, rayLength, -0.5F * rayWidth).color(r2, g2, b2, edgeAlpha).endVertex();
+
+            consumer.vertex(matrix, 0.0F, 0.0F, 0.0F).color(r1, g1, b1, coreAlpha).endVertex();
+            consumer.vertex(matrix, 0.866F * rayWidth, rayLength, -0.5F * rayWidth).color(r2, g2, b2, edgeAlpha).endVertex();
+            consumer.vertex(matrix, 0.0F, rayLength, 1.0F * rayWidth).color(r1, g1, b1, edgeAlpha).endVertex();
+
+            consumer.vertex(matrix, 0.0F, 0.0F, 0.0F).color(r1, g1, b1, coreAlpha).endVertex();
+            consumer.vertex(matrix, 0.0F, rayLength, 1.0F * rayWidth).color(r1, g1, b1, edgeAlpha).endVertex();
+            consumer.vertex(matrix, -0.866F * rayWidth, rayLength, -0.5F * rayWidth).color(r2, g2, b2, edgeAlpha).endVertex();
+        }
+
+        poseStack.popPose();
     }
 
     @Override

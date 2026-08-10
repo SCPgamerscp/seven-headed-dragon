@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "sevenheadeddragon:item/fang_king_spawn_egg"
+  }
+}
