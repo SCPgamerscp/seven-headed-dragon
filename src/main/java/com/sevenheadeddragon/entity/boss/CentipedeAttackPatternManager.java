@@ -35,7 +35,6 @@ public final class CentipedeAttackPatternManager {
     private static final int PATTERN_COUNT = 3;
     private static final int PATTERN_CIRCLE_WALK = 0;
     private static final int PATTERN_BITE = 1;
-    private static final int PATTERN_POISON_RAIN = 2;
 
     private CentipedeAttackPatternManager() {}
 

@@ -128,15 +128,12 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
     // ------------------------------------------------------------------
 
     private static final RawAnimation ANIM_IDLE = RawAnimation.begin().thenLoop("animation.dragon.idle");
-    private static final RawAnimation ANIM_CLAW = RawAnimation.begin().thenLoop("animation.dragon.claw");
-    private static final RawAnimation ANIM_CHARGE = RawAnimation.begin().thenLoop("animation.dragon.attack_charge");
-    private static final RawAnimation ANIM_TAIL =
-            RawAnimation.begin().thenPlayXTimes("animation.dragon.attack_tail", 1).thenLoop("animation.dragon.idle");
-    private static final RawAnimation ANIM_FLY_START =
-            RawAnimation.begin().thenPlayXTimes("animation.dragon.fly.start", 1).thenLoop("animation.dragon.fly");
+    private static final RawAnimation ANIM_CLAW = RawAnimation.begin().thenPlayXTimes("animation.dragon.attack_claw", 1).thenLoop("animation.dragon.idle");
+    private static final RawAnimation ANIM_CHARGE = RawAnimation.begin().thenPlayXTimes("animation.dragon.attack_charge", 1).thenLoop("animation.dragon.idle");
+    private static final RawAnimation ANIM_TAIL = RawAnimation.begin().thenPlayXTimes("animation.dragon.attack_tail", 1).thenLoop("animation.dragon.idle");
+    private static final RawAnimation ANIM_FLY_START = RawAnimation.begin().thenPlayXTimes("animation.dragon.fly.start", 1).thenLoop("animation.dragon.fly");
     private static final RawAnimation ANIM_FLY = RawAnimation.begin().thenLoop("animation.dragon.fly");
-    private static final RawAnimation ANIM_FLY_END =
-            RawAnimation.begin().thenPlayXTimes("animation.dragon.fly.end", 1).thenLoop("animation.dragon.idle");
+    private static final RawAnimation ANIM_FLY_END = RawAnimation.begin().thenPlayXTimes("animation.dragon.fly.end", 1).thenLoop("animation.dragon.idle");
 
     /** attack_bite_1 .. attack_bite_7, indexed 0-6. */
     private static final RawAnimation[] ANIM_BITES = new RawAnimation[7];

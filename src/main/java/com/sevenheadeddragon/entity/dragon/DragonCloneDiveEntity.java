@@ -42,8 +42,6 @@ public class DragonCloneDiveEntity extends Entity implements GeoEntity {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     private int ageTicks = 0;
-    private static final int TELEGRAPH_TICKS = 40; // 2 seconds grace period
-    private static final int DIVE_TICKS = 20; // 1.0 second spiral dive
 
     private LivingEntity owner;
     private double startY = -999.0D;
