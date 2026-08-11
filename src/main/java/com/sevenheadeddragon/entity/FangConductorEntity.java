@@ -113,7 +113,7 @@ public class FangConductorEntity extends Entity {
         double y = this.getY();
         
         // Stage 2 telegraph: Enchant particles exactly where the fang will appear
-        serverLevel.sendParticles(ParticleTypes.ENCHANT, x, y + 0.1, z, 4, 0.2, 0.0, 0.2, 0.05);
+        serverLevel.sendParticles(ParticleTypes.ENCHANT, x, y + 0.1, z, 15, 0.3, 0.0, 0.3, 0.05);
 
         // Schedule the actual fang spawn 10 ticks later (0.5s)
         boss.scheduleIn(ENCHANT_LEAD_TICKS, () -> {
