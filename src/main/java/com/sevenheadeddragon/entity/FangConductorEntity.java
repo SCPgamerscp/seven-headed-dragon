@@ -313,9 +313,9 @@ public class FangConductorEntity extends Entity {
 
             double twist = Math.toRadians(subTick * 10.0);
 
-            // 6 strands shooting out in 360 degrees
-            for (int strand = 0; strand < 6; strand++) {
-                double strandAngle = Math.toRadians(strand * 60.0);
+            // 8 strands shooting out in 360 degrees
+            for (int strand = 0; strand < 8; strand++) {
+                double strandAngle = Math.toRadians(strand * 45.0);
                 Vec3 dir = new Vec3(Math.cos(strandAngle), 0, Math.sin(strandAngle));
                 Vec3 perp = new Vec3(-dir.z, 0, dir.x);
 
