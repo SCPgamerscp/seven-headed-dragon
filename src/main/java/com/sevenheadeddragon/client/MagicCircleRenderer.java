@@ -36,7 +36,7 @@ public class MagicCircleRenderer extends EntityRenderer<MagicCircleEntity> {
     public void render(MagicCircleEntity entity, float entityYaw, float partialTicks, PoseStack poseStack,
                         MultiBufferSource buffer, int packedLight) {
         poseStack.pushPose();
-        poseStack.translate(0.0, 0.05, 0.0);
+        poseStack.translate(0.0, 0.18, 0.0);
 
         // Apply orientation: yaw (horizontal facing), then pitch (tilt upright).
         float yaw = entity.getOrientationYaw();
