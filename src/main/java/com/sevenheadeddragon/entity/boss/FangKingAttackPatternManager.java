@@ -77,6 +77,11 @@ public final class FangKingAttackPatternManager {
         MagicCircleEntity circle = ModEntities.MAGIC_CIRCLE.get().create(serverLevel);
         if (circle == null) return;
 
+        double yawRad = Math.toRadians(boss.getYRot());
+        double posX = boss.getX() - Math.sin(yawRad) * 1.5;
+        double posZ = boss.getZ() + Math.cos(yawRad) * 1.5;
+        circle.moveTo(posX, boss.getY() + 1.8, posZ, boss.getYRot(), boss.getXRot());
+
         circle.setLifetime(MAGIC_CIRCLE_TELEGRAPH_TICKS);
         circle.setOwnerAndTarget(boss, target);
         
