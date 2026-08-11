@@ -29,7 +29,7 @@ public final class FangKingAttackPatternManager {
 
     private static final int VEX_BURST_COUNT = 5;
     private static final int VEX_BURST_INTERVAL_TICKS = 100; // 5 seconds, per spec
-    private static final int VEX_PER_BURST = 3; // same as vanilla Evoker
+    private static final int VEX_PER_BURST = 5; // 5 Vexes per burst
 
     private FangKingAttackPatternManager() {}
 
