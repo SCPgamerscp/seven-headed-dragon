@@ -25,8 +25,8 @@ public class DragonMagicCircleRenderer extends EntityRenderer<DragonMagicCircleE
     private static final ResourceLocation TEXTURE =
             new ResourceLocation(SevenHeadedDragon.MODID, "textures/entity/magic_circle.png");
 
-    /** Lifted slightly off the ground so it never z-fights with the block below. */
-    private static final double GROUND_OFFSET = 0.06D;
+    /** Lifted 0.18m off the ground so it never buries into grass, snow layers, or terrain. */
+    private static final double GROUND_OFFSET = 0.18D;
 
     public DragonMagicCircleRenderer(EntityRendererProvider.Context context) {
         super(context);

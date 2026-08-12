@@ -64,7 +64,11 @@ public final class RedDragonAttackPatternManager {
 
     public static void startRandomAttack(ApocalypseSevenHeadedRedDragonEntity dragon) {
         LivingEntity target = dragon.getFocusedTarget();
-        if (target == null || !target.isAlive()) {
+        if (target != null && !target.isAlive()) {
+            dragon.setTarget(null);
+            target = null;
+        }
+        if (target == null) {
             dragon.onPatternFinished();
             return;
         }
@@ -522,7 +526,7 @@ public final class RedDragonAttackPatternManager {
 
             TimedGimmickCreeperEntity creeper = ModEntities.TIMED_GIMMICK_CREEPER.get().create(serverLevel);
             if (creeper == null) continue;
-            creeper.moveTo(x, groundY(serverLevel, new Vec3(x, target.getY(), z)), z,
+            creeper.moveTo(x, groundY(serverLevel, new Vec3(x, target.getY(), z)) + 0.05D, z,
                     (float) Math.toDegrees(-angle), 0.0F);
             creeper.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(creeper.blockPosition()),
                     MobSpawnType.MOB_SUMMONED, null, null);
@@ -569,7 +573,7 @@ public final class RedDragonAttackPatternManager {
 
             DebilitationMartyrEntity martyr = ModEntities.DEBILITATION_MARTYR.get().create(serverLevel);
             if (martyr == null) continue;
-            martyr.moveTo(x, groundY(serverLevel, new Vec3(x, target.getY(), z)), z,
+            martyr.moveTo(x, groundY(serverLevel, new Vec3(x, target.getY(), z)) + 0.05D, z,
                     dragon.getRandom().nextFloat() * 360.0F, 0.0F);
             martyr.setOwner(dragon);
             serverLevel.addFreshEntity(martyr);
@@ -824,8 +828,11 @@ public final class RedDragonAttackPatternManager {
      */
     private static double groundY(ServerLevel level, Vec3 pos) {
         BlockPos base = BlockPos.containing(pos.x, pos.y, pos.z);
+        double startY = Math.min(level.getMaxBuildHeight() - 1, pos.y + 20.0D);
+        Vec3 start = new Vec3(pos.x, startY, pos.z);
+        Vec3 end = new Vec3(pos.x, level.getMinBuildHeight(), pos.z);
         net.minecraft.world.phys.HitResult hit = level.clip(new net.minecraft.world.level.ClipContext(
-                pos, new Vec3(pos.x, level.getMinBuildHeight(), pos.z),
+                start, end,
                 net.minecraft.world.level.ClipContext.Block.COLLIDER,
                 net.minecraft.world.level.ClipContext.Fluid.NONE, null));
         if (hit.getType() != net.minecraft.world.phys.HitResult.Type.MISS) {
