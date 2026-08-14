@@ -34,6 +34,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -62,6 +63,7 @@ public class WormDragonEntity extends Monster implements GeoEntity {
     private int attackTimer = 40;
     private int quakeTicks;
     private int biteTicks;
+    private ChunkPos lastForcedChunk = null;
 
     public WormDragonEntity(EntityType<? extends WormDragonEntity> type, Level level) {
         super(type, level);
@@ -229,8 +231,60 @@ public class WormDragonEntity extends Monster implements GeoEntity {
         spawnAtLocation(new ItemStack(Items.ENCHANTED_GOLDEN_APPLE, 20));
     }
 
-    @Override public void die(DamageSource source) {
+    private void updateForcedChunks(boolean force) {
+        if (level() instanceof ServerLevel serverLevel) {
+            ChunkPos current = new ChunkPos(blockPosition());
+            if (force) {
+                if (lastForcedChunk == null || !lastForcedChunk.equals(current)) {
+                    if (lastForcedChunk != null) {
+                        releaseForcedChunks(serverLevel, lastForcedChunk);
+                    }
+                    applyForcedChunks(serverLevel, current);
+                    lastForcedChunk = current;
+                }
+            } else if (lastForcedChunk != null) {
+                releaseForcedChunks(serverLevel, lastForcedChunk);
+                lastForcedChunk = null;
+            }
+        }
+    }
+
+    private void applyForcedChunks(ServerLevel level, ChunkPos center) {
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dz = -2; dz <= 2; dz++) {
+                level.setChunkForced(center.x + dx, center.z + dz, true);
+            }
+        }
+    }
+
+    private void releaseForcedChunks(ServerLevel level, ChunkPos center) {
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dz = -2; dz <= 2; dz++) {
+                level.setChunkForced(center.x + dx, center.z + dz, false);
+            }
+        }
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (!level().isClientSide && tickCount % 40 == 0) {
+            updateForcedChunks(true);
+        }
+    }
+
+    @Override
+    public void remove(RemovalReason reason) {
         if (!level().isClientSide) {
+            updateForcedChunks(false);
+        }
+        super.remove(reason);
+    }
+
+    @Override
+    public void die(DamageSource source) {
+        if (!level().isClientSide) {
+            updateForcedChunks(false);
             level().getEntitiesOfClass(Mob.class, getBoundingBox().inflate(160), m -> m.getPersistentData().hasUUID("WormDragonOwner")
                     && m.getPersistentData().getUUID("WormDragonOwner").equals(getUUID())).forEach(Entity::discard);
         }
