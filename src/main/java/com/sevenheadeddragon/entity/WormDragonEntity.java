@@ -1,9 +1,12 @@
 package com.sevenheadeddragon.entity;
 
+import com.sevenheadeddragon.network.ModNetworking;
+import com.sevenheadeddragon.network.ScreenShakePacket;
 import com.sevenheadeddragon.registry.ModEffects;
 import com.sevenheadeddragon.registry.ModPotions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
@@ -152,8 +155,12 @@ public class WormDragonEntity extends Monster implements GeoEntity {
             serverLevel.sendParticles(ParticleTypes.ENCHANTED_HIT, x, y, z, 1, 0, 0.05D, 0, 0);
         }
         if (quakeTicks % 10 == 0) {
+            ScreenShakePacket packet = new ScreenShakePacket(3.0F, 12);
             for (ServerPlayer player : serverLevel.players()) {
                 player.playNotifySound(com.sevenheadeddragon.registry.ModSounds.CENTIPEDE_WALK.get(), SoundSource.HOSTILE, 1.0F, 1.0F);
+                if (player.distanceTo(this) <= QUAKE_RADIUS + 32.0D) {
+                    ModNetworking.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), packet);
+                }
             }
             AABB area = getBoundingBox().inflate(QUAKE_RADIUS, 32.0D, QUAKE_RADIUS);
             for (LivingEntity victim : level().getEntitiesOfClass(LivingEntity.class, area,
