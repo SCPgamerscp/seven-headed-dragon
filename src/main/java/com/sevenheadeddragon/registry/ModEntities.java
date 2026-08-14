@@ -72,7 +72,7 @@ public final class ModEntities {
     public static final RegistryObject<EntityType<WormDragonEntity>> WORM_DRAGON =
             ENTITY_TYPES.register("worm_dragon", () -> EntityType.Builder.of(WormDragonEntity::new, MobCategory.MONSTER)
                     .sized(24.0F, 18.0F)
-                    .clientTrackingRange(192)
+                    .clientTrackingRange(500)
                     .updateInterval(1)
                     .fireImmune()
                     .build("worm_dragon"));

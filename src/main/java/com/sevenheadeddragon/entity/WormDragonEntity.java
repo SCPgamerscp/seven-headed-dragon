@@ -163,12 +163,12 @@ public class WormDragonEntity extends Monster implements GeoEntity {
 
     @Override
     public boolean shouldRenderAtSqrDistance(double distance) {
-        return distance < 256.0D * 256.0D;
+        return distance < 500.0D * 500.0D;
     }
 
     @Override
     public AABB getBoundingBoxForCulling() {
-        return getBoundingBox().inflate(128.0D);
+        return getBoundingBox().inflate(500.0D);
     }
 
     private void bite() {
