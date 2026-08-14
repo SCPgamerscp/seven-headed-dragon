@@ -18,8 +18,7 @@ public class WormDragonRenderer extends GeoEntityRenderer<WormDragonEntity> {
                           MultiBufferSource source, com.mojang.blaze3d.vertex.VertexConsumer buffer,
                           boolean reRender, float partialTick, int light, int overlay,
                           float red, float green, float blue, float alpha) {
-        // The supplied model uses deliberately gigantic cubes; this still fills most screens.
-        poseStack.scale(0.08F, 0.08F, 0.08F);
+        poseStack.scale(1.0F, 1.0F, 1.0F);
         super.preRender(poseStack, entity, model, source, buffer, reRender, partialTick, light, overlay,
                 red, green, blue, alpha);
     }

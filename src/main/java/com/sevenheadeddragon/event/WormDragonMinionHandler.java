@@ -127,4 +127,29 @@ public class WormDragonMinionHandler {
             level.addFreshEntity(bolt);
         }
     }
+
+    /** Prevents Worm Dragon minions from taking friendly-fire damage from each other or the boss. */
+    @SubscribeEvent
+    public void onMinionHurt(net.minecraftforge.event.entity.living.LivingHurtEvent event) {
+        LivingEntity victim = event.getEntity();
+        if (victim.getPersistentData().getBoolean(MINION) || victim instanceof com.sevenheadeddragon.entity.WormDragonEntity) {
+            Entity attacker = event.getSource().getEntity();
+            Entity directSource = event.getSource().getDirectEntity();
+            if ((attacker != null && (attacker.getPersistentData().getBoolean(MINION) || attacker instanceof com.sevenheadeddragon.entity.WormDragonEntity))
+                    || (directSource != null && (directSource.getPersistentData().getBoolean(MINION) || directSource.getPersistentData().getBoolean(PROJECTILE)))) {
+                event.setCanceled(true);
+            }
+        }
+    }
+
+    /** Prevents Worm Dragon minions from locking onto each other as attack targets. */
+    @SubscribeEvent
+    public void onMinionTarget(net.minecraftforge.event.entity.living.LivingChangeTargetEvent event) {
+        if (event.getEntity() instanceof Mob mob && mob.getPersistentData().getBoolean(MINION)) {
+            LivingEntity newTarget = event.getNewTarget();
+            if (newTarget != null && (newTarget.getPersistentData().getBoolean(MINION) || newTarget instanceof com.sevenheadeddragon.entity.WormDragonEntity)) {
+                event.setCanceled(true);
+            }
+        }
+    }
 }
