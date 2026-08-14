@@ -34,5 +34,14 @@
         "stream": true
       }
     ]
+  },
+  "common.your_turn": {
+    "subtitle": "subtitle.sevenheadeddragon.common.your_turn",
+    "sounds": [
+      {
+        "name": "sevenheadeddragon:common/the_time",
+        "stream": false
+      }
+    ]
   }
 }

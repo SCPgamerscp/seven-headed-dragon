@@ -459,7 +459,7 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
                 serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(2, PLAYER_TURN_TICKS - 10, 8));
                 serverPlayer.connection.send(new ClientboundSetTitleTextPacket(
                         Component.literal("YOUR TURN").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)));
-                serverPlayer.playNotifySound(SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.MASTER, 1.0F, 1.4F);
+                serverPlayer.playNotifySound(com.sevenheadeddragon.registry.ModSounds.YOUR_TURN.get(), SoundSource.MASTER, 1.0F, 1.0F);
             }
         }
     }

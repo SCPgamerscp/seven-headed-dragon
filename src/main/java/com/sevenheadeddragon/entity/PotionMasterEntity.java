@@ -242,7 +242,7 @@ public class PotionMasterEntity extends Monster {
             if (!serverPlayer.isCreative() && !serverPlayer.isSpectator()) {
                 serverPlayer.connection.send(new ClientboundSetTitleTextPacket(
                         Component.literal("YOUR TURN").withStyle(net.minecraft.ChatFormatting.GOLD, net.minecraft.ChatFormatting.BOLD)));
-                serverPlayer.playNotifySound(net.minecraft.sounds.SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.MASTER, 1.0F, 1.2F);
+                serverPlayer.playNotifySound(com.sevenheadeddragon.registry.ModSounds.YOUR_TURN.get(), SoundSource.MASTER, 1.0F, 1.0F);
             }
         }
     }

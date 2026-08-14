@@ -27,5 +27,8 @@ public final class ModSounds {
     public static final RegistryObject<SoundEvent> DRAGON_BGM = SOUND_EVENTS.register("dragon.bgm",
             () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(SevenHeadedDragon.MODID, "dragon.bgm")));
 
+    public static final RegistryObject<SoundEvent> YOUR_TURN = SOUND_EVENTS.register("common.your_turn",
+            () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(SevenHeadedDragon.MODID, "common.your_turn")));
+
     private ModSounds() {}
 }

@@ -1,6 +1,5 @@
 {
   "itemGroup.sevenheadeddragon": "Seven Headed Dragon",
-
   "entity.sevenheadeddragon.potion_master": "Potion Master",
   "entity.sevenheadeddragon.magic_circle": "Magic Circle",
   "entity.sevenheadeddragon.potion_bullet": "Potion Bullet",
@@ -8,21 +7,17 @@
   "entity.sevenheadeddragon.fang_conductor": "Fang Conductor",
   "entity.sevenheadeddragon.centipede_black_dragon_eater": "Black Dragon Eater",
   "entity.sevenheadeddragon.worm_dragon": "Dragon King Beneath the Earth (Worm Dragon)",
-
   "item.sevenheadeddragon.potion_master_summon": "Potion Master Summoning Charge",
   "item.sevenheadeddragon.energy_drink": "Energy Drink",
   "item.sevenheadeddragon.fang_king_spawn_egg": "Fang King Spawn Egg",
   "item.sevenheadeddragon.centipede_black_dragon_eater_spawn_egg": "Black Dragon Eater Spawn Egg",
-
   "effect.sevenheadeddragon.dragon_slaying_poison": "Dragon-Slaying Poison",
   "death.attack.sevenheadeddragon.dragon_slaying_poison": "%1$s was eaten away by dragon-slaying poison",
   "death.attack.sevenheadeddragon.dragon_slaying_poison.player": "%1$s was eaten away by dragon-slaying poison while trying to escape %2$s",
-
   "subtitle.sevenheadeddragon.centipede.walk": "Centipede skitters",
   "subtitle.sevenheadeddragon.centipede.youchu": "Centipede screeches",
   "subtitle.sevenheadeddragon.dragon.longinus": "Spear of Longinus descends",
   "subtitle.sevenheadeddragon.dragon.bgm": "Ode to Joy (Beethoven's 9th Symphony)",
-
   "effect.sevenheadeddragon.percent_poison": "Percent Poison",
   "effect.sevenheadeddragon.undead_curse": "Undead Curse",
   "effect.sevenheadeddragon.insectify": "Insectify",
@@ -41,7 +36,6 @@
   "effect.sevenheadeddragon.enchantment_blessing": "Enchantment Blessing",
   "item.minecraft.potion.effect.enchantment_blessing": "Potion of Enchantment Blessing",
   "item.minecraft.potion.effect.sevenheadeddragon.enchantment_blessing": "Potion of Enchantment Blessing",
-
   "item.minecraft.potion.effect.percent_poison": "Potion of Percent Poison",
   "item.minecraft.splash_potion.effect.percent_poison": "Splash Potion of Percent Poison",
   "item.minecraft.lingering_potion.effect.percent_poison": "Lingering Potion of Percent Poison",
@@ -95,7 +89,6 @@
   "item.minecraft.splash_potion.effect.explosion": "Splash Potion of Explosion",
   "item.minecraft.lingering_potion.effect.explosion": "Lingering Potion of Explosion",
   "item.minecraft.tipped_arrow.effect.explosion": "Arrow of Explosion",
-
   "item.minecraft.potion.effect.dragon_slaying_poison": "Potion of Dragon-Slaying Poison",
   "item.minecraft.splash_potion.effect.dragon_slaying_poison": "Splash Potion of Dragon-Slaying Poison",
   "item.minecraft.lingering_potion.effect.dragon_slaying_poison": "Lingering Potion of Dragon-Slaying Poison",
@@ -104,7 +97,6 @@
   "item.minecraft.splash_potion.effect.sevenheadeddragon.dragon_slaying_poison": "Splash Potion of Dragon-Slaying Poison",
   "item.minecraft.lingering_potion.effect.sevenheadeddragon.dragon_slaying_poison": "Lingering Potion of Dragon-Slaying Poison",
   "item.minecraft.tipped_arrow.effect.sevenheadeddragon.dragon_slaying_poison": "Arrow of Dragon-Slaying Poison",
-
   "item.minecraft.potion.effect.poison_5": "Potion of Poison V",
   "item.minecraft.splash_potion.effect.poison_5": "Splash Potion of Poison V",
   "item.minecraft.lingering_potion.effect.poison_5": "Lingering Potion of Poison V",
@@ -113,7 +105,6 @@
   "item.minecraft.splash_potion.effect.sevenheadeddragon.poison_5": "Splash Potion of Poison V",
   "item.minecraft.lingering_potion.effect.sevenheadeddragon.poison_5": "Lingering Potion of Poison V",
   "item.minecraft.tipped_arrow.effect.sevenheadeddragon.poison_5": "Arrow of Poison V",
-
   "death.attack.sevenheadeddragon.percent_poison": "%1$s was dissolved by a virulent poison",
   "death.attack.sevenheadeddragon.percent_poison.player": "%1$s was dissolved by a virulent poison while trying to escape %2$s",
   "death.attack.sevenheadeddragon.insecticide": "%1$s was exterminated like a bug",
@@ -126,7 +117,6 @@
   "death.attack.sevenheadeddragon.void_damage.player": "%1$s was pulled into the void while trying to escape %2$s",
   "death.attack.sevenheadeddragon.water_vulnerability": "%1$s was washed away by the rain",
   "death.attack.sevenheadeddragon.water_vulnerability.player": "%1$s was washed away by the rain while trying to escape %2$s",
-
   "entity.sevenheadeddragon.apocalypse_seven_headed_red_dragon": "Apocalypse Seven Headed Red Dragon",
   "entity.sevenheadeddragon.goat_missile": "Goat Missile",
   "entity.sevenheadeddragon.squid_missile": "Squid Missile",
@@ -136,10 +126,8 @@
   "entity.sevenheadeddragon.timed_gimmick_creeper": "Timed Creeper",
   "entity.sevenheadeddragon.debilitation_martyr": "Martyr of Debilitation",
   "entity.sevenheadeddragon.dragon_clone_dive": "Apocalypse Red Dragon Clone",
-
   "item.sevenheadeddragon.apocalypse_seven_headed_red_dragon_spawn_egg": "Apocalypse Seven Headed Red Dragon Spawn Egg",
   "item.sevenheadeddragon.apocalypse_elytra": "Wings of the Former Seraph",
-
   "effect.sevenheadeddragon.god_slaying": "God Slaying",
   "effect.sevenheadeddragon.sin_pride": "Pride",
   "effect.sevenheadeddragon.sin_wrath": "Wrath",
@@ -148,7 +136,6 @@
   "effect.sevenheadeddragon.sin_greed": "Greed",
   "effect.sevenheadeddragon.sin_gluttony": "Gluttony",
   "effect.sevenheadeddragon.sin_lust": "Lust",
-
   "death.attack.sevenheadeddragon.god_slaying": "%1$s was unmade by %2$s's God Slaying curse",
   "death.attack.sevenheadeddragon.god_slaying.player": "%1$s was unmade by the God Slaying curse while trying to escape %2$s",
   "death.attack.sevenheadeddragon.longinus_spear": "%1$s was impaled by %2$s's Spear of Longinus",
@@ -157,13 +144,11 @@
   "death.attack.sevenheadeddragon.rainbow_lightning.player": "%1$s was struck down by seven-coloured lightning while trying to escape %2$s",
   "death.attack.sevenheadeddragon.wither_poison_cloud": "%1$s withered away in %2$s's martyr's miasma",
   "death.attack.sevenheadeddragon.wither_poison_cloud.player": "%1$s withered away in a martyr's miasma while trying to escape %2$s",
-
   "message.sevenheadeddragon.red_dragon_progress": "Omen of the Apocalypse: %1$s / %2$s zombies slain",
   "message.sevenheadeddragon.red_dragon_awakens": "The sky burns red... the Apocalypse Seven Headed Red Dragon awakens!",
   "message.sevenheadeddragon.red_dragon_defeated": "The red dragon falls. The sky returns to blue.",
   "message.sevenheadeddragon.worm_dragon_progress": "Tremors Below: %1$s / %2$s skeletons slain",
   "message.sevenheadeddragon.worm_dragon_awakens": "The earth splits... the Dragon King Beneath the Earth awakens!",
-
   "advancements.sevenheadeddragon.root.title": "Seven-Headed Dragon",
   "advancements.sevenheadeddragon.root.description": "The battle against the apocalyptic bosses begins",
   "advancements.sevenheadeddragon.kill_apocalypse_red_dragon.title": "Saviour of the World",
@@ -229,5 +214,6 @@
   "advancements.sevenheadeddragon.angel_falls_from_heaven.title": "Even Angels Fall from Heaven",
   "advancements.sevenheadeddragon.angel_falls_from_heaven.description": "Died of fall or kinetic damage while wearing the Wings of the Former Seraph",
   "advancements.sevenheadeddragon.lucifer.title": "Lucifer?",
-  "advancements.sevenheadeddragon.lucifer.description": "Entered the Nether while wearing the Wings of the Former Seraph"
+  "advancements.sevenheadeddragon.lucifer.description": "Entered the Nether while wearing the Wings of the Former Seraph",
+  "subtitle.sevenheadeddragon.common.your_turn": "Your Turn"
 }

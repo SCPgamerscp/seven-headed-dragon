@@ -1,6 +1,5 @@
 {
   "itemGroup.sevenheadeddragon": "セブンヘッドドラゴン",
-
   "entity.sevenheadeddragon.potion_master": "ポーションマスター",
   "entity.sevenheadeddragon.magic_circle": "魔法陣",
   "entity.sevenheadeddragon.potion_bullet": "ポーション弾",
@@ -8,21 +7,17 @@
   "entity.sevenheadeddragon.fang_conductor": "牙制御体",
   "entity.sevenheadeddragon.centipede_black_dragon_eater": "竜殺しのオオムカデ",
   "entity.sevenheadeddragon.worm_dragon": "地中の竜王（ワームドラゴン）",
-
   "item.sevenheadeddragon.potion_master_summon": "ポーションマスターの召喚石",
   "item.sevenheadeddragon.energy_drink": "エナジードリンク",
   "item.sevenheadeddragon.fang_king_spawn_egg": "牙の王のスポーンエッグ",
   "item.sevenheadeddragon.centipede_black_dragon_eater_spawn_egg": "竜殺しのオオムカデのスポーンエッグ",
-
   "effect.sevenheadeddragon.dragon_slaying_poison": "ドラゴン殺しの毒",
   "death.attack.sevenheadeddragon.dragon_slaying_poison": "%1$sはドラゴン殺しの毒に蝕まれて死んだ",
   "death.attack.sevenheadeddragon.dragon_slaying_poison.player": "%1$sは%2$sから逃げようとしてドラゴン殺しの毒に蝕まれて死んだ",
-
   "subtitle.sevenheadeddragon.centipede.walk": "ムカデが這う音",
   "subtitle.sevenheadeddragon.centipede.youchu": "ムカデの鳴き声",
   "subtitle.sevenheadeddragon.dragon.longinus": "神を殺す絶望の槍が降臨する音",
   "subtitle.sevenheadeddragon.dragon.bgm": "歓喜の歌（ベートーヴェン交響曲第9番）",
-
   "effect.sevenheadeddragon.percent_poison": "割合毒",
   "effect.sevenheadeddragon.undead_curse": "アンデッド化",
   "effect.sevenheadeddragon.insectify": "昆虫化",
@@ -41,7 +36,6 @@
   "effect.sevenheadeddragon.enchantment_blessing": "エンチャントの加護",
   "item.minecraft.potion.effect.enchantment_blessing": "エンチャントの加護のポーション",
   "item.minecraft.potion.effect.sevenheadeddragon.enchantment_blessing": "エンチャントの加護のポーション",
-
   "item.minecraft.potion.effect.percent_poison": "割合毒のポーション",
   "item.minecraft.splash_potion.effect.percent_poison": "割合毒のスプラッシュポーション",
   "item.minecraft.lingering_potion.effect.percent_poison": "割合毒のスローポーション",
@@ -95,7 +89,6 @@
   "item.minecraft.splash_potion.effect.explosion": "スプラッシュポーション（爆発）",
   "item.minecraft.lingering_potion.effect.explosion": "残留ポーション（爆発）",
   "item.minecraft.tipped_arrow.effect.explosion": "効能付きの矢（爆発）",
-
   "item.minecraft.potion.effect.dragon_slaying_poison": "ドラゴン殺しの毒のポーション",
   "item.minecraft.splash_potion.effect.dragon_slaying_poison": "ドラゴン殺しの毒のスプラッシュポーション",
   "item.minecraft.lingering_potion.effect.dragon_slaying_poison": "ドラゴン殺しの毒の残留ポーション",
@@ -104,7 +97,6 @@
   "item.minecraft.splash_potion.effect.sevenheadeddragon.dragon_slaying_poison": "ドラゴン殺しの毒のスプラッシュポーション",
   "item.minecraft.lingering_potion.effect.sevenheadeddragon.dragon_slaying_poison": "ドラゴン殺しの毒の残留ポーション",
   "item.minecraft.tipped_arrow.effect.sevenheadeddragon.dragon_slaying_poison": "ドラゴン殺しの毒の矢",
-
   "item.minecraft.potion.effect.poison_5": "毒 V のポーション",
   "item.minecraft.splash_potion.effect.poison_5": "毒 V のスプラッシュポーション",
   "item.minecraft.lingering_potion.effect.poison_5": "毒 V の残留ポーション",
@@ -113,7 +105,6 @@
   "item.minecraft.splash_potion.effect.sevenheadeddragon.poison_5": "毒 V のスプラッシュポーション",
   "item.minecraft.lingering_potion.effect.sevenheadeddragon.poison_5": "毒 V の残留ポーション",
   "item.minecraft.tipped_arrow.effect.sevenheadeddragon.poison_5": "毒 V の矢",
-
   "death.attack.sevenheadeddragon.percent_poison": "%1$sは猛毒に溶かされた",
   "death.attack.sevenheadeddragon.percent_poison.player": "%1$sは%2$sから逃げようとして猛毒に溶かされた",
   "death.attack.sevenheadeddragon.insecticide": "%1$sは害虫のように駆除された",
@@ -126,7 +117,6 @@
   "death.attack.sevenheadeddragon.void_damage.player": "%1$sは%2$sから逃げようとして奈落に飲み込まれた",
   "death.attack.sevenheadeddragon.water_vulnerability": "%1$sは雨に流された",
   "death.attack.sevenheadeddragon.water_vulnerability.player": "%1$sは%2$sから逃げようとして雨に流された",
-
   "entity.sevenheadeddragon.apocalypse_seven_headed_red_dragon": "終末の七つ頭の赤い竜",
   "entity.sevenheadeddragon.goat_missile": "山羊ミサイル",
   "entity.sevenheadeddragon.squid_missile": "イカミサイル",
@@ -136,10 +126,8 @@
   "entity.sevenheadeddragon.timed_gimmick_creeper": "時限クリーパー",
   "entity.sevenheadeddragon.debilitation_martyr": "衰弱の殉教者",
   "entity.sevenheadeddragon.dragon_clone_dive": "終末の七つ頭の赤い竜の分身",
-
   "item.sevenheadeddragon.apocalypse_seven_headed_red_dragon_spawn_egg": "終末の七つ頭の赤い竜のスポーンエッグ",
   "item.sevenheadeddragon.apocalypse_elytra": "元熾天使の翼",
-
   "effect.sevenheadeddragon.god_slaying": "神殺し",
   "effect.sevenheadeddragon.sin_pride": "傲慢",
   "effect.sevenheadeddragon.sin_wrath": "憤怒",
@@ -148,7 +136,6 @@
   "effect.sevenheadeddragon.sin_greed": "強欲",
   "effect.sevenheadeddragon.sin_gluttony": "暴食",
   "effect.sevenheadeddragon.sin_lust": "色欲",
-
   "death.attack.sevenheadeddragon.god_slaying": "%1$sは%2$sの神殺しの呪いに滅ぼされた",
   "death.attack.sevenheadeddragon.god_slaying.player": "%1$sは%2$sの神殺しの呪いによって滅ぼされた",
   "death.attack.sevenheadeddragon.longinus_spear": "%1$sは%2$sのロンギヌスの槍に貫かれた",
@@ -157,13 +144,11 @@
   "death.attack.sevenheadeddragon.rainbow_lightning.player": "%1$sは%2$sの七色の雷によって討たれた",
   "death.attack.sevenheadeddragon.wither_poison_cloud": "%1$sは%2$sの殉教者の瘴気に衰弱した",
   "death.attack.sevenheadeddragon.wither_poison_cloud.player": "%1$sは%2$sの殉教者の瘴気によって衰弱死した",
-
   "message.sevenheadeddragon.red_dragon_progress": "終末の予兆: ゾンビ %1$s / %2$s 体討伐",
   "message.sevenheadeddragon.red_dragon_awakens": "空が赤く燃える……終末の七つ頭の赤い竜が目覚めた！",
   "message.sevenheadeddragon.red_dragon_defeated": "赤い竜は倒れた。空に青が戻る。",
   "message.sevenheadeddragon.worm_dragon_progress": "地中の震動: スケルトン %1$s / %2$s 体討伐",
   "message.sevenheadeddragon.worm_dragon_awakens": "大地が裂ける……地中の竜王が目覚めた！",
-
   "advancements.sevenheadeddragon.root.title": "セブンヘッドドラゴン",
   "advancements.sevenheadeddragon.root.description": "終末のボスたちとの戦いが始まる",
   "advancements.sevenheadeddragon.kill_apocalypse_red_dragon.title": "世界を救った",
@@ -229,5 +214,6 @@
   "advancements.sevenheadeddragon.angel_falls_from_heaven.title": "天使も天から落ちる",
   "advancements.sevenheadeddragon.angel_falls_from_heaven.description": "元熾天使の翼を身につけて落下死または激突死した",
   "advancements.sevenheadeddragon.lucifer.title": "ルシファー?",
-  "advancements.sevenheadeddragon.lucifer.description": "元熾天使の翼を身につけてネザーに入った"
+  "advancements.sevenheadeddragon.lucifer.description": "元熾天使の翼を身につけてネザーに入った",
+  "subtitle.sevenheadeddragon.common.your_turn": "プレイヤーターン開始"
 }
