@@ -108,8 +108,21 @@ public class WormDragonEntity extends Monster implements GeoEntity {
         getNavigation().stop();
         setDeltaMovement(0.0D, getDeltaMovement().y, 0.0D);
 
+        LivingEntity target = getTarget();
+        boolean hasValidTarget = target != null && target.isAlive()
+                && (!(target instanceof Player player) || (!player.isCreative() && !player.isSpectator()));
+
         if (biteTicks > 0 && --biteTicks == 0) entityData.set(BITING, false);
         if (quakeTicks > 0) tickQuake();
+
+        if (!hasValidTarget) {
+            if (isPlayerTurn()) {
+                entityData.set(PLAYER_TURN, false);
+            }
+            turnTimer = BOSS_TURN_TICKS;
+            attackTimer = 40;
+            return;
+        }
 
         if (!isPlayerTurn() && quakeTicks == 0 && biteTicks == 0 && --attackTimer <= 0) {
             attackTimer = 60 + random.nextInt(61);
@@ -131,8 +144,10 @@ public class WormDragonEntity extends Monster implements GeoEntity {
         entityData.set(BITING, false);
         if (playerTurn) {
             for (ServerPlayer player : bossEvent.getPlayers()) {
-                player.connection.send(new ClientboundSetTitleTextPacket(Component.literal("YOUR TURN").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)));
-                player.playNotifySound(SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.MASTER, 1.0F, 1.2F);
+                if (!player.isCreative() && !player.isSpectator()) {
+                    player.connection.send(new ClientboundSetTitleTextPacket(Component.literal("YOUR TURN").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)));
+                    player.playNotifySound(SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.MASTER, 1.0F, 1.2F);
+                }
             }
         }
     }
