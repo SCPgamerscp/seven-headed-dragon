@@ -70,6 +70,9 @@ public class WormDragonEntity extends Monster implements GeoEntity {
         setMaxUpStep(5.0F);
         xpReward = 5000;
         this.noCulling = true;
+        if (level.isClientSide) {
+            com.sevenheadeddragon.client.WormDragonFarRenderer.TRACKED_DRAGONS.add(this);
+        }
     }
 
     public static AttributeSupplier.Builder createAttributes() {
