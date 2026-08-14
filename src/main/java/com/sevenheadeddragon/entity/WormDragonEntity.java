@@ -6,7 +6,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -16,7 +15,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -40,7 +38,6 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.entity.PartEntity;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -60,14 +57,6 @@ public class WormDragonEntity extends Monster implements GeoEntity {
     private static final EntityDataAccessor<Boolean> PLAYER_TURN = SynchedEntityData.defineId(WormDragonEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> BITING = SynchedEntityData.defineId(WormDragonEntity.class, EntityDataSerializers.BOOLEAN);
 
-    public static final int PART_COUNT = 25;
-    private static final float[] PART_OFFSETS = new float[] {
-            -480.0F, -440.0F, -400.0F, -360.0F, -320.0F, -280.0F, -240.0F, -200.0F, -160.0F, -120.0F, -80.0F, -40.0F,
-            0.0F,
-            40.0F, 80.0F, 120.0F, 160.0F, 200.0F, 240.0F, 280.0F, 320.0F, 360.0F, 400.0F, 440.0F, 480.0F
-    };
-    private final PartEntity<?>[] parts;
-
     private final ServerBossEvent bossEvent = (ServerBossEvent) new ServerBossEvent(getDisplayName(), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS).setDarkenScreen(true);
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     private int turnTimer = BOSS_TURN_TICKS;
@@ -81,10 +70,6 @@ public class WormDragonEntity extends Monster implements GeoEntity {
         setMaxUpStep(5.0F);
         xpReward = 5000;
         this.noCulling = true;
-        this.parts = new PartEntity<?>[PART_COUNT];
-        for (int i = 0; i < PART_COUNT; i++) {
-            this.parts[i] = new WormDragonPart(this, i, 40.0F, 30.0F);
-        }
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -115,7 +100,6 @@ public class WormDragonEntity extends Monster implements GeoEntity {
 
     @Override public void aiStep() {
         super.aiStep();
-        positionBodyParts();
         if (level().isClientSide) return;
         bossEvent.setProgress(getHealth() / getMaxHealth());
         getNavigation().stop();
@@ -133,60 +117,6 @@ public class WormDragonEntity extends Monster implements GeoEntity {
             }
         }
         if (--turnTimer <= 0) switchTurn();
-    }
-
-    @Override
-    public boolean isMultipartEntity() {
-        return true;
-    }
-
-    @Override
-    public PartEntity<?>[] getParts() {
-        return this.parts;
-    }
-
-    @Override
-    public void setId(int id) {
-        super.setId(id);
-        if (this.parts != null) {
-            for (int i = 0; i < this.parts.length; i++) {
-                this.parts[i].setId(id + i + 1);
-            }
-        }
-    }
-
-    @Override
-    public void recreateFromPacket(ClientboundAddEntityPacket packet) {
-        super.recreateFromPacket(packet);
-        if (this.parts != null) {
-            for (int i = 0; i < this.parts.length; i++) {
-                this.parts[i].setId(packet.getId() + i + 1);
-            }
-        }
-    }
-
-    private void positionBodyParts() {
-        if (this.parts == null) return;
-        float yawRad = -this.getYRot() * Mth.DEG_TO_RAD;
-        double sin = Math.sin(yawRad);
-        double cos = Math.cos(yawRad);
-
-        for (int i = 0; i < this.parts.length; i++) {
-            double offset = PART_OFFSETS[i];
-            double x = this.getX() + sin * offset;
-            double y = this.getY();
-            double z = this.getZ() + cos * offset;
-
-            if (this.parts[i] instanceof WormDragonPart wormPart) {
-                if (this.tickCount <= 1) {
-                    wormPart.setPosAndOld(x, y, z);
-                } else {
-                    wormPart.updatePosWithOld(x, y, z);
-                }
-            } else {
-                this.parts[i].setPos(x, y, z);
-            }
-        }
     }
 
     private void switchTurn() {
@@ -241,15 +171,7 @@ public class WormDragonEntity extends Monster implements GeoEntity {
 
     @Override
     public AABB getBoundingBoxForCulling() {
-        AABB combinedBox = this.getBoundingBox();
-        if (this.parts != null) {
-            for (PartEntity<?> part : this.parts) {
-                if (part != null) {
-                    combinedBox = combinedBox.minmax(part.getBoundingBox());
-                }
-            }
-        }
-        return combinedBox.inflate(50.0D);
+        return getBoundingBox().inflate(10000.0D);
     }
 
     private void bite() {
