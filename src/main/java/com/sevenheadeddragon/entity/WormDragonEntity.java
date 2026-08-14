@@ -56,6 +56,7 @@ import java.util.List;
 public class WormDragonEntity extends Monster implements GeoEntity {
     public static final int BOSS_TURN_TICKS = 20 * 60;
     public static final int PLAYER_TURN_TICKS = 20 * 5;
+    public static final int MAX_MINIONS = 15;
     private static final int QUAKE_RADIUS = 100;
     private static final EntityDataAccessor<Boolean> PLAYER_TURN = SynchedEntityData.defineId(WormDragonEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> BITING = SynchedEntityData.defineId(WormDragonEntity.class, EntityDataSerializers.BOOLEAN);
@@ -195,12 +196,19 @@ public class WormDragonEntity extends Monster implements GeoEntity {
 
     private void summonMinions() {
         if (!(level() instanceof ServerLevel serverLevel)) return;
+        List<Mob> currentMinions = level().getEntitiesOfClass(Mob.class, getBoundingBox().inflate(160),
+                m -> m.isAlive() && m.getPersistentData().hasUUID("WormDragonOwner")
+                        && m.getPersistentData().getUUID("WormDragonOwner").equals(getUUID()));
+        int canSpawnCount = MAX_MINIONS - currentMinions.size();
+        if (canSpawnCount <= 0) return;
+
         List<EntityType<? extends Mob>> types = List.of(EntityType.SKELETON, EntityType.DROWNED, EntityType.SHULKER,
                 EntityType.LLAMA, EntityType.GHAST, EntityType.BLAZE, EntityType.PILLAGER);
-        for (int i = 0; i < types.size(); i++) {
+        int spawnAmount = Math.min(canSpawnCount, types.size());
+        for (int i = 0; i < spawnAmount; i++) {
             Mob minion = types.get(i).create(serverLevel);
             if (minion == null) continue;
-            double angle = i * Math.PI * 2.0D / types.size();
+            double angle = i * Math.PI * 2.0D / spawnAmount;
             minion.moveTo(getX() + Math.cos(angle) * 20.0D, getY() + 3.0D, getZ() + Math.sin(angle) * 20.0D, 0, 0);
             minion.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(minion.blockPosition()), MobSpawnType.MOB_SUMMONED, null, null);
             if (minion instanceof net.minecraft.world.entity.monster.PatrollingMonster patrolling) {
