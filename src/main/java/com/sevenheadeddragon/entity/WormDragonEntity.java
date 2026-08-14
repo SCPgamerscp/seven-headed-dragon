@@ -64,6 +64,7 @@ public class WormDragonEntity extends Monster implements GeoEntity {
     private int quakeTicks;
     private int biteTicks;
     private ChunkPos lastForcedChunk = null;
+    public long clientRenderFrame = 0L;
 
     public WormDragonEntity(EntityType<? extends WormDragonEntity> type, Level level) {
         super(type, level);
