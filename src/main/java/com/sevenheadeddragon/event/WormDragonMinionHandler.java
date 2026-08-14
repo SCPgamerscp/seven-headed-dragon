@@ -120,6 +120,7 @@ public class WormDragonMinionHandler {
     @SubscribeEvent
     public void onProjectileImpact(net.minecraftforge.event.entity.ProjectileImpactEvent event) {
         if (!event.getProjectile().getPersistentData().getBoolean("WormDragonChanneling")) return;
+        if (!(event.getRayTraceResult() instanceof net.minecraft.world.phys.EntityHitResult)) return;
         if (!(event.getProjectile().level() instanceof ServerLevel level)) return;
         net.minecraft.world.entity.LightningBolt bolt = net.minecraft.world.entity.EntityType.LIGHTNING_BOLT.create(level);
         if (bolt != null) {

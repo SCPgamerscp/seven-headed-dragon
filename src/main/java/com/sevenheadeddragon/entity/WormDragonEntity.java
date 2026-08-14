@@ -150,6 +150,7 @@ public class WormDragonEntity extends Monster implements GeoEntity {
             serverLevel.sendParticles(ParticleTypes.ENCHANTED_HIT, x, y, z, 1, 0, 0.05D, 0, 0);
         }
         if (quakeTicks % 10 == 0) {
+            level().playSound(null, blockPosition(), com.sevenheadeddragon.registry.ModSounds.CENTIPEDE_WALK.get(), SoundSource.HOSTILE, 2.0F, 1.0F);
             AABB area = getBoundingBox().inflate(QUAKE_RADIUS, 32.0D, QUAKE_RADIUS);
             for (LivingEntity victim : level().getEntitiesOfClass(LivingEntity.class, area,
                     e -> e.isAlive() && e != this && !(e instanceof Mob mob && mob.getPersistentData().getBoolean("WormDragonMinion")))) {
