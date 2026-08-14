@@ -185,6 +185,20 @@ public class FangKingEntity extends SpellcasterIllager {
         this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
         tickScheduledTasks();
 
+        LivingEntity target = getFocusedTarget();
+        boolean hasValidTarget = target != null && target.isAlive()
+                && (!(target instanceof Player player) || (!player.isCreative() && !player.isSpectator()));
+
+        if (!hasValidTarget) {
+            if (isPlayerTurn()) {
+                setPlayerTurn(false);
+            }
+            turnTimer = BOSS_TURN_TICKS;
+            patternActive = false;
+            scheduledTasks.clear();
+            return;
+        }
+
         if (isPlayerTurn()) {
             // "your turn": completely frozen and defenseless.
             this.getNavigation().stop();
@@ -208,13 +222,14 @@ public class FangKingEntity extends SpellcasterIllager {
         }
     }
 
-    /** Displays the large center-screen "your turn" title text to the currently focused target. */
+    /** Displays the large center-screen "YOUR TURN" title text to all participating players in the boss fight. */
     private void broadcastYourTurnTitle() {
-        LivingEntity target = getFocusedTarget();
-        if (target instanceof ServerPlayer serverPlayer) {
-            if (serverPlayer.isCreative() || serverPlayer.isSpectator()) return;
-            serverPlayer.connection.send(new ClientboundSetTitleTextPacket(
-                    Component.literal("your turn").withStyle(net.minecraft.ChatFormatting.GOLD, net.minecraft.ChatFormatting.BOLD)));
+        for (ServerPlayer serverPlayer : this.bossEvent.getPlayers()) {
+            if (!serverPlayer.isCreative() && !serverPlayer.isSpectator()) {
+                serverPlayer.connection.send(new ClientboundSetTitleTextPacket(
+                        Component.literal("YOUR TURN").withStyle(net.minecraft.ChatFormatting.GOLD, net.minecraft.ChatFormatting.BOLD)));
+                serverPlayer.playNotifySound(net.minecraft.sounds.SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.MASTER, 1.0F, 1.2F);
+            }
         }
     }
 

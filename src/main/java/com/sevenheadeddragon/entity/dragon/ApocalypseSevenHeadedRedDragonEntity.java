@@ -358,6 +358,25 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
         tickScheduledTasks();
         tickHover();
 
+        LivingEntity target = getFocusedTarget();
+        boolean hasValidTarget = target != null && target.isAlive()
+                && (!(target instanceof Player player) || (!player.isCreative() && !player.isSpectator()));
+
+        if (!hasValidTarget) {
+            if (isPlayerTurn()) {
+                setPlayerTurn(false);
+            }
+            this.turnTimer = BOSS_TURN_TICKS;
+            this.patternActive = false;
+            this.charging = false;
+            this.scheduledTasks.clear();
+            if (this.isHovering()) {
+                stopHovering();
+                setActionState(ACTION_IDLE);
+            }
+            return;
+        }
+
         if (isPlayerTurn()) {
             // プレイヤーターン: 地上に停止して無防備
             this.getNavigation().stop();
@@ -435,13 +454,13 @@ public class ApocalypseSevenHeadedRedDragonEntity extends Monster implements Geo
 
     /** Displays the golden bold <b>YOUR TURN</b> title to everyone fighting the boss. */
     private void broadcastYourTurnTitle() {
-        LivingEntity target = getFocusedTarget();
-        if (target instanceof ServerPlayer serverPlayer) {
-            if (serverPlayer.isCreative() || serverPlayer.isSpectator()) return;
-            serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(2, PLAYER_TURN_TICKS - 10, 8));
-            serverPlayer.connection.send(new ClientboundSetTitleTextPacket(
-                    Component.literal("YOUR TURN").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)));
-            serverPlayer.playNotifySound(SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.MASTER, 1.0F, 1.4F);
+        for (ServerPlayer serverPlayer : this.bossEvent.getPlayers()) {
+            if (!serverPlayer.isCreative() && !serverPlayer.isSpectator()) {
+                serverPlayer.connection.send(new ClientboundSetTitlesAnimationPacket(2, PLAYER_TURN_TICKS - 10, 8));
+                serverPlayer.connection.send(new ClientboundSetTitleTextPacket(
+                        Component.literal("YOUR TURN").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)));
+                serverPlayer.playNotifySound(SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.MASTER, 1.0F, 1.4F);
+            }
         }
     }
 
