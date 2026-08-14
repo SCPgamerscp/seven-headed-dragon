@@ -63,16 +63,12 @@ public class WormDragonEntity extends Monster implements GeoEntity {
     private int attackTimer = 40;
     private int quakeTicks;
     private int biteTicks;
-    public long clientRenderFrame = 0L;
 
     public WormDragonEntity(EntityType<? extends WormDragonEntity> type, Level level) {
         super(type, level);
         setMaxUpStep(5.0F);
         xpReward = 5000;
         this.noCulling = true;
-        if (level.isClientSide) {
-            com.sevenheadeddragon.client.WormDragonFarRenderer.TRACKED_DRAGONS.add(this);
-        }
     }
 
     public static AttributeSupplier.Builder createAttributes() {

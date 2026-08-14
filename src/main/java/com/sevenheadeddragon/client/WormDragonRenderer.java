@@ -27,10 +27,4 @@ public class WormDragonRenderer extends GeoEntityRenderer<WormDragonEntity> {
     public boolean shouldRender(WormDragonEntity entity, net.minecraft.client.renderer.culling.Frustum frustum, double x, double y, double z) {
         return true;
     }
-
-    @Override
-    public void render(WormDragonEntity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-        entity.clientRenderFrame = System.currentTimeMillis();
-        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
-    }
 }
