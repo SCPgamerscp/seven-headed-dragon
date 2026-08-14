@@ -29,6 +29,7 @@ public class WormDragonSpawnHandler {
     @SubscribeEvent
     public void onDeath(LivingDeathEvent event) {
         if (event.getEntity().getType() != EntityType.SKELETON) return;
+        if (event.getEntity().getPersistentData().getBoolean("WormDragonMinion")) return;
         Entity attacker = event.getSource().getEntity();
         if (!(attacker instanceof ServerPlayer player)) return;
         if (!player.hasEffect(MobEffects.BAD_OMEN)) {

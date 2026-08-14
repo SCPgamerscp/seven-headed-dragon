@@ -203,6 +203,11 @@ public class WormDragonEntity extends Monster implements GeoEntity {
             double angle = i * Math.PI * 2.0D / types.size();
             minion.moveTo(getX() + Math.cos(angle) * 20.0D, getY() + 3.0D, getZ() + Math.sin(angle) * 20.0D, 0, 0);
             minion.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(minion.blockPosition()), MobSpawnType.MOB_SUMMONED, null, null);
+            if (minion instanceof net.minecraft.world.entity.monster.PatrollingMonster patrolling) {
+                patrolling.setPatrolLeader(false);
+            }
+            minion.setItemSlot(net.minecraft.world.entity.EquipmentSlot.HEAD, ItemStack.EMPTY);
+            minion.setDropChance(net.minecraft.world.entity.EquipmentSlot.HEAD, 0.0F);
             minion.getPersistentData().putBoolean("WormDragonMinion", true);
             minion.getPersistentData().putUUID("WormDragonOwner", getUUID());
             minion.setPersistenceRequired();
