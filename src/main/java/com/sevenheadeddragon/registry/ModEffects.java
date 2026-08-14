@@ -3,6 +3,7 @@ package com.sevenheadeddragon.registry;
 import com.sevenheadeddragon.SevenHeadedDragon;
 import com.sevenheadeddragon.effect.AsphyxiationEffect;
 import com.sevenheadeddragon.effect.ControlReversalEffect;
+import com.sevenheadeddragon.effect.EnchantmentBlessingEffect;
 import com.sevenheadeddragon.effect.FireworkMarkEffect;
 import com.sevenheadeddragon.effect.GodSlayingEffect;
 import com.sevenheadeddragon.effect.SevenSinsEffect;
@@ -135,6 +136,10 @@ public final class ModEffects {
      */
     public static final java.util.List<RegistryObject<MobEffect>> SEVEN_SINS = java.util.List.of(
             SIN_PRIDE, SIN_WRATH, SIN_ENVY, SIN_SLOTH, SIN_GREED, SIN_GLUTTONY, SIN_LUST);
+
+    /** Enchantment Blessing — the Worm Dragon's ten-minute reward effect. */
+    public static final RegistryObject<MobEffect> ENCHANTMENT_BLESSING =
+            EFFECTS.register("enchantment_blessing", EnchantmentBlessingEffect::new);
 
     private ModEffects() {}
 }
