@@ -7,6 +7,7 @@
   "entity.sevenheadeddragon.fang_king": "Fang King",
   "entity.sevenheadeddragon.fang_conductor": "Fang Conductor",
   "entity.sevenheadeddragon.centipede_black_dragon_eater": "Black Dragon Eater",
+  "entity.sevenheadeddragon.worm_dragon": "Dragon King Beneath the Earth (Worm Dragon)",
 
   "item.sevenheadeddragon.potion_master_summon": "Potion Master Summoning Charge",
   "item.sevenheadeddragon.energy_drink": "Energy Drink",
@@ -37,6 +38,9 @@
   "effect.sevenheadeddragon.control_reversal": "Control Reversal",
   "effect.sevenheadeddragon.teleport_mark": "Teleport",
   "effect.sevenheadeddragon.firework_mark": "Firework",
+  "effect.sevenheadeddragon.enchantment_blessing": "Enchantment Blessing",
+  "item.minecraft.potion.effect.enchantment_blessing": "Potion of Enchantment Blessing",
+  "item.minecraft.potion.effect.sevenheadeddragon.enchantment_blessing": "Potion of Enchantment Blessing",
 
   "item.minecraft.potion.effect.percent_poison": "Potion of Percent Poison",
   "item.minecraft.splash_potion.effect.percent_poison": "Splash Potion of Percent Poison",
@@ -157,6 +161,8 @@
   "message.sevenheadeddragon.red_dragon_progress": "Omen of the Apocalypse: %1$s / %2$s zombies slain",
   "message.sevenheadeddragon.red_dragon_awakens": "The sky burns red... the Apocalypse Seven Headed Red Dragon awakens!",
   "message.sevenheadeddragon.red_dragon_defeated": "The red dragon falls. The sky returns to blue.",
+  "message.sevenheadeddragon.worm_dragon_progress": "Tremors Below: %1$s / %2$s skeletons slain",
+  "message.sevenheadeddragon.worm_dragon_awakens": "The earth splits... the Dragon King Beneath the Earth awakens!",
 
   "advancements.sevenheadeddragon.root.title": "Seven-Headed Dragon",
   "advancements.sevenheadeddragon.root.description": "The battle against the apocalyptic bosses begins",

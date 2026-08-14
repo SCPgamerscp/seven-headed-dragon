@@ -7,6 +7,7 @@
   "entity.sevenheadeddragon.fang_king": "牙の王",
   "entity.sevenheadeddragon.fang_conductor": "牙制御体",
   "entity.sevenheadeddragon.centipede_black_dragon_eater": "竜殺しのオオムカデ",
+  "entity.sevenheadeddragon.worm_dragon": "地中の竜王（ワームドラゴン）",
 
   "item.sevenheadeddragon.potion_master_summon": "ポーションマスターの召喚石",
   "item.sevenheadeddragon.energy_drink": "エナジードリンク",
@@ -37,6 +38,9 @@
   "effect.sevenheadeddragon.control_reversal": "操作反転",
   "effect.sevenheadeddragon.teleport_mark": "テレポート",
   "effect.sevenheadeddragon.firework_mark": "花火",
+  "effect.sevenheadeddragon.enchantment_blessing": "エンチャントの加護",
+  "item.minecraft.potion.effect.enchantment_blessing": "エンチャントの加護のポーション",
+  "item.minecraft.potion.effect.sevenheadeddragon.enchantment_blessing": "エンチャントの加護のポーション",
 
   "item.minecraft.potion.effect.percent_poison": "割合毒のポーション",
   "item.minecraft.splash_potion.effect.percent_poison": "割合毒のスプラッシュポーション",
@@ -157,6 +161,8 @@
   "message.sevenheadeddragon.red_dragon_progress": "終末の予兆: ゾンビ %1$s / %2$s 体討伐",
   "message.sevenheadeddragon.red_dragon_awakens": "空が赤く燃える……終末の七つ頭の赤い竜が目覚めた！",
   "message.sevenheadeddragon.red_dragon_defeated": "赤い竜は倒れた。空に青が戻る。",
+  "message.sevenheadeddragon.worm_dragon_progress": "地中の震動: スケルトン %1$s / %2$s 体討伐",
+  "message.sevenheadeddragon.worm_dragon_awakens": "大地が裂ける……地中の竜王が目覚めた！",
 
   "advancements.sevenheadeddragon.root.title": "セブンヘッドドラゴン",
   "advancements.sevenheadeddragon.root.description": "終末のボスたちとの戦いが始まる",
