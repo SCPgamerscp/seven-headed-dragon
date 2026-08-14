@@ -150,13 +150,25 @@ public class WormDragonEntity extends Monster implements GeoEntity {
             serverLevel.sendParticles(ParticleTypes.ENCHANTED_HIT, x, y, z, 1, 0, 0.05D, 0, 0);
         }
         if (quakeTicks % 10 == 0) {
-            level().playSound(null, blockPosition(), com.sevenheadeddragon.registry.ModSounds.CENTIPEDE_WALK.get(), SoundSource.HOSTILE, 2.0F, 1.0F);
+            for (ServerPlayer player : serverLevel.players()) {
+                player.playNotifySound(com.sevenheadeddragon.registry.ModSounds.CENTIPEDE_WALK.get(), SoundSource.HOSTILE, 1.0F, 1.0F);
+            }
             AABB area = getBoundingBox().inflate(QUAKE_RADIUS, 32.0D, QUAKE_RADIUS);
             for (LivingEntity victim : level().getEntitiesOfClass(LivingEntity.class, area,
                     e -> e.isAlive() && e != this && !(e instanceof Mob mob && mob.getPersistentData().getBoolean("WormDragonMinion")))) {
                 if (victim.distanceToSqr(this) <= QUAKE_RADIUS * QUAKE_RADIUS) victim.hurt(damageSources().mobAttack(this), 10.0F);
             }
         }
+    }
+
+    @Override
+    public boolean shouldRenderAtSqrDistance(double distance) {
+        return distance < 256.0D * 256.0D;
+    }
+
+    @Override
+    public AABB getBoundingBoxForCulling() {
+        return getBoundingBox().inflate(128.0D);
     }
 
     private void bite() {
