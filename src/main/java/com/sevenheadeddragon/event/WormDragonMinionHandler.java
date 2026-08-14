@@ -53,7 +53,7 @@ public class WormDragonMinionHandler {
                 entity.discard();
             } else if (entity instanceof Mob mob && mob.isAlive() && mob.getPersistentData().getBoolean(MINION)) {
                 LivingEntity target = mob.getTarget();
-                if (target != null && target.isAlive() && mob.distanceToSqr(target) < 160.0D * 160.0D) fire(level, mob, target);
+                if (mob.tickCount % 5 == 0 && target != null && target.isAlive() && mob.distanceToSqr(target) < 160.0D * 160.0D) fire(level, mob, target);
             }
         }
     }
