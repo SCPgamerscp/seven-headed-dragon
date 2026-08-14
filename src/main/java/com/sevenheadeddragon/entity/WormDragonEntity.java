@@ -175,8 +175,8 @@ public class WormDragonEntity extends Monster implements GeoEntity {
         entityData.set(BITING, true);
         biteTicks = 25;
         Vec3 look = getLookAngle();
-        Vec3 center = position().add(look.x * 15.0D, 4.0D, look.z * 15.0D);
-        AABB area = new AABB(center, center).inflate(18.0D, 12.0D, 18.0D);
+        Vec3 center = position().add(look.x * 25.0D, 4.0D, look.z * 25.0D);
+        AABB area = new AABB(center, center).inflate(25.0D, 16.0D, 25.0D);
         for (LivingEntity victim : level().getEntitiesOfClass(LivingEntity.class, area, e -> e != this && e.isAlive())) {
             victim.hurt(damageSources().mobAttack(this), 30.0F);
             victim.knockback(3.0D, getX() - victim.getX(), getZ() - victim.getZ());
