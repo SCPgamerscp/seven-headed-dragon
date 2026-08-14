@@ -79,7 +79,7 @@ public class WormDragonEntity extends Monster implements GeoEntity {
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.22D)
                 .add(Attributes.FOLLOW_RANGE, 128.0D)
-                .add(Attributes.ATTACK_DAMAGE, 30.0D);
+                .add(Attributes.ATTACK_DAMAGE, 40.0D);
     }
 
     @Override protected void defineSynchedData() {
@@ -180,7 +180,7 @@ public class WormDragonEntity extends Monster implements GeoEntity {
         Vec3 center = position().add(look.x * 25.0D, 4.0D, look.z * 25.0D);
         AABB area = new AABB(center, center).inflate(25.0D, 16.0D, 25.0D);
         for (LivingEntity victim : level().getEntitiesOfClass(LivingEntity.class, area, e -> e != this && e.isAlive())) {
-            victim.hurt(damageSources().mobAttack(this), 30.0F);
+            victim.hurt(damageSources().mobAttack(this), 40.0F);
             victim.knockback(3.0D, getX() - victim.getX(), getZ() - victim.getZ());
         }
         level().playSound(null, blockPosition(), SoundEvents.ENDER_DRAGON_GROWL, SoundSource.HOSTILE, 5.0F, 0.65F);
