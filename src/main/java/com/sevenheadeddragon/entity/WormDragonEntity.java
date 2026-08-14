@@ -140,7 +140,7 @@ public class WormDragonEntity extends Monster implements GeoEntity {
         quakeTicks--;
         if (!(level() instanceof ServerLevel serverLevel)) return;
         // A dense, 100-block-wide warning carpet without scanning/changing terrain.
-        for (int i = 0; i < 180; i++) {
+        for (int i = 0; i < 800; i++) {
             double angle = random.nextDouble() * Math.PI * 2.0D;
             double radius = Math.sqrt(random.nextDouble()) * QUAKE_RADIUS;
             double x = getX() + Math.cos(angle) * radius;
