@@ -67,6 +67,7 @@ public class WormDragonEntity extends Monster implements GeoEntity {
         super(type, level);
         setMaxUpStep(5.0F);
         xpReward = 5000;
+        this.noCulling = true;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -163,12 +164,12 @@ public class WormDragonEntity extends Monster implements GeoEntity {
 
     @Override
     public boolean shouldRenderAtSqrDistance(double distance) {
-        return distance < 500.0D * 500.0D;
+        return true;
     }
 
     @Override
     public AABB getBoundingBoxForCulling() {
-        return getBoundingBox().inflate(500.0D);
+        return getBoundingBox().inflate(10000.0D);
     }
 
     private void bite() {
