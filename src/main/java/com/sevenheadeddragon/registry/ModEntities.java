@@ -6,6 +6,7 @@ import com.sevenheadeddragon.entity.FangConductorEntity;
 import com.sevenheadeddragon.entity.FangKingEntity;
 import com.sevenheadeddragon.entity.MagicCircleEntity;
 import com.sevenheadeddragon.entity.PotionMasterEntity;
+import com.sevenheadeddragon.entity.WormDragonEntity;
 import com.sevenheadeddragon.entity.dragon.ApocalypseSevenHeadedRedDragonEntity;
 import com.sevenheadeddragon.entity.dragon.DebilitationMartyrEntity;
 import com.sevenheadeddragon.entity.dragon.DragonMagicCircleEntity;
@@ -66,6 +67,15 @@ public final class ModEntities {
                     .clientTrackingRange(80)
                     .updateInterval(1)
                     .build("centipede_black_dragon_eater"));
+
+    /** 地中の竜王（ワームドラゴン）— a screen-filling, limbless anti-god weapon. */
+    public static final RegistryObject<EntityType<WormDragonEntity>> WORM_DRAGON =
+            ENTITY_TYPES.register("worm_dragon", () -> EntityType.Builder.of(WormDragonEntity::new, MobCategory.MONSTER)
+                    .sized(24.0F, 18.0F)
+                    .clientTrackingRange(192)
+                    .updateInterval(1)
+                    .fireImmune()
+                    .build("worm_dragon"));
 
     // ------------------------------------------------------------------
     // 終末の七つ頭の赤い竜 (Apocalypse Seven Headed Red Dragon) and its arsenal
@@ -174,6 +184,7 @@ public final class ModEntities {
         event.put(POTION_MASTER.get(), PotionMasterEntity.createAttributes().build());
         event.put(FANG_KING.get(), FangKingEntity.createAttributes().build());
         event.put(CENTIPEDE_BOSS.get(), CentipedeBossEntity.createAttributes().build());
+        event.put(WORM_DRAGON.get(), WormDragonEntity.createAttributes().build());
         event.put(APOCALYPSE_RED_DRAGON.get(), ApocalypseSevenHeadedRedDragonEntity.createAttributes().build());
         event.put(TIMED_GIMMICK_CREEPER.get(), TimedGimmickCreeperEntity.createAttributes().build());
     }

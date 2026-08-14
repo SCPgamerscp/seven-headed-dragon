@@ -62,6 +62,10 @@ public final class ModPotions {
     public static final RegistryObject<Potion> POISON_5 = POTIONS.register("poison_5",
             () -> new Potion("poison_5", new MobEffectInstance(MobEffects.POISON, DURATION, 4)));
 
+    /** Ten-minute Enchantment Blessing potion dropped by the Worm Dragon. */
+    public static final RegistryObject<Potion> ENCHANTMENT_BLESSING =
+            register("enchantment_blessing", ModEffects.ENCHANTMENT_BLESSING);
+
     private static RegistryObject<Potion> register(String name, Supplier<MobEffect> effect) {
         return POTIONS.register(name, () -> new Potion(name, new MobEffectInstance(effect.get(), DURATION, 0)));
     }

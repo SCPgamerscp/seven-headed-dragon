@@ -30,6 +30,7 @@ public final class ClientSetup {
         event.registerEntityRenderer(ModEntities.FANG_KING.get(), FangKingRenderer::new);
         event.registerEntityRenderer(ModEntities.FANG_CONDUCTOR.get(), FangConductorRenderer::new);
         event.registerEntityRenderer(ModEntities.CENTIPEDE_BOSS.get(), CentipedeRenderer::new);
+        event.registerEntityRenderer(ModEntities.WORM_DRAGON.get(), WormDragonRenderer::new);
 
         // 終末の七つ頭の赤い竜 and its whole attack cast.
         event.registerEntityRenderer(ModEntities.APOCALYPSE_RED_DRAGON.get(),
