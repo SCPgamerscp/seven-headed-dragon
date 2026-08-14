@@ -56,7 +56,7 @@ import java.util.List;
 public class WormDragonEntity extends Monster implements GeoEntity {
     public static final int BOSS_TURN_TICKS = 20 * 60;
     public static final int PLAYER_TURN_TICKS = 20 * 5;
-    public static final int MAX_MINIONS = 15;
+    public static final int MAX_MINIONS = 30;
     private static final int QUAKE_RADIUS = 100;
     private static final EntityDataAccessor<Boolean> PLAYER_TURN = SynchedEntityData.defineId(WormDragonEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> BITING = SynchedEntityData.defineId(WormDragonEntity.class, EntityDataSerializers.BOOLEAN);
