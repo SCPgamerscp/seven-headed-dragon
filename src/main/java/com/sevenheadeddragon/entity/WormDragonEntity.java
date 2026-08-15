@@ -9,6 +9,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -41,6 +42,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.entity.PartEntity;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -63,6 +65,7 @@ public class WormDragonEntity extends Monster implements GeoEntity {
 
     private final ServerBossEvent bossEvent = (ServerBossEvent) new ServerBossEvent(getDisplayName(), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS).setDarkenScreen(true);
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    private final WormDragonPart[] parts;
     private int turnTimer = BOSS_TURN_TICKS;
     private int attackTimer = 40;
     private int quakeTicks;
@@ -73,6 +76,46 @@ public class WormDragonEntity extends Monster implements GeoEntity {
         setMaxUpStep(5.0F);
         xpReward = 5000;
         this.noCulling = true;
+
+        // 18 parts: 8 base ground ring + 6 body column + 4 neck & head
+        this.parts = new WormDragonPart[18];
+        for (int i = 0; i < 8; i++) {
+            this.parts[i] = new WormDragonPart(this, "base_" + i, 6.0F, 6.0F);
+        }
+        for (int i = 0; i < 6; i++) {
+            this.parts[8 + i] = new WormDragonPart(this, "spine_" + i, 8.0F, 7.0F);
+        }
+        this.parts[14] = new WormDragonPart(this, "neck_upper", 7.0F, 7.0F);
+        this.parts[15] = new WormDragonPart(this, "neck_head", 8.0F, 8.0F);
+        this.parts[16] = new WormDragonPart(this, "head", 8.0F, 8.0F);
+        this.parts[17] = new WormDragonPart(this, "jaw", 6.0F, 5.0F);
+        positionParts();
+    }
+
+    @Override
+    public boolean isMultipartEntity() {
+        return true;
+    }
+
+    @Override
+    public PartEntity<?>[] getParts() {
+        return this.parts;
+    }
+
+    @Override
+    public void setId(int id) {
+        super.setId(id);
+        for (int i = 0; i < this.parts.length; i++) {
+            this.parts[i].setId(id + i + 1);
+        }
+    }
+
+    @Override
+    public void recreateFromPacket(ClientboundAddEntityPacket packet) {
+        super.recreateFromPacket(packet);
+        for (int i = 0; i < this.parts.length; i++) {
+            this.parts[i].setId(packet.getId() + i + 1);
+        }
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -103,6 +146,7 @@ public class WormDragonEntity extends Monster implements GeoEntity {
 
     @Override public void aiStep() {
         super.aiStep();
+        positionParts();
         if (level().isClientSide) return;
         bossEvent.setProgress(getHealth() / getMaxHealth());
         getNavigation().stop();
@@ -194,6 +238,59 @@ public class WormDragonEntity extends Monster implements GeoEntity {
     @Override
     public AABB getBoundingBoxForCulling() {
         return getBoundingBox().inflate(10000.0D);
+    }
+
+    private void positionParts() {
+        if (this.parts == null) return;
+        double rootX = getX();
+        double rootY = getY();
+        double rootZ = getZ();
+        float yawRad = (float) Math.toRadians(getYRot());
+        float time = (float) this.tickCount * 0.05F;
+
+        // 1. Base Ring (8 parts at radius ~12m)
+        double baseRadius = 12.0D;
+        for (int i = 0; i < 8; i++) {
+            double angle = yawRad + i * Math.PI / 4.0D;
+            double px = rootX + Math.cos(angle) * baseRadius;
+            double py = rootY + 1.0D;
+            double pz = rootZ + Math.sin(angle) * baseRadius;
+            this.parts[i].updatePosWithOld(px, py, pz);
+        }
+
+        // 2. Spine Column (6 parts, rising Y+4 to Y+34 with idle sway)
+        for (int i = 0; i < 6; i++) {
+            double swayFactor = (i + 1) * 0.4D;
+            double swayX = Math.sin(time + i * 0.5D) * swayFactor;
+            double swayZ = Math.cos(time + i * 0.5D) * swayFactor;
+            double px = rootX + swayX;
+            double py = rootY + 4.0D + i * 6.0D;
+            double pz = rootZ + swayZ;
+            this.parts[8 + i].updatePosWithOld(px, py, pz);
+        }
+
+        // 3. Neck & Head Segments (parts 14..17)
+        boolean isBiting = entityData.get(BITING) || biteTicks > 0;
+        double lunge = 0.0D;
+        double headHeight = rootY + 38.0D;
+        if (isBiting) {
+            double biteProgress = Math.sin((25 - Math.max(0, biteTicks)) / 25.0D * Math.PI);
+            lunge = biteProgress * 25.0D;
+            headHeight = rootY + 38.0D - biteProgress * 30.0D;
+        }
+
+        Vec3 look = getLookAngle();
+        double lookX = look.x;
+        double lookZ = look.z;
+
+        // neck_upper
+        this.parts[14].updatePosWithOld(rootX + lookX * (lunge * 0.35D), (rootY + 32.0D + headHeight) * 0.5D, rootZ + lookZ * (lunge * 0.35D));
+        // neck_head
+        this.parts[15].updatePosWithOld(rootX + lookX * (lunge * 0.65D), headHeight + 2.0D, rootZ + lookZ * (lunge * 0.65D));
+        // head
+        this.parts[16].updatePosWithOld(rootX + lookX * lunge, headHeight, rootZ + lookZ * lunge);
+        // jaw
+        this.parts[17].updatePosWithOld(rootX + lookX * (lunge + 2.0D), headHeight - 2.0D, rootZ + lookZ * (lunge + 2.0D));
     }
 
     private void bite() {

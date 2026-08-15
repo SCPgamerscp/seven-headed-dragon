@@ -71,7 +71,7 @@ public final class ModEntities {
     /** 地中の竜王（ワームドラゴン）— a screen-filling, limbless anti-god weapon. */
     public static final RegistryObject<EntityType<WormDragonEntity>> WORM_DRAGON =
             ENTITY_TYPES.register("worm_dragon", () -> EntityType.Builder.of(WormDragonEntity::new, MobCategory.MONSTER)
-                    .sized(32.0F, 24.0F)
+                    .sized(6.0F, 6.0F)
                     .clientTrackingRange(10000)
                     .updateInterval(1)
                     .fireImmune()
