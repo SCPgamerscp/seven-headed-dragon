@@ -14,7 +14,6 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
 public class WormDragonRenderer extends GeoEntityRenderer<WormDragonEntity> {
 
     private static final String[] ALL_BONES = {
-            "tail12", "tail11", "tail10", "tail9", "tail8", "tail7", "tail6", "tail5", "tail4", "tail3", "tail2", "tail1",
             "neck11", "neck10", "neck9", "neck8", "neck7", "neck6", "neck1", "neck2", "neck3", "neck4", "neck5",
             "head", "jaw"
     };
