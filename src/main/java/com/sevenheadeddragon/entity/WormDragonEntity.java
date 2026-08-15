@@ -77,16 +77,19 @@ public class WormDragonEntity extends Monster implements GeoEntity {
         xpReward = 5000;
         this.noCulling = true;
 
-        // 13 parts matching the 13 upright bones of the model (neck11..neck5, head, jaw)
+        // 25 parts matching ALL 25 bones of wormdragon.geo.json (tail1..12, neck11..5, head, jaw)
         // Body segments: 40m x 20m. Head: 64m x 30m. Jaw: 48m x 20m.
-        this.parts = new WormDragonPart[13];
-        this.parts[0] = new WormDragonPart(this, "neck11", 40.0F, 20.0F);
+        this.parts = new WormDragonPart[25];
+        for (int i = 0; i < 12; i++) {
+            this.parts[i] = new WormDragonPart(this, "tail" + (i + 1), 40.0F, 20.0F);
+        }
+        this.parts[12] = new WormDragonPart(this, "neck11", 40.0F, 20.0F);
         String[] neckNames = {"neck10", "neck9", "neck8", "neck7", "neck6", "neck1", "neck2", "neck3", "neck4", "neck5"};
         for (int i = 0; i < 10; i++) {
-            this.parts[1 + i] = new WormDragonPart(this, neckNames[i], 40.0F, 20.0F);
+            this.parts[13 + i] = new WormDragonPart(this, neckNames[i], 40.0F, 20.0F);
         }
-        this.parts[11] = new WormDragonPart(this, "head", 64.0F, 30.0F);
-        this.parts[12] = new WormDragonPart(this, "jaw", 48.0F, 20.0F);
+        this.parts[23] = new WormDragonPart(this, "head", 64.0F, 30.0F);
+        this.parts[24] = new WormDragonPart(this, "jaw", 48.0F, 20.0F);
         positionParts();
     }
 
@@ -251,32 +254,42 @@ public class WormDragonEntity extends Monster implements GeoEntity {
         boolean isBiting = entityData.get(BITING) || biteTicks > 0;
         double biteProgress = isBiting ? Math.sin((25 - Math.max(0, biteTicks)) / 25.0D * Math.PI) : 0.0D;
 
-        // 1. Vertical Spine Tower (parts 0..10 for neck11..neck5) rising from rootY up to rootY + 120
-        for (int i = 0; i < 11; i++) {
-            double swayFactor = i * 0.25D;
+        // 1. Tail chain (parts 0..11 for tail1..tail12) trailing along ground/root
+        for (int i = 1; i <= 12; i++) {
+            double dist = i * 25.0D;
+            double tx = rootX + sinYaw * dist;
+            double ty = rootY;
+            double tz = rootZ - cosYaw * dist;
+            this.parts[i - 1].updatePosWithOld(tx, ty, tz);
+        }
+
+        // 2. Base root (part 12 for neck11)
+        this.parts[12].updatePosWithOld(rootX, rootY, rootZ);
+
+        // 3. Vertical Spine Tower (parts 13..22 for neck10..neck5) rising from rootY up to rootY + 120
+        for (int i = 0; i < 10; i++) {
+            double swayFactor = (i + 1) * 0.25D;
             double swayX = Math.sin(time + i * 0.3D) * swayFactor;
             double swayZ = Math.cos(time + i * 0.3D) * swayFactor;
             double px = rootX + swayX;
-            double py = rootY + i * 12.0D;
+            double py = rootY + (i + 1) * 12.0D;
             double pz = rootZ + swayZ;
-            this.parts[i].updatePosWithOld(px, py, pz);
+            this.parts[13 + i].updatePosWithOld(px, py, pz);
         }
 
-        // 2. Head (part 11) & Jaw (part 12)
-        // During idle: sit vertically atop the pillar at Y+132, Y+122.
-        // During biting lunge: arcs forward and down along look vector to ground (Y+4.0D), then arcs back!
+        // 4. Head (part 23) & Jaw (part 24)
         double headLunge = biteProgress * 30.0D;
         double headDrop = biteProgress * 125.0D;
 
         double hx = rootX - sinYaw * headLunge;
         double hy = rootY + 132.0D - headDrop;
         double hz = rootZ + cosYaw * headLunge;
-        this.parts[11].updatePosWithOld(hx, hy, hz);
+        this.parts[23].updatePosWithOld(hx, hy, hz);
 
         double jx = rootX - sinYaw * (headLunge + 2.0D);
         double jy = rootY + 122.0D - headDrop - 4.0D;
         double jz = rootZ + cosYaw * (headLunge + 2.0D);
-        this.parts[12].updatePosWithOld(jx, jy, jz);
+        this.parts[24].updatePosWithOld(jx, jy, jz);
     }
 
     private void bite() {
