@@ -157,10 +157,7 @@ public class WormDragonEntity extends Monster implements GeoEntity {
         boolean hasValidTarget = target != null && target.isAlive()
                 && (!(target instanceof Player player) || (!player.isCreative() && !player.isSpectator()));
 
-        if (biteTicks > 0) {
-            if (biteTicks == 12) doBiteImpactAoE();
-            if (--biteTicks == 0) entityData.set(BITING, false);
-        }
+        if (biteTicks > 0 && --biteTicks == 0) entityData.set(BITING, false);
         if (quakeTicks > 0) tickQuake();
 
         if (!hasValidTarget) {
@@ -300,41 +297,15 @@ public class WormDragonEntity extends Monster implements GeoEntity {
     private void bite() {
         entityData.set(BITING, true);
         biteTicks = 25;
-        LivingEntity target = getTarget();
-        if (target != null) {
-            double dx = target.getX() - getX();
-            double dz = target.getZ() - getZ();
-            float targetYaw = (float) (Math.toDegrees(Math.atan2(dz, dx)) - 90.0F);
-            setYRot(targetYaw);
-            setYHeadRot(targetYaw);
-            setYBodyRot(targetYaw);
-        }
-        level().playSound(null, blockPosition(), SoundEvents.PHANTOM_BITE, SoundSource.HOSTILE, 6.0F, 0.5F);
-    }
-
-    private void doBiteImpactAoE() {
-        if (!(level() instanceof ServerLevel serverLevel)) return;
-        level().playSound(null, blockPosition(), SoundEvents.ENDER_DRAGON_GROWL, SoundSource.HOSTILE, 10.0F, 0.6F);
-        level().playSound(null, blockPosition(), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 8.0F, 0.5F);
-
-        // 100-block full radius Area of Effect (AoE)
-        AABB area = getBoundingBox().inflate(100.0D, 40.0D, 100.0D);
+        AABB area = getBoundingBox().inflate(100.0D, 32.0D, 100.0D);
         for (LivingEntity victim : level().getEntitiesOfClass(LivingEntity.class, area,
                 e -> e.isAlive() && e != this && !(e instanceof Mob mob && mob.getPersistentData().getBoolean("WormDragonMinion")))) {
             if (victim.distanceToSqr(this) <= 100.0D * 100.0D) {
                 victim.hurt(damageSources().mobAttack(this), 40.0F);
-                victim.knockback(3.5D, getX() - victim.getX(), getZ() - victim.getZ());
-                serverLevel.sendParticles(ParticleTypes.CRIT, victim.getX(), victim.getY() + 1.0D, victim.getZ(), 30, 0.5D, 0.5D, 0.5D, 0.2D);
+                victim.knockback(3.0D, getX() - victim.getX(), getZ() - victim.getZ());
             }
         }
-        // Visual shockwave particles across the 100-block area
-        for (int i = 0; i < 300; i++) {
-            double angle = random.nextDouble() * Math.PI * 2.0D;
-            double radius = Math.sqrt(random.nextDouble()) * 100.0D;
-            double x = getX() + Math.cos(angle) * radius;
-            double z = getZ() + Math.sin(angle) * radius;
-            serverLevel.sendParticles(ParticleTypes.SWEEP_ATTACK, x, getY() + 0.5D, z, 1, 0, 0, 0, 0);
-        }
+        level().playSound(null, blockPosition(), SoundEvents.ENDER_DRAGON_GROWL, SoundSource.HOSTILE, 5.0F, 0.65F);
     }
 
     private void summonMinions() {
