@@ -315,6 +315,11 @@ public class WormDragonEntity extends Monster implements GeoEntity {
         int canSpawnCount = MAX_MINIONS - currentMinions.size();
         if (canSpawnCount <= 0) return;
 
+        LivingEntity target = getTarget();
+        double centerX = target != null ? target.getX() : getX();
+        double centerY = target != null ? target.getY() : getY();
+        double centerZ = target != null ? target.getZ() : getZ();
+
         List<EntityType<? extends Mob>> types = List.of(EntityType.SKELETON, EntityType.DROWNED, EntityType.SHULKER,
                 EntityType.LLAMA, EntityType.GHAST, EntityType.BLAZE, EntityType.PILLAGER);
         int spawnAmount = Math.min(canSpawnCount, types.size());
@@ -322,7 +327,10 @@ public class WormDragonEntity extends Monster implements GeoEntity {
             Mob minion = types.get(i).create(serverLevel);
             if (minion == null) continue;
             double angle = i * Math.PI * 2.0D / spawnAmount;
-            minion.moveTo(getX() + Math.cos(angle) * 20.0D, getY() + 3.0D, getZ() + Math.sin(angle) * 20.0D, 0, 0);
+            double spawnX = centerX + Math.cos(angle) * 15.0D;
+            double spawnY = centerY + 0.5D;
+            double spawnZ = centerZ + Math.sin(angle) * 15.0D;
+            minion.moveTo(spawnX, spawnY, spawnZ, 0, 0);
             minion.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(minion.blockPosition()), MobSpawnType.MOB_SUMMONED, null, null);
             if (minion instanceof net.minecraft.world.entity.monster.PatrollingMonster patrolling) {
                 patrolling.setPatrolLeader(false);
@@ -332,10 +340,11 @@ public class WormDragonEntity extends Monster implements GeoEntity {
             minion.getPersistentData().putBoolean("WormDragonMinion", true);
             minion.getPersistentData().putUUID("WormDragonOwner", getUUID());
             minion.setPersistenceRequired();
-            if (getTarget() != null) minion.setTarget(getTarget());
+            if (target != null) minion.setTarget(target);
             serverLevel.addFreshEntity(minion);
+            serverLevel.sendParticles(ParticleTypes.POOF, spawnX, spawnY + 0.5D, spawnZ, 10, 0.3D, 0.3D, 0.3D, 0.05D);
         }
-        serverLevel.sendParticles(ParticleTypes.WITCH, getX(), getY() + 5, getZ(), 100, 15, 6, 15, 0.1D);
+        serverLevel.sendParticles(ParticleTypes.WITCH, centerX, centerY + 1.0D, centerZ, 100, 10.0D, 2.0D, 10.0D, 0.1D);
     }
 
     @Override public boolean hurt(DamageSource source, float amount) {
