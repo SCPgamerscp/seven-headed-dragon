@@ -10,7 +10,7 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
 public class WormDragonRenderer extends GeoEntityRenderer<WormDragonEntity> {
     public WormDragonRenderer(EntityRendererProvider.Context context) {
         super(context, new WormDragonModel());
-        shadowRadius = 16.0F;
+        shadowRadius = 32.0F;
     }
 
     @Override
