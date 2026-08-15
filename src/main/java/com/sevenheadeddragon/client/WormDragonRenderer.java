@@ -13,7 +13,7 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 public class WormDragonRenderer extends GeoEntityRenderer<WormDragonEntity> {
 
-    private static final String[] ALL_BONES = {
+    private static final String[] UPRIGHT_BONES = {
             "neck11", "neck10", "neck9", "neck8", "neck7", "neck6", "neck1", "neck2", "neck3", "neck4", "neck5",
             "head", "jaw"
     };
@@ -30,8 +30,8 @@ public class WormDragonRenderer extends GeoEntityRenderer<WormDragonEntity> {
                           float red, float green, float blue, float alpha) {
         poseStack.scale(1.0F, 1.0F, 1.0F);
 
-        // Enable matrix tracking on ALL 25 animated bones (tail, base, neck, head, jaw)
-        for (String boneName : ALL_BONES) {
+        // Enable matrix tracking on animated upright bones
+        for (String boneName : UPRIGHT_BONES) {
             model.getBone(boneName).ifPresent(bone -> bone.setTrackingMatrices(true));
         }
 
@@ -49,12 +49,14 @@ public class WormDragonRenderer extends GeoEntityRenderer<WormDragonEntity> {
         if (model != null && entity.getParts() != null) {
             for (PartEntity<?> p : entity.getParts()) {
                 if (p instanceof WormDragonPart part) {
-                    model.getBone(part.partName).ifPresent(bone -> {
-                        Vector3d pos = bone.getWorldPosition();
-                        if (pos != null && (pos.x != 0.0 || pos.y != 0.0 || pos.z != 0.0)) {
-                            part.updatePosWithOld(pos.x, pos.y, pos.z);
-                        }
-                    });
+                    if (!part.partName.startsWith("tail")) {
+                        model.getBone(part.partName).ifPresent(bone -> {
+                            Vector3d pos = bone.getWorldPosition();
+                            if (pos != null && (pos.x != 0.0 || pos.y != 0.0 || pos.z != 0.0)) {
+                                part.updatePosWithOld(pos.x, pos.y, pos.z);
+                            }
+                        });
+                    }
                 }
             }
         }
