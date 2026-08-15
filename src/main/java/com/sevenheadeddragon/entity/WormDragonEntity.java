@@ -153,7 +153,7 @@ public class WormDragonEntity extends Monster implements GeoEntity {
     }
 
     private void startQuake() {
-        quakeTicks = 100;
+        quakeTicks = 200;
         level().playSound(null, blockPosition(), SoundEvents.WARDEN_SONIC_BOOM, SoundSource.HOSTILE, 6.0F, 0.5F);
     }
 

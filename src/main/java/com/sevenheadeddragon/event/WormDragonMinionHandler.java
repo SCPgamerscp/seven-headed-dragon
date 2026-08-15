@@ -65,7 +65,7 @@ public class WormDragonMinionHandler {
 
         if (shooter instanceof Skeleton) {
             Arrow arrow = new Arrow(level, shooter);
-            arrow.addEffect(new MobEffectInstance(ARROW_EFFECTS.get(shooter.getRandom().nextInt(ARROW_EFFECTS.size())), 20 * 8, 1));
+            arrow.addEffect(new MobEffectInstance(ARROW_EFFECTS.get(shooter.getRandom().nextInt(ARROW_EFFECTS.size())), 20 * 20, 1));
             projectile = arrow;
         } else if (shooter instanceof Drowned) {
             projectile = new ThrownTrident(level, shooter, new ItemStack(Items.TRIDENT));
