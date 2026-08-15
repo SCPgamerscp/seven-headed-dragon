@@ -157,7 +157,10 @@ public class WormDragonEntity extends Monster implements GeoEntity {
         boolean hasValidTarget = target != null && target.isAlive()
                 && (!(target instanceof Player player) || (!player.isCreative() && !player.isSpectator()));
 
-        if (biteTicks > 0 && --biteTicks == 0) entityData.set(BITING, false);
+        if (biteTicks > 0) {
+            if (biteTicks == 16) doBiteDamage();
+            if (--biteTicks == 0) entityData.set(BITING, false);
+        }
         if (quakeTicks > 0) tickQuake();
 
         if (!hasValidTarget) {
@@ -252,7 +255,7 @@ public class WormDragonEntity extends Monster implements GeoEntity {
         float time = (float) this.tickCount * 0.05F;
 
         boolean isBiting = entityData.get(BITING) || biteTicks > 0;
-        double biteProgress = isBiting ? Math.sin((25 - Math.max(0, biteTicks)) / 25.0D * Math.PI) : 0.0D;
+        double biteProgress = isBiting ? Math.sin((30 - Math.max(0, biteTicks)) / 30.0D * Math.PI) : 0.0D;
 
         // 1. Lower Body & Tail (parts 0..11 for tail1..tail12) descending vertically into ground from rootY-12 to rootY-144
         for (int i = 1; i <= 12; i++) {
@@ -296,7 +299,11 @@ public class WormDragonEntity extends Monster implements GeoEntity {
 
     private void bite() {
         entityData.set(BITING, true);
-        biteTicks = 25;
+        biteTicks = 30;
+        level().playSound(null, blockPosition(), SoundEvents.ENDER_DRAGON_GROWL, SoundSource.HOSTILE, 5.0F, 0.65F);
+    }
+
+    private void doBiteDamage() {
         AABB area = getBoundingBox().inflate(100.0D, 32.0D, 100.0D);
         for (LivingEntity victim : level().getEntitiesOfClass(LivingEntity.class, area,
                 e -> e.isAlive() && e != this && !(e instanceof Mob mob && mob.getPersistentData().getBoolean("WormDragonMinion")))) {
@@ -305,7 +312,6 @@ public class WormDragonEntity extends Monster implements GeoEntity {
                 victim.knockback(3.0D, getX() - victim.getX(), getZ() - victim.getZ());
             }
         }
-        level().playSound(null, blockPosition(), SoundEvents.ENDER_DRAGON_GROWL, SoundSource.HOSTILE, 5.0F, 0.65F);
     }
 
     private void summonMinions() {
