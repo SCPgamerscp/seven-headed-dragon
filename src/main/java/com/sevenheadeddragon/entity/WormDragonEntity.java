@@ -359,6 +359,9 @@ public class WormDragonEntity extends Monster implements GeoEntity {
             if (!level().isClientSide) level().playSound(null, blockPosition(), SoundEvents.SHIELD_BLOCK, SoundSource.HOSTILE, 1, 0.6F);
             return false;
         }
+        if (source.getDirectEntity() instanceof net.minecraft.world.entity.projectile.SpectralArrow) {
+            this.addEffect(new MobEffectInstance(net.minecraft.world.effect.MobEffects.GLOWING, 200, 0));
+        }
         return super.hurt(source, amount);
     }
 
@@ -366,7 +369,7 @@ public class WormDragonEntity extends Monster implements GeoEntity {
     @Override public boolean isPushable() { return false; }
     @Override protected void doPush(Entity entity) {}
     @Override public boolean removeWhenFarAway(double distance) { return false; }
-    @Override public boolean canBeAffected(MobEffectInstance effect) { return false; }
+    @Override public boolean canBeAffected(MobEffectInstance effect) { return true; }
 
     @Override public void startSeenByPlayer(ServerPlayer player) { super.startSeenByPlayer(player); bossEvent.addPlayer(player); }
     @Override public void stopSeenByPlayer(ServerPlayer player) { super.stopSeenByPlayer(player); bossEvent.removePlayer(player); }
