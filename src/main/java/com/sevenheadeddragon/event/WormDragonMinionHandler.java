@@ -129,7 +129,20 @@ public class WormDragonMinionHandler {
         }
     }
 
-    /** Prevents Worm Dragon minions from taking friendly-fire damage from each other or the boss. */
+    /** Prevents Worm Dragon minions from taking friendly-fire damage, red flash, or knockback from each other or the boss. */
+    @SubscribeEvent
+    public void onMinionAttack(net.minecraftforge.event.entity.living.LivingAttackEvent event) {
+        LivingEntity victim = event.getEntity();
+        if (victim.getPersistentData().getBoolean(MINION) || victim instanceof com.sevenheadeddragon.entity.WormDragonEntity) {
+            Entity attacker = event.getSource().getEntity();
+            Entity directSource = event.getSource().getDirectEntity();
+            if ((attacker != null && (attacker.getPersistentData().getBoolean(MINION) || attacker instanceof com.sevenheadeddragon.entity.WormDragonEntity))
+                    || (directSource != null && (directSource.getPersistentData().getBoolean(MINION) || directSource.getPersistentData().getBoolean(PROJECTILE)))) {
+                event.setCanceled(true);
+            }
+        }
+    }
+
     @SubscribeEvent
     public void onMinionHurt(net.minecraftforge.event.entity.living.LivingHurtEvent event) {
         LivingEntity victim = event.getEntity();
