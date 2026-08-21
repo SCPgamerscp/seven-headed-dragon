@@ -143,7 +143,14 @@ public class DebilitationMartyrEntity extends Entity implements GeoEntity, net.m
     public boolean hurt(DamageSource source, float amount) {
         if (this.level().isClientSide) return false;
         if (source.getEntity() instanceof ApocalypseSevenHeadedRedDragonEntity) return false;
+        if (source.getEntity() instanceof TimedGimmickCreeperEntity) return false;
         if (source.is(DamageTypes.WITHER)) return false;
+        if (source.is(DamageTypes.EXPLOSION) || source.is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION)) {
+            net.minecraft.world.entity.Entity attacker = source.getEntity();
+            if (attacker instanceof TimedGimmickCreeperEntity || attacker instanceof DebilitationMartyrEntity || attacker instanceof ApocalypseSevenHeadedRedDragonEntity) {
+                return false;
+            }
+        }
 
         float nextHealth = getHealth() - amount;
         setHealth(nextHealth);

@@ -214,13 +214,17 @@ public class TimedGimmickCreeperEntity extends Monster implements net.minecraft.
         return false;
     }
 
-    /** Immune to the dragon's own attacks, so a stray missile cannot clear the puzzle for the player. */
+    /** Immune to the dragon and other dragon summons' attacks, so stray friendly fire cannot clear the puzzle for the player. */
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (source.getEntity() instanceof ApocalypseSevenHeadedRedDragonEntity) return false;
-        if (source.is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION)
-                && source.getEntity() instanceof TimedGimmickCreeperEntity) {
-            return false;
+        if (source.getEntity() instanceof DebilitationMartyrEntity) return false;
+        if (source.is(net.minecraft.world.damagesource.DamageTypes.WITHER)) return false;
+        if (source.is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION)) {
+            net.minecraft.world.entity.Entity attacker = source.getEntity();
+            if (attacker instanceof TimedGimmickCreeperEntity || attacker instanceof DebilitationMartyrEntity || attacker instanceof ApocalypseSevenHeadedRedDragonEntity) {
+                return false;
+            }
         }
         return super.hurt(source, amount);
     }
